@@ -1,0 +1,6 @@
+*~
+*.pro.user
+lib
+Makefile
+qoauth.framework
+tmp
