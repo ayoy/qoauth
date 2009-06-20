@@ -32,7 +32,7 @@ else:unix {
     target.path = $${INSTALL_PREFIX}/lib
     headers.path = $${INSTALL_PREFIX}/include/QOAuth
     INSTALLS += target \
-        lib_headers \
+        headers \
         features
 }
 else:win32 { 
