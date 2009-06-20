@@ -1,5 +1,8 @@
-QOAUTH_INCDIR = /usr/local/include
-QOAUTH_LIBDIR = /usr/local/lib
+QOAUTH_INCDIR = $$[QT_INSTALL_HEADERS]
+QOAUTH_LIBDIR = $$[QT_INSTALL_LIBS]
+
+QOAUTH_INCDIR ~= s!/qt4!!
+QOAUTH_LIBDIR ~= s!/qt4!!
 
 CONFIG *= qt
 
