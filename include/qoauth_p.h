@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008-2009 by Dominik Kapusta       <d@ayoy.net>         *
+ *   Copyright (C) 2009 by Dominik Kapusta       <d@ayoy.net>              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Lesser General Public License as        *
@@ -23,7 +23,6 @@
 
 #include "qoauth.h"
 #include <QObject>
-#include <QNetworkRequest>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -57,8 +56,7 @@ public:
                               const QByteArray &tokenSecret, QOAuth::ParamMap *params );
 
   QOAuth::ParamMap sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
-                                const QByteArray &token, const QByteArray &tokenSecret,
-                                uint timeout, const QOAuth::ParamMap &params );
+                                const QByteArray &token, const QByteArray &tokenSecret, const QOAuth::ParamMap &params );
 
 
   QByteArray consumerKey;
@@ -70,10 +68,8 @@ public:
   QNetworkAccessManager *manager;
   QEventLoop *loop;
 
+  uint requestTimeout;
   int error;
-
-  static const QNetworkRequest::Attribute RequestType;
-
 
 
 public slots:

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008-2009 by Dominik Kapusta       <d@ayoy.net>         *
+ *   Copyright (C) 2009 by Dominik Kapusta       <d@ayoy.net>              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Lesser General Public License as        *
@@ -34,6 +34,7 @@ class QOAUTH_EXPORT QOAuth : public QObject
 
   Q_PROPERTY( QByteArray consumerKey READ consumerKey WRITE setConsumerKey )
   Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
+  Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
   Q_PROPERTY( int error READ error )
 
 public:
@@ -45,12 +46,15 @@ public:
 
   enum HttpMethod {
     GET,
-    POST
+    POST,
+    HEAD,
+    PUT,
+    DELETE
   };
   
   enum ParsingMode {
-    ParseForSignatureBaseString,
-    ParseForInlineQuery = ParseForSignatureBaseString,
+    ParseForInlineQuery,
+    ParseForSignatureBaseString = ParseForInlineQuery,
     ParseForHeaderArguments
   };
 
@@ -60,6 +64,10 @@ public:
     Unauthorized = 401,
     Forbidden = 403,
     Timeout = 1,
+    ConsumerKeyEmpty,
+    ConsumerSecretEmpty,
+    UnsupportedSignatureMethod,
+    UnsupportedHttpMethod,
     OtherError
   };
 
@@ -86,13 +94,17 @@ public:
   QByteArray consumerSecret() const;
   void setConsumerSecret( const QByteArray &consumerSecret );
 
+  uint requestTimeout() const;
+  void setRequestTimeout( uint requestTimeout );
+
   int error() const;
 
-  ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
-                         uint timeout = 0, const ParamMap &params = ParamMap() );
-  ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
-                        const QByteArray &token, const QByteArray &tokenSecret,
-                        uint timeout = 0, const ParamMap &params = ParamMap() );
+  ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
+                         SignatureMethod signatureMethod = HMAC_SHA1, const ParamMap &params = ParamMap() );
+
+  ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+                        const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
+                        const ParamMap &params = ParamMap() );
 
   QByteArray createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
                                      const QByteArray &token, const QByteArray &tokenSecret,

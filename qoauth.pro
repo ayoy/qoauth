@@ -34,7 +34,7 @@ INCLUDEPATH += include
 DEFINES += QOAUTH
 
 headers.files = \
-    include/QOAuth \
+    include/QtOAuth \
     include/qoauth.h \
     include/qoauth_global.h
 features.path = $$[QMAKE_MKSPECS]/features
@@ -45,14 +45,11 @@ macx {
     QMAKE_FRAMEWORK_BUNDLE_NAME = $$TARGET
     CONFIG(debug, debug|release) {
       CONFIG += build_all
-    } else {
-      !debug_and_release|build_pass {
-        FRAMEWORK_HEADERS.version = Versions
-        FRAMEWORK_HEADERS.files = $$headers.files
-        FRAMEWORK_HEADERS.path = Headers
-        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
-      }
     }
+    FRAMEWORK_HEADERS.version = Versions
+    FRAMEWORK_HEADERS.files = $$headers.files
+    FRAMEWORK_HEADERS.path = Headers
+    QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
     target.path = $$[QT_INSTALL_LIBS]
     INSTALLS += \
         target \
@@ -62,7 +59,7 @@ else:unix {
     isEmpty( PREFIX ):INSTALL_PREFIX = /usr
     else:INSTALL_PREFIX = $${PREFIX}
     target.path = $${INSTALL_PREFIX}/lib
-    headers.path = $${INSTALL_PREFIX}/include/QOAuth
+    headers.path = $${INSTALL_PREFIX}/include/QtOAuth
     INSTALLS += \
         target \
         headers \

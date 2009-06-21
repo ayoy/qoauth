@@ -4,3 +4,5 @@ lib
 Makefile*
 qoauth.framework
 tmp
+.DS_Store
+commit-message.txt
