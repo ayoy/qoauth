@@ -702,6 +702,7 @@ QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::Ht
   // convert the map to bytearray, according to requested mode
   QByteArray parametersString = d->paramsToString( parameters, mode );
 
+  // add a query separator, this will be a query part of the URL
   if ( httpMethod == GET && mode == ParseForInlineQuery ) {
     parametersString.prepend( '?' );
   }
