@@ -28,7 +28,7 @@ mac: {
 
 # else, link normally
 isEmpty(LINKAGE) {
-        INCLUDEPATH += $$QOAUTH_INCDIR/QOAuth
+        INCLUDEPATH += $$QOAUTH_INCDIR/QtOAuth
         LIBS += -L$$QOAUTH_LIBDIR
         LINKAGE = -lqoauth
         CONFIG(debug, debug|release) {
