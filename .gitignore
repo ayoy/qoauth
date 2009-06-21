@@ -1,6 +1,6 @@
 *~
 *.pro.user
 lib
-Makefile
+Makefile*
 qoauth.framework
 tmp
