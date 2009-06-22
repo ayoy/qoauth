@@ -6,3 +6,6 @@ qoauth.framework
 tmp
 .DS_Store
 commit-message.txt
+moc_*
+*.o
+tests/ut_qoauth

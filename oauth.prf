@@ -21,9 +21,8 @@ mac: {
     framework_dir = $${QOAUTH_LIBDIR}
     exists($$framework_dir/qoauth.framework) {
         LIBS += -F$$framework_dir
-#        exists($$PWD/qoauth.pro):
-        INCLUDEPATH += $$framework_dir/qoauth.framework/Headers
-#        else: INCLUDEPATH += $${QOAUTH_INCDIR}
+        exists($$PWD/qoauth.pro): INCLUDEPATH += $${QOAUTH_INCDIR}
+        else: INCLUDEPATH += $$framework_dir/qoauth.framework/Headers
         LINKAGE = -framework qoauth
     }
 }

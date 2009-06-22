@@ -384,7 +384,7 @@ QByteArray QOAuthPrivate::httpMethodToString( QOAuth::HttpMethod method )
   case QOAuth::DELETE:
     return "DELETE";
   default:
-    qWarning() << __PRETTY_FUNCTION__ << "Unrecognized method";
+    qWarning() << __FUNCTION__ << "- Unrecognized method";
     return QByteArray();
   }
 }
@@ -399,7 +399,7 @@ QByteArray QOAuthPrivate::signatureMethodToString( QOAuth::SignatureMethod metho
   case QOAuth::PLAINTEXT:
     return "PLAINTEXT";
   default:
-    qWarning() << __PRETTY_FUNCTION__ << "Unrecognized method";
+    qWarning() << __FUNCTION__ << "- Unrecognized method";
     return QByteArray();
   }
 }
@@ -436,10 +436,10 @@ void QOAuthPrivate::parseReply( QNetworkReply *reply )
   case QOAuth::NoError:
     replyParams = replyToMap( reply->readAll() );
     if ( !replyParams.contains( QOAuth::ParamToken ) ) {
-      qWarning() << __PRETTY_FUNCTION__ << "oauth_token not present in reply!";
+      qWarning() << __FUNCTION__ << "- oauth_token not present in reply!";
     }
     if ( !replyParams.contains( QOAuth::ParamTokenSecret ) ) {
-      qWarning() << __PRETTY_FUNCTION__ << "oauth_token_secret not present in reply!";
+      qWarning() << __FUNCTION__ << "- oauth_token_secret not present in reply!";
     }
 
   case QOAuth::BadRequest:
@@ -469,7 +469,7 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
     endString = "\",";
     break;
   default:
-    qWarning() << __PRETTY_FUNCTION__ << "Unrecognized mode";
+    qWarning() << __FUNCTION__ << "- Unrecognized mode";
     return QByteArray();
   }
 
@@ -783,7 +783,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
                                              const QByteArray &token, const QByteArray &tokenSecret, const QOAuth::ParamMap &params )
 {
   if ( httpMethod != QOAuth::GET && httpMethod != QOAuth::POST ) {
-    qWarning() << __PRETTY_FUNCTION__ << "requestToken() and accessToken() accept only GET and POST methods";
+    qWarning() << __FUNCTION__ << "- requestToken() and accessToken() accept only GET and POST methods";
     error = QOAuth::UnsupportedHttpMethod;
     return QOAuth::ParamMap();
   }
@@ -853,19 +853,19 @@ QByteArray QOAuthPrivate::createSignature( const QString &requestUrl, QOAuth::Ht
                                            const QByteArray &tokenSecret, QOAuth::ParamMap *params )
 {
   if ( consumerKey.isEmpty() ) {
-    qWarning() << __PRETTY_FUNCTION__ << "consumer key is empty, make sure that you set it with QOAuth::setConsumerKey()";
+    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it with QOAuth::setConsumerKey()";
     error = QOAuth::ConsumerKeyEmpty;
     return QByteArray();
   }
   if ( consumerSecret.isEmpty() ) {
-    qWarning() << __PRETTY_FUNCTION__ << "consumer secret is empty, make sure that you set it with QOAuth::setConsumerSecret()";
+    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it with QOAuth::setConsumerSecret()";
     error = QOAuth::ConsumerSecretEmpty;
     return QByteArray();
   }
 
   // temporarily only HMAC-SHA1 is supported
   if ( signatureMethod != QOAuth::HMAC_SHA1 ) {
-    qWarning() << __PRETTY_FUNCTION__ << "Sorry, we're currently supporting only HMAC-SHA1 method...";
+    qWarning() << __FUNCTION__ << "- Sorry, we're currently supporting only HMAC-SHA1 method...";
     error = QOAuth::UnsupportedSignatureMethod;
     return QByteArray();
   }
