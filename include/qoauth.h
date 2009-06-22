@@ -106,8 +106,8 @@ public:
                         const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
                         const ParamMap &params = ParamMap() );
 
-  QByteArray createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
-                                     const QByteArray &token, const QByteArray &tokenSecret,
+  QByteArray createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
+                                     const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
                                      const QOAuth::ParamMap &params, QOAuth::ParsingMode mode );
 
 protected:
@@ -115,6 +115,10 @@ protected:
 
 private:  
   Q_DECLARE_PRIVATE(QOAuth)
+
+#ifdef UNIT_TEST
+  friend class Ut_QOAuth;
+#endif
 };
 
 #endif // QOAUTH_H

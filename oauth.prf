@@ -10,31 +10,33 @@ CONFIG *= qt
 # an installed qmake CONFIG feature), then point to the tree.  this allows our
 # qoauth tree apps to build before qoauth itself is installed.
 exists($$PWD/qoauth.pro) {
-        QOAUTH_INCDIR = $$PWD/include
-        QOAUTH_LIBDIR = $$PWD/lib
+    QOAUTH_INCDIR = $$PWD/include
+    QOAUTH_LIBDIR = $$PWD/lib
 }
 
 LINKAGE =
 
 # on mac, if qoauth was built as a framework, link against it
 mac: {
-        framework_dir = $$[QT_INSTALL_LIBS]
-        exists($$framework_dir/qoauth.framework) {
-                LIBS += -F$$framework_dir
-                INCLUDEPATH += $$framework_dir/qoauth.framework/Headers
-                LINKAGE = -framework qoauth
-        }
+    framework_dir = $${QOAUTH_LIBDIR}
+    exists($$framework_dir/qoauth.framework) {
+        LIBS += -F$$framework_dir
+#        exists($$PWD/qoauth.pro):
+        INCLUDEPATH += $$framework_dir/qoauth.framework/Headers
+#        else: INCLUDEPATH += $${QOAUTH_INCDIR}
+        LINKAGE = -framework qoauth
+    }
 }
 
 # else, link normally
 isEmpty(LINKAGE) {
-        INCLUDEPATH += $$QOAUTH_INCDIR/QtOAuth
-        LIBS += -L$$QOAUTH_LIBDIR
-        LINKAGE = -lqoauth
-        CONFIG(debug, debug|release) {
-                windows:LINKAGE = -lqoauthd
-                mac:LINKAGE = -lqoauth_debug
-        }
+    INCLUDEPATH += $$QOAUTH_INCDIR/QtOAuth
+    LIBS += -L$$QOAUTH_LIBDIR
+    LINKAGE = -lqoauth
+    CONFIG(debug, debug|release) {
+        windows:LINKAGE = -lqoauthd
+        mac:LINKAGE = -lqoauth_debug
+    }
 }
 
 LIBS += $$LINKAGE

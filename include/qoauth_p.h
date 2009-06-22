@@ -68,7 +68,6 @@ public:
 
   QByteArray consumerKey;
   QByteArray consumerSecret;
-  QByteArray accessToken;
 
   QOAuth::ParamMap replyParams;
 

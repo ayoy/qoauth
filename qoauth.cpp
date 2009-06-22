@@ -361,7 +361,6 @@ QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     QObject( parent ),
     consumerKey( QByteArray() ),
     consumerSecret( QByteArray() ),
-    accessToken( QByteArray() ),
     manager( new QNetworkAccessManager( this ) ),
     loop( new QEventLoop( this ) ),
     requestTimeout(0),
@@ -520,6 +519,7 @@ QOAuth::QOAuth( QObject *parent ) :
 
 QOAuth::~QOAuth()
 {
+  delete d_ptr;
 }
 
 /*!
@@ -747,8 +747,8 @@ QOAuth::ParamMap QOAuth::accessToken( const QString &requestUrl, HttpMethod http
   </table>
 */
 
-QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
-                                           const QByteArray &token, const QByteArray &tokenSecret,
+QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
+                                           const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
                                            const QOAuth::ParamMap &params, QOAuth::ParsingMode mode )
 {
   Q_D(QOAuth);
@@ -819,7 +819,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   request.setUrl( QUrl( requestUrl ) );
 
   // fire up a single shot timer if timeout was specified
-  if ( this->requestTimeout > 0 ) {
+  if ( requestTimeout > 0 ) {
     QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
     // if the request finishes on time, the error value is overriden
     // if not, it remains equal to QOAuth::Timeout
@@ -843,6 +843,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   if ( error == QOAuth::Timeout ) {
     reply->abort();
   }
+  reply->deleteLater();
 
   return replyParams;
 }

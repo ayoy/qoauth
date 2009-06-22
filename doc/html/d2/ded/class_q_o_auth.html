@@ -89,7 +89,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href=".
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken</a> (const QString &amp;requestUrl, <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">HttpMethod</a> httpMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, <a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">SignatureMethod</a> signatureMethod=HMAC_SHA1, const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a> &amp;params=<a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a>())</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString</a> (const QString &amp;requestUrl, <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">QOAuth::HttpMethod</a> httpMethod, <a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">QOAuth::SignatureMethod</a> signatureMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">QOAuth::ParamMap</a> &amp;params, <a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">QOAuth::ParsingMode</a> mode)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString</a> (const QString &amp;requestUrl, <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">QOAuth::HttpMethod</a> httpMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, <a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">QOAuth::SignatureMethod</a> signatureMethod, const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">QOAuth::ParamMap</a> &amp;params, <a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">QOAuth::ParsingMode</a> mode)</td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="78a87a948839345c86a46b668cabff76"></a><!-- doxytag: member="QOAuth::OAuthVersion" ref="78a87a948839345c86a46b668cabff76" args="" -->
@@ -124,7 +124,7 @@ The <a class="el" href="../../d2/ded/class_q_o_auth.html" title="This class prov
 <li><a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a>,</li>
 </ul>
 and the third one helps with creation of requests for accessing Protected Resources: <ul>
-<li><a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>.</li>
+<li><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>.</li>
 </ul>
 <h2><a class="anchor" name="sec_auth_scheme">
 OAuth authorization scheme</a></h2>
@@ -190,12 +190,12 @@ map.insert( "size", "small" );
 
 <span class="comment">// construct the parameters string</span>
 QByteArray content =
-    qoauth-&gt;<a class="code" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString</a>( requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993196ed361499757a38a5cb06209acf7c04e" title="Sets the HTTP method to GET.">GET</a>, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f8e9abfba36e69632bf6dde3fcdcd5e32" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>,
+    qoauth-&gt;<a class="code" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString</a>( requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993196ed361499757a38a5cb06209acf7c04e" title="Sets the HTTP method to GET.">GET</a>, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f8e9abfba36e69632bf6dde3fcdcd5e32" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>,
                                     token, tokenSecret, map,
                                     <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a" title="Inlne query format (parameters appended to the request URL).">ParseForInlineQuery</a> );
 <span class="comment">// append parameters string to the URL</span>
 url.append( content );
-QNetworkRequest( QUrl( url ) );
+QNetworkRequest request( QUrl( url ) );
 <span class="comment">// etc...</span>
 </pre></div><h2><a class="anchor" name="sec_capabilities">
 Capabilities</a></h2>
@@ -255,7 +255,7 @@ A network-related error not specified above. </td></tr>
 <p>
 The HTTP method has to be specified in <a class="el" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a> class for two reasons: <ul>
 <li>to know what type of request should be prepared and sent (<a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a> and <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a>), </li>
-<li>to prepare a correct signature, as the Signature Base String contains a parameter specifying the HTTP method used for request (<a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>).</li>
+<li>to prepare a correct signature, as the Signature Base String contains a parameter specifying the HTTP method used for request (<a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>).</li>
 </ul>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>For <a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a> and <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a> methods only <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993196ed361499757a38a5cb06209acf7c04e">GET</a> and <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993194e0cbeb2f0a98cb0a78a5ce2d733b6e5">POST</a> methods are allowed. </dd></dl>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
@@ -287,9 +287,9 @@ Sets the HTTP method to DELETE. </td></tr>
 <div class="memdoc">
 
 <p>
-When creating a parameters string for a custom request using <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a> the parsing mode must be defined in order to prepare the string correctly.<p>
-According to what is stated in <a href="http://oauth.net/core/1.0/#consumer_req_param">OAuth 1.0 Core specification</a>, parameters can be passed in a request to the Service Provider in 3 different ways. When using <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>, choose the one that suits you by setting <em>ParsingMode</em> appropriatelly.<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a> </dd></dl>
+When creating a parameters string for a custom request using <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a> the parsing mode must be defined in order to prepare the string correctly.<p>
+According to what is stated in <a href="http://oauth.net/core/1.0/#consumer_req_param">OAuth 1.0 Core specification</a>, parameters can be passed in a request to the Service Provider in 3 different ways. When using <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>, choose the one that suits you by setting <em>ParsingMode</em> appropriatelly.<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a> </dd></dl>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a"></a><!-- doxytag: member="ParseForInlineQuery" ref="442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a" args="" -->ParseForInlineQuery</em>&nbsp;</td><td>
@@ -315,7 +315,7 @@ HTTP request header format (parameters to be put inside a request header). </td>
 <div class="memdoc">
 
 <p>
-There are 3 different signature methods defined by the <a href="http://oauth.net/core/1.0/#signing_process">OAuth protocol</a>. This enum is used to specify the method used by a specific request. Hence, one of its values must be passed as a parameter in any of the <a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a> or <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a> method.<p>
+There are 3 different signature methods defined by the <a href="http://oauth.net/core/1.0/#signing_process">OAuth protocol</a>. This enum is used to specify the method used by a specific request. Hence, one of its values must be passed as a parameter in any of the <a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a> or <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a> method.<p>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>The current implementation of the library supports only HMAC-SHA1 signature algorithm. </dd></dl>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
@@ -388,12 +388,12 @@ When the signature is created, the appropriate request is sent to the Service Pr
 <li>for POST requests, as a request body with <code>content-type</code> set to <code>application/x-www-form-urlencoded</code>.</li>
 </ul>
 Once the request is sent, a local event loop is executed and set up to wait for the request to complete. If the <a class="el" href="../../d2/ded/class_q_o_auth.html#490d0554af9f9fb18b50f9a2bca8a985">requestTimeout</a> property is set to a non-zero value, its vaue is applied as a request timeout, after which the request is aborted.<p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>If request succeded, the method returns all the data passed in the Service Provider response (including an authorized Access Token and Token Secret), formed in a ParamMap. This request ends the authorization process, and the obtained Access Token and Token Secret should be kept by the application and provided with every future request authorized by OAuth, e.g. using <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>. If request fails, the <a class="el" href="../../d2/ded/class_q_o_auth.html#e37f754819efa2022a0d7afa4c62ad54">error</a> property is set to an appropriate value, and an empty ParamMap is returned.</dd></dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#e37f754819efa2022a0d7afa4c62ad54" title="This property holds the error code.">error</a> </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>If request succeded, the method returns all the data passed in the Service Provider response (including an authorized Access Token and Token Secret), formed in a ParamMap. This request ends the authorization process, and the obtained Access Token and Token Secret should be kept by the application and provided with every future request authorized by OAuth, e.g. using <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>. If request fails, the <a class="el" href="../../d2/ded/class_q_o_auth.html#e37f754819efa2022a0d7afa4c62ad54">error</a> property is set to an appropriate value, and an empty ParamMap is returned.</dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#e37f754819efa2022a0d7afa4c62ad54" title="This property holds the error code.">error</a> </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="878979854b2820c78c6cb68ab69b18de"></a><!-- doxytag: member="QOAuth::createParametersString" ref="878979854b2820c78c6cb68ab69b18de" args="(const QString &amp;requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, const QOAuth::ParamMap &amp;params, QOAuth::ParsingMode mode)" -->
+<a class="anchor" name="78f7906f925465dfb6ffed2ebacd2a32"></a><!-- doxytag: member="QOAuth::createParametersString" ref="78f7906f925465dfb6ffed2ebacd2a32" args="(const QString &amp;requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, QOAuth::SignatureMethod signatureMethod, const QOAuth::ParamMap &amp;params, QOAuth::ParsingMode mode)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -412,12 +412,6 @@ Once the request is sent, a local event loop is executed and set up to wait for 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">QOAuth::SignatureMethod</a>&nbsp;</td>
-          <td class="paramname"> <em>signatureMethod</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const QByteArray &amp;&nbsp;</td>
           <td class="paramname"> <em>token</em>, </td>
         </tr>
@@ -426,6 +420,12 @@ Once the request is sent, a local event loop is executed and set up to wait for 
           <td></td>
           <td class="paramtype">const QByteArray &amp;&nbsp;</td>
           <td class="paramname"> <em>tokenSecret</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">QOAuth::SignatureMethod</a>&nbsp;</td>
+          <td class="paramname"> <em>signatureMethod</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -572,7 +572,7 @@ Access functions: <ul>
 <div class="memdoc">
 
 <p>
-The error code is initially set to <a class="el" href="../../d2/ded/class_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b0a0f4121509d6cf0495e661491e09aa">NoError</a>, and its value is updated with every request, i.e. <a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a> or <a class="el" href="../../d2/ded/class_q_o_auth.html#878979854b2820c78c6cb68ab69b18de">createParametersString()</a>.<p>
+The error code is initially set to <a class="el" href="../../d2/ded/class_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b0a0f4121509d6cf0495e661491e09aa">NoError</a>, and its value is updated with every request, i.e. <a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, <a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a> or <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>.<p>
 Access functions: <ul>
 <li><b>int error() const</b></li>
 </ul>
@@ -603,7 +603,7 @@ Access functions: <ul>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="../../dc/db0/qoauth_8h-source.html">qoauth.h</a><li>qoauth.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jun 22 20:02:47 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 23 00:30:45 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="../../doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

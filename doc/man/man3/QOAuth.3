@@ -1,4 +1,4 @@
-.TH "QOAuth" 3 "22 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
+.TH "QOAuth" 3 "23 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -51,7 +51,7 @@ QOAuth \- This class provides means for interaction with network services suppor
 .RI "\fBParamMap\fP \fBaccessToken\fP (const QString &requestUrl, \fBHttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBSignatureMethod\fP signatureMethod=HMAC_SHA1, const \fBParamMap\fP &params=\fBParamMap\fP())"
 .br
 .ti -1c
-.RI "QByteArray \fBcreateParametersString\fP (const QString &requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, \fBQOAuth::SignatureMethod\fP signatureMethod, const QByteArray &token, const QByteArray &tokenSecret, const \fBQOAuth::ParamMap\fP &params, \fBQOAuth::ParsingMode\fP mode)"
+.RI "QByteArray \fBcreateParametersString\fP (const QString &requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBQOAuth::SignatureMethod\fP signatureMethod, const \fBQOAuth::ParamMap\fP &params, \fBQOAuth::ParsingMode\fP mode)"
 .br
 .in -1c
 .SS "Static Public Attributes"
@@ -192,7 +192,7 @@ QByteArray content =
                                     QOAuth::ParseForInlineQuery );
 // append parameters string to the URL
 url.append( content );
-QNetworkRequest( QUrl( url ) );
+QNetworkRequest request( QUrl( url ) );
 // etc...
 .fi
 .PP
@@ -353,7 +353,7 @@ If request succeded, the method returns all the data passed in the Service Provi
 .RE
 .PP
 
-.SS "QByteArray QOAuth::createParametersString (const QString & requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, \fBQOAuth::SignatureMethod\fP signatureMethod, const QByteArray & token, const QByteArray & tokenSecret, const \fBQOAuth::ParamMap\fP & params, \fBQOAuth::ParsingMode\fP mode)"
+.SS "QByteArray QOAuth::createParametersString (const QString & requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, const QByteArray & token, const QByteArray & tokenSecret, \fBQOAuth::SignatureMethod\fP signatureMethod, const \fBQOAuth::ParamMap\fP & params, \fBQOAuth::ParsingMode\fP mode)"
 .PP
 This method generates a parameters string required to access Protected Resources using OAuth authorization. According to \fCOAuth 1.0 Core specification\fP, every outgoing request for accessing Protected Resources must contain information like consumer key and Access Token, and has to be signed using one of the supported signature methods.
 .PP
