@@ -63,45 +63,52 @@
 <a name="l00043"></a>00043     AccessToken
 <a name="l00044"></a>00044   };
 <a name="l00045"></a>00045 
-<a name="l00046"></a>00046 
-<a name="l00047"></a>00047   QOAuthPrivate( QObject *parent = 0 );
-<a name="l00048"></a>00048   QByteArray httpMethodToString( <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> method );
-<a name="l00049"></a>00049   QByteArray signatureMethodToString( <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> method );
-<a name="l00050"></a>00050   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> replyToMap( <span class="keyword">const</span> QByteArray &amp;data );
-<a name="l00051"></a>00051   QByteArray paramsToString( <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;parameters, <a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">QOAuth::ParsingMode</a> mode );
+<a name="l00046"></a>00046   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamConsumerKey;
+<a name="l00047"></a>00047   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamNonce;
+<a name="l00048"></a>00048   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamSignature;
+<a name="l00049"></a>00049   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamSignatureMethod;
+<a name="l00050"></a>00050   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamTimestamp;
+<a name="l00051"></a>00051   <span class="keyword">static</span> <span class="keyword">const</span> QByteArray ParamVersion;
 <a name="l00052"></a>00052 
 <a name="l00053"></a>00053 
-<a name="l00054"></a>00054   QByteArray createSignature( <span class="keyword">const</span> QString &amp;requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> httpMethod,
-<a name="l00055"></a>00055                               <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> signatureMethod, <span class="keyword">const</span> QByteArray &amp;token,
-<a name="l00056"></a>00056                               <span class="keyword">const</span> QByteArray &amp;tokenSecret, <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> *params );
-<a name="l00057"></a>00057 
-<a name="l00058"></a>00058   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> sendRequest( <span class="keyword">const</span> QString &amp;requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> httpMethod, <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> signatureMethod,
-<a name="l00059"></a>00059                                 <span class="keyword">const</span> QByteArray &amp;token, <span class="keyword">const</span> QByteArray &amp;tokenSecret, <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;params );
+<a name="l00054"></a>00054   QOAuthPrivate( QObject *parent = 0 );
+<a name="l00055"></a>00055   QByteArray httpMethodToString( <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> method );
+<a name="l00056"></a>00056   QByteArray signatureMethodToString( <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> method );
+<a name="l00057"></a>00057   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> replyToMap( <span class="keyword">const</span> QByteArray &amp;data );
+<a name="l00058"></a>00058   QByteArray paramsToString( <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;parameters, <a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">QOAuth::ParsingMode</a> mode );
+<a name="l00059"></a>00059 
 <a name="l00060"></a>00060 
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062   QByteArray consumerKey;
-<a name="l00063"></a>00063   QByteArray consumerSecret;
-<a name="l00064"></a>00064   QByteArray accessToken;
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> replyParams;
+<a name="l00061"></a>00061   QByteArray createSignature( <span class="keyword">const</span> QString &amp;requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> httpMethod,
+<a name="l00062"></a>00062                               <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> signatureMethod, <span class="keyword">const</span> QByteArray &amp;token,
+<a name="l00063"></a>00063                               <span class="keyword">const</span> QByteArray &amp;tokenSecret, <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> *params );
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> sendRequest( <span class="keyword">const</span> QString &amp;requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">QOAuth::HttpMethod</a> httpMethod, <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> signatureMethod,
+<a name="l00066"></a>00066                                 <span class="keyword">const</span> QByteArray &amp;token, <span class="keyword">const</span> QByteArray &amp;tokenSecret, <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;params );
 <a name="l00067"></a>00067 
-<a name="l00068"></a>00068   QNetworkAccessManager *manager;
-<a name="l00069"></a>00069   QEventLoop *loop;
-<a name="l00070"></a>00070 
-<a name="l00071"></a>00071   uint requestTimeout;
-<a name="l00072"></a>00072   <span class="keywordtype">int</span> error;
-<a name="l00073"></a>00073 
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069   QByteArray consumerKey;
+<a name="l00070"></a>00070   QByteArray consumerSecret;
+<a name="l00071"></a>00071   QByteArray accessToken;
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073   <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> replyParams;
 <a name="l00074"></a>00074 
-<a name="l00075"></a>00075 <span class="keyword">public</span> slots:
-<a name="l00076"></a>00076   <span class="keywordtype">void</span> parseReply( QNetworkReply *reply );
+<a name="l00075"></a>00075   QNetworkAccessManager *manager;
+<a name="l00076"></a>00076   QEventLoop *loop;
 <a name="l00077"></a>00077 
-<a name="l00078"></a>00078 <span class="keyword">protected</span>:
-<a name="l00079"></a>00079   <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a> *q_ptr;
-<a name="l00080"></a>00080 };
+<a name="l00078"></a>00078   uint requestTimeout;
+<a name="l00079"></a>00079   <span class="keywordtype">int</span> error;
+<a name="l00080"></a>00080 
 <a name="l00081"></a>00081 
-<a name="l00082"></a>00082 <span class="preprocessor">#endif // QOAUTH_P_H</span>
+<a name="l00082"></a>00082 <span class="keyword">public</span> slots:
+<a name="l00083"></a>00083   <span class="keywordtype">void</span> parseReply( QNetworkReply *reply );
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085 <span class="keyword">protected</span>:
+<a name="l00086"></a>00086   <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a> *q_ptr;
+<a name="l00087"></a>00087 };
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089 <span class="preprocessor">#endif // QOAUTH_P_H</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Jun 21 22:46:58 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jun 22 18:49:56 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="../../doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

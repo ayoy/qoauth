@@ -11,5 +11,5 @@ QByteArray content =
                                     QOAuth::ParseForInlineQuery );
 // append parameters string to the URL
 url.append( content );
-QNetworkRequest( QUrl( url ) );
+QNetworkRequest request( QUrl( url ) );
 // etc...

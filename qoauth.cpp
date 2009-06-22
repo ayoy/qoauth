@@ -32,6 +32,74 @@
 #include <QEventLoop>
 #include <QTimer>
 
+
+/*!
+  \mainpage
+
+  \section sec_what What is the purpose of QOAuth?
+
+  The main motivation to create this library was to provide an interface to OAuth
+  protocoll for (Qt-based) C++ applications in an easy way. This is very early version
+  of the library, and it lacks some functionality, but in the same time it is capable
+  of sending OAuth authorization requests as well as preparing requests for accessing
+  User's Protected Resources.
+
+  \section sec_lic License and Authors
+
+  The project is licensed under <a href=http://www.gnu.org/licenses/lgpl-2.1.html>GNU LGPL
+  license</a> version 2.1 or later. The work is done by Dominik Kapusta (d at ayoy dot net).
+
+  \section sec_inst How to install?
+
+  \subsection ssec_deps Dependencies
+
+  There are a few things necessary to get OAuth library working:
+
+  <ol>
+    <li>Qt libraries, version 4.4 or higher,</li>
+    <li>QCA (Qt Cryptographic Architecture), available from
+        <a href=http://delta.affinix.com/qca>Delta XMPP Project</a>, version 2.0.0
+        or higher,</li>
+    <li>OpenSSL plugin to QCA (qca-ossl), available from QCA page, and requiring OpenSSL.</li>
+  </ol>
+
+  \b Note: KDE4 users met all the requirements out of the box.
+
+  \subsection ssec_inst Installation
+
+  The source code repository is hosted on <a href=http://github.com/ayoy/qoauth>GitHub</a>
+  and the code can be checked out from there easily using git:
+  \verbatim
+    $ git clone git://github.com/ayoy/qoauth.git \endverbatim
+
+  To compile the code, follow the simple procedure:
+
+  \verbatim
+    $ qmake
+    $ make
+    $ sudo make install \endverbatim
+
+  \subsection ssec_use Usage
+
+  Configuring your project to work with QOAuth library is extremely simple. Firstly,
+  append a line to your project file:
+  \verbatim
+    CONFIG += oauth \endverbatim
+
+  Then include the following header in your code:
+  \verbatim
+    #include <QtOAuth> \endverbatim
+
+  \section sec_bugs Bugs and issues
+
+  Please file all the bug reports to the QOAuth bug tracking system at
+  <a href="http://ayoy.lighthouseapp.com/projects/32547-qoauth/tickets?q=all">
+  lighthouseapp.com</a>. If you wish to contribute, you're extremely welcome
+  to fork a <a href=http://github.com/ayoy/qoauth>GitHub</a> repository and
+  add your input there.
+
+*/
+
 /*!
   \class QOAuth qoauth.h <QtOAuth>
   \brief This class provides means for interaction with network services supporting
@@ -42,7 +110,7 @@
     \li \ref requestToken(),
     \li \ref accessToken(),
 
-  and the third one helps with creation of requests for Protected Resources:
+  and the third one helps with creation of requests for accessing Protected Resources:
     \li \ref createParametersString().
 
   \section sec_auth_scheme OAuth authorization scheme
@@ -74,7 +142,7 @@
 
   After the unauthorized Request Token is received, User has to authorize it using
   Service Provider-defined method. This is beyond the scope of this library. Once User
-  authorizes the Request Token, it can be exchanged for an Access Token, authorizing the
+  authorizes the Request Token, it can be exchanged for an Access Token that authorizes the
   application to access User's Protected Resources. This can be done with another one line:
 
   \include accessToken.cpp
@@ -271,24 +339,23 @@
 */
 const QByteArray QOAuth::OAuthVersion = "1.0";
 
-//! \brief The <em>consumer key</em> request parameter string
-const QByteArray QOAuth::ParamConsumerKey     = "oauth_consumer_key";
-//! \brief The <em>nonce</em> request parameter string
-const QByteArray QOAuth::ParamNonce           = "oauth_nonce";
-//! \brief The <em>signature</em> request parameter string
-const QByteArray QOAuth::ParamSignature       = "oauth_signature";
-//! \brief The <em>signature method</em> request parameter string
-const QByteArray QOAuth::ParamSignatureMethod = "oauth_signature_method";
-//! \brief The <em>timestamp</em> request parameter string
-const QByteArray QOAuth::ParamTimestamp       = "oauth_timestamp";
-//! \brief The <em>version</em> request parameter string
-const QByteArray QOAuth::ParamVersion         = "oauth_version";
 //! \brief The <em>token</em> request parameter string
 const QByteArray QOAuth::ParamToken           = "oauth_token";
 //! \brief The <em>token secret</em> request parameter string
 const QByteArray QOAuth::ParamTokenSecret     = "oauth_token_secret";
-//! \brief The <em>access token</em> request parameter string
-const QByteArray QOAuth::ParamAccessToken     = "oauth_access_token";
+
+//! \brief The <em>consumer key</em> request parameter string
+const QByteArray QOAuthPrivate::ParamConsumerKey     = "oauth_consumer_key";
+//! \brief The <em>nonce</em> request parameter string
+const QByteArray QOAuthPrivate::ParamNonce           = "oauth_nonce";
+//! \brief The <em>signature</em> request parameter string
+const QByteArray QOAuthPrivate::ParamSignature       = "oauth_signature";
+//! \brief The <em>signature method</em> request parameter string
+const QByteArray QOAuthPrivate::ParamSignatureMethod = "oauth_signature_method";
+//! \brief The <em>timestamp</em> request parameter string
+const QByteArray QOAuthPrivate::ParamTimestamp       = "oauth_timestamp";
+//! \brief The <em>version</em> request parameter string
+const QByteArray QOAuthPrivate::ParamVersion         = "oauth_version";
 
 QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     QObject( parent ),
@@ -511,9 +578,9 @@ void QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
 
   The QOAuth class can send network requests when asked to do so by calling either
   requestToken() or accessToken() method. By defining the \a requestTimeout, requests
-  can have the time constraint applied, after which they fail. The \a requestTimeout
-  value is initially set to \c 0, which in this case means that no timeout is applied
-  to outgoing requests.
+  can have the time constraint applied, after which they fail, setting \ref error to
+  \ref Timeout. The \a requestTimeout value is initially set to \c 0, which in this
+  case means that no timeout is applied to outgoing requests.
 
   Access functions:
   \li <b>uint requestTimeout() const</b>
@@ -669,13 +736,15 @@ QOAuth::ParamMap QOAuth::accessToken( const QString &requestUrl, HttpMethod http
 
   The \a mode parameter specifies the format of the parameter string.
 
-  \returns The parsed parameters string, depending on \a mode and \a httpMethod is:
-    \li prepended with <em>'?'</em> and ready to be appended to the \a requestUrl - when
-        <tt>mode == QOAuth::ParseForInlineQuery</tt> and <tt>httpMethod == QOAuth::GET</tt>
-    \li ready to be passed as a request body - when <tt>mode == QOAuth::ParseForInlineQuery</tt> and
-        <tt>httpMethod != QOAuth::GET</tt>
-    \li ready to be passed as a value for \c Authorization HTTP header field - when
-        <tt>mode == QOAuth::ParseForHeaderArguments</tt>.
+  \returns The parsed parameters string, that depending on \a mode and \a httpMethod is:
+
+  <table>
+    <tr><td>\b \a mode </td>                                   <td>\b \a httpMode </td>     <td>\b outcome </td></tr>
+    <tr><td rowspan=2><tt>QOAuth::ParseForInlineQuery</tt></td><td><tt>QOAuth::GET</tt></td><td>prepended with a <em>'?'</em> and ready to be appended to the \a requestUrl</td></tr>
+    <tr>                                                       <td><em>others</em></td>     <td>ready to be posted as a request body</td></tr>
+    <tr><td><tt>QOAuth::ParseForHeaderArguments</tt></td>      <td>irrelevant</td>          <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
+    <tr><td><tt>QOAuth::ParseForSignatureBaseString</tt></td>  <td>irrelevant</td>          <td><em>meant for internal use</em></td></tr>
+  </table>
 */
 
 QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
@@ -698,7 +767,7 @@ QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::Ht
   }
 
   // append it to parameters
-  parameters.insert( QOAuth::ParamSignature, signature );
+  parameters.insert( QOAuthPrivate::ParamSignature, signature );
   // convert the map to bytearray, according to requested mode
   QByteArray parametersString = d->paramsToString( parameters, mode );
 
@@ -732,7 +801,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   }
 
   // add signature to parameters
-  parameters.insert( QOAuth::ParamSignature, signature );
+  parameters.insert( QOAuthPrivate::ParamSignature, signature );
 
   QByteArray authorizationHeader;
   QNetworkRequest request;
@@ -821,12 +890,12 @@ QByteArray QOAuthPrivate::createSignature( const QString &requestUrl, QOAuth::Ht
   // 2. prepare percent-encoded request URL
   QByteArray percentRequestUrl = requestUrl.toAscii().toPercentEncoding();
   // 3. prepare percent-encoded parameters string
-  params->insert( QOAuth::ParamConsumerKey, consumerKey );
-  params->insert( QOAuth::ParamNonce, nonce );
-  params->insert( QOAuth::ParamSignatureMethod,
+  params->insert( QOAuthPrivate::ParamConsumerKey, consumerKey );
+  params->insert( QOAuthPrivate::ParamNonce, nonce );
+  params->insert( QOAuthPrivate::ParamSignatureMethod,
                   signatureMethodToString( signatureMethod ) );
-  params->insert( QOAuth::ParamTimestamp, timestamp );
-  params->insert( QOAuth::ParamVersion, QOAuth::OAuthVersion );
+  params->insert( QOAuthPrivate::ParamTimestamp, timestamp );
+  params->insert( QOAuthPrivate::ParamVersion, QOAuth::OAuthVersion );
   // append token only if it is defined (requestToken() doesn't use a token at all)
   if ( !token.isEmpty() ) {
     params->insert( QOAuth::ParamToken, token );

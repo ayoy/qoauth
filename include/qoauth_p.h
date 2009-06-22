@@ -43,6 +43,13 @@ public:
     AccessToken
   };
 
+  static const QByteArray ParamConsumerKey;
+  static const QByteArray ParamNonce;
+  static const QByteArray ParamSignature;
+  static const QByteArray ParamSignatureMethod;
+  static const QByteArray ParamTimestamp;
+  static const QByteArray ParamVersion;
+
 
   QOAuthPrivate( QObject *parent = 0 );
   QByteArray httpMethodToString( QOAuth::HttpMethod method );

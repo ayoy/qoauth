@@ -5,6 +5,8 @@ QOAuth qoauth = new QOAuth;
 // set the consumer key and secret
 qoauth->setConsumerKey( "75b3d557c9268c49cfdf041a" );
 qoauth->setConsumerSecret( "fd12803fbf0760d34cd2ceb9955199ce" );
+// set a timeout for requests (in msecs)
+qoauth->setRequestTimeout( 10000 );
 
 // send a request for an unauthorized token
 QOAuth::ParamMap reply =

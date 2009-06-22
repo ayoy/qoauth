@@ -1,4 +1,4 @@
-.TH "QOAuth" 3 "21 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
+.TH "QOAuth" 3 "22 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -62,30 +62,6 @@ QOAuth \- This class provides means for interaction with network services suppor
 .br
 .RI "\fIThe supported OAuth scheme version. \fP"
 .ti -1c
-.RI "static const QByteArray \fBParamConsumerKey\fP = 'oauth_consumer_key'"
-.br
-.RI "\fIThe \fIconsumer key\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamNonce\fP = 'oauth_nonce'"
-.br
-.RI "\fIThe \fInonce\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamSignature\fP = 'oauth_signature'"
-.br
-.RI "\fIThe \fIsignature\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamSignatureMethod\fP = 'oauth_signature_method'"
-.br
-.RI "\fIThe \fIsignature method\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamTimestamp\fP = 'oauth_timestamp'"
-.br
-.RI "\fIThe \fItimestamp\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamVersion\fP = 'oauth_version'"
-.br
-.RI "\fIThe \fIversion\fP request parameter string. \fP"
-.ti -1c
 .RI "static const QByteArray \fBParamToken\fP = 'oauth_token'"
 .br
 .RI "\fIThe \fItoken\fP request parameter string. \fP"
@@ -93,10 +69,6 @@ QOAuth \- This class provides means for interaction with network services suppor
 .RI "static const QByteArray \fBParamTokenSecret\fP = 'oauth_token_secret'"
 .br
 .RI "\fIThe \fItoken secret\fP request parameter string. \fP"
-.ti -1c
-.RI "static const QByteArray \fBParamAccessToken\fP = 'oauth_access_token'"
-.br
-.RI "\fIThe \fIaccess token\fP request parameter string. \fP"
 .in -1c
 .SS "Properties"
 
@@ -128,7 +100,7 @@ The \fBQOAuth\fP class is meant to enable OAuth support in applications in as si
 .IP "\(bu" 2
 \fBaccessToken()\fP,
 .PP
-and the third one helps with creation of requests for Protected Resources: 
+and the third one helps with creation of requests for accessing Protected Resources: 
 .PD 0
 
 .IP "\(bu" 2
@@ -160,6 +132,8 @@ QOAuth qoauth = new QOAuth;
 // set the consumer key and secret
 qoauth->setConsumerKey( '75b3d557c9268c49cfdf041a' );
 qoauth->setConsumerSecret( 'fd12803fbf0760d34cd2ceb9955199ce' );
+// set a timeout for requests (in msecs)
+qoauth->setRequestTimeout( 10000 );
 
 // send a request for an unauthorized token
 QOAuth::ParamMap reply =
@@ -175,7 +149,7 @@ if ( qoauth->error() == QOAuth::NoError ) {
 .fi
 .PP
 .PP
-After the unauthorized Request Token is received, User has to authorize it using Service Provider-defined method. This is beyond the scope of this library. Once User authorizes the Request Token, it can be exchanged for an Access Token, authorizing the application to access User's Protected Resources. This can be done with another one line:
+After the unauthorized Request Token is received, User has to authorize it using Service Provider-defined method. This is beyond the scope of this library. Once User authorizes the Request Token, it can be exchanged for an Access Token that authorizes the application to access User's Protected Resources. This can be done with another one line:
 .PP
 .PP
 .nf
@@ -222,7 +196,9 @@ QNetworkRequest( QUrl( url ) );
 // etc...
 .fi
 .PP
- 
+.SH "Capabilities"
+.PP
+Out of 3 signature methods supported by OAuth protocol, \fBQOAuth\fP library supports only HMAC-SHA1 at the moment. This is subject to change in future releases. 
 .SH "Member Enumeration Documentation"
 .PP 
 .SS "enum \fBQOAuth::ErrorCode\fP"
@@ -389,19 +365,10 @@ The \fImode\fP parameter specifies the format of the parameter string.
 .PP
 \fBReturns:\fP
 .RS 4
-The parsed parameters string, depending on \fImode\fP and \fIhttpMethod\fP is: 
-.PD 0
-
-.IP "\(bu" 2
-prepended with \fI'?'\fP and ready to be appended to the \fIrequestUrl\fP - when \fCmode == \fBQOAuth::ParseForInlineQuery\fP\fP and \fChttpMethod == \fBQOAuth::GET\fP\fP 
-.IP "\(bu" 2
-ready to be passed as a request body - when \fCmode == \fBQOAuth::ParseForInlineQuery\fP\fP and \fChttpMethod != \fBQOAuth::GET\fP\fP 
-.IP "\(bu" 2
-ready to be passed as a value for \fCAuthorization\fP HTTP header field - when \fCmode == \fBQOAuth::ParseForHeaderArguments\fP\fP. 
-.PP
+The parsed parameters string, that depending on \fImode\fP and \fIhttpMethod\fP is:
 .RE
 .PP
-
+\fB\fImode\fP \fP  \fB\fIhttpMode\fP \fP  \fBoutcome\fP  \fC\fBQOAuth::ParseForInlineQuery\fP\fP\fC\fBQOAuth::GET\fP\fPprepended with a \fI'?'\fP and ready to be appended to the \fIrequestUrl\fP  \fIothers\fP ready to be posted as a request body \fC\fBQOAuth::ParseForHeaderArguments\fP\fP irrelevant ready to be set as an argument for the \fCAuthorization\fP HTTP header \fC\fBQOAuth::ParseForSignatureBaseString\fP\fP irrelevant \fImeant for internal use\fP 
 .SS "\fBQOAuth::ParamMap\fP QOAuth::requestToken (const QString & requestUrl, \fBHttpMethod\fP httpMethod, \fBSignatureMethod\fP signatureMethod = \fCHMAC_SHA1\fP, const \fBParamMap\fP & params = \fC\fBParamMap\fP()\fP)"
 .PP
 This method constructs and sends a request for obtaining an unauthorized Request Token from the Service Provider. This is the first step of the OAuth authentication flow, according to \fCOAuth 1.0 Core specification\fP. At the moment only HMAC-SHA1 signature method is supported. The HMAC-SHA1 \fCSignature Base String\fP is created using the given \fIrequestUrl\fP and \fIhttpMethod\fP. The optional request parameters specified by the Service Provider can be passed in the \fIparams\fP ParamMap.
@@ -475,7 +442,7 @@ Access functions:
 
 .SS "uint QOAuth::requestTimeout\fC [read, write]\fP"
 .PP
-The \fBQOAuth\fP class can send network requests when asked to do so by calling either \fBrequestToken()\fP or \fBaccessToken()\fP method. By defining the \fIrequestTimeout\fP, requests can have the time constraint applied, after which they fail. The \fIrequestTimeout\fP value is initially set to \fC0\fP, which in this case means that no timeout is applied to outgoing requests.
+The \fBQOAuth\fP class can send network requests when asked to do so by calling either \fBrequestToken()\fP or \fBaccessToken()\fP method. By defining the \fIrequestTimeout\fP, requests can have the time constraint applied, after which they fail, setting \fBerror\fP to \fBTimeout\fP. The \fIrequestTimeout\fP value is initially set to \fC0\fP, which in this case means that no timeout is applied to outgoing requests.
 .PP
 Access functions: 
 .PD 0

@@ -18,6 +18,13 @@
  ***************************************************************************/
 
 
+/*!
+  \file qoauth.h
+
+  This file is a part of libqoauth. You should not include it directly in your
+  application. Instead please use <tt>\#include <QtOAuth></tt>.
+*/
+
 #ifndef QOAUTH_H
 #define QOAUTH_H
 
@@ -75,15 +82,8 @@ public:
 
   static const QByteArray OAuthVersion;
 
-  static const QByteArray ParamConsumerKey;
-  static const QByteArray ParamNonce;
-  static const QByteArray ParamSignature;
-  static const QByteArray ParamSignatureMethod;
-  static const QByteArray ParamTimestamp;
-  static const QByteArray ParamVersion;
   static const QByteArray ParamToken;
   static const QByteArray ParamTokenSecret;
-  static const QByteArray ParamAccessToken;
 
   QOAuth( QObject *parent = 0 );
   virtual ~QOAuth();
@@ -111,9 +111,9 @@ public:
                                      const QOAuth::ParamMap &params, QOAuth::ParsingMode mode );
 
 protected:
-  QOAuthPrivate *d_ptr;
+  QOAuthPrivate * const d_ptr;
 
-private:
+private:  
   Q_DECLARE_PRIVATE(QOAuth)
 };
 
