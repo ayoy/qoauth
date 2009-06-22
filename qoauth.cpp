@@ -843,7 +843,6 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   if ( error == QOAuth::Timeout ) {
     reply->abort();
   }
-  reply->deleteLater();
 
   return replyParams;
 }
