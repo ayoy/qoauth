@@ -39,6 +39,7 @@ headers.files = \
     include/qoauth_global.h
 features.path = $$[QMAKE_MKSPECS]/features
 features.files = oauth.prf
+docs.files = doc/html
 
 macx {
     CONFIG += lib_bundle
@@ -60,9 +61,12 @@ else:unix {
     else:INSTALL_PREFIX = $${PREFIX}
     target.path = $${INSTALL_PREFIX}/lib
     headers.path = $${INSTALL_PREFIX}/include/QtOAuth
+    features.path ~= s!^/usr!$${INSTALL_PREFIX}!
+    docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}
     INSTALLS += \
         target \
         headers \
+        docs \
         features
 }
 
