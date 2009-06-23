@@ -182,17 +182,17 @@ otherArgs.insert( <span class="stringliteral">"misc_arg2"</span>, <span class="s
 Once the Access Token is received, the application is authorized.<h2><a class="anchor" name="sec_acc_res">
 Requesting Protected Resources with QOAuth</a></h2>
 In order to access Protected Resources, the application has to send a request containing arguments including Customer Key and Access Token, and encrypt them with Customer Secret and Token Secret. The process of constructing such a request can be reduced to another one-line call with <a class="el" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>:<p>
-<div class="fragment"><pre class="fragment">QByteArray url( <span class="stringliteral">"http://example.com/get_photo"</span>)
+<div class="fragment"><pre class="fragment">QByteArray url( <span class="stringliteral">"http://example.com/get_photo"</span>);
 <span class="comment">// create a request parameters map</span>
-<a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">ParamMap</a> map;
-map.insert( "file", "flower_48.jpg" );
-map.insert( "size", "small" );
+<a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> map;
+map.insert( <span class="stringliteral">"file"</span>, <span class="stringliteral">"flower_48.jpg"</span> );
+map.insert( <span class="stringliteral">"size"</span>, <span class="stringliteral">"small"</span> );
 
 <span class="comment">// construct the parameters string</span>
 QByteArray content =
-    qoauth-&gt;<a class="code" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString</a>( requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993196ed361499757a38a5cb06209acf7c04e" title="Sets the HTTP method to GET.">GET</a>, <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f8e9abfba36e69632bf6dde3fcdcd5e32" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>,
+    qoauth-&gt;<a class="code" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString</a>( requestUrl, <a class="code" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993196ed361499757a38a5cb06209acf7c04e" title="Sets the HTTP method to GET.">QOAuth::GET</a>, <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f8e9abfba36e69632bf6dde3fcdcd5e32" title="Sets the signature method to HMAC-SHA1.">QOAuth::HMAC_SHA1</a>,
                                     token, tokenSecret, map,
-                                    <a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>::<a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a" title="Inlne query format (parameters appended to the request URL).">ParseForInlineQuery</a> );
+                                    <a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a" title="Inlne query format (parameters appended to the request URL).">QOAuth::ParseForInlineQuery</a> );
 <span class="comment">// append parameters string to the URL</span>
 url.append( content );
 QNetworkRequest request( QUrl( url ) );
@@ -603,7 +603,7 @@ Access functions: <ul>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="../../dc/db0/qoauth_8h-source.html">qoauth.h</a><li>qoauth.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 23 00:30:45 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 23 18:39:53 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="../../doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
