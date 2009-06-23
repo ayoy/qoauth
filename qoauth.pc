@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib
+includedir=/usr/include/QtOAuth
+
+Name: QOAuth
+Description: Qt OAuth support library
+Version: 0.1.0
+Requires: QtCore QtNetwork qca2
+Libs: -L${libdir} -lqoauth
+Cflags: -I${includedir}

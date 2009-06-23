@@ -59,14 +59,20 @@ macx {
 else:unix { 
     isEmpty( PREFIX ):INSTALL_PREFIX = /usr
     else:INSTALL_PREFIX = $${PREFIX}
+    # this creates a pkgconfig file
+    system( ./pcfile.sh $${INSTALL_PREFIX} $${VERSION} )
+    pkgconfig.files = qoauth.pc
+
     target.path = $${INSTALL_PREFIX}/lib
     headers.path = $${INSTALL_PREFIX}/include/QtOAuth
-    features.path ~= s!^/usr!$${INSTALL_PREFIX}!
     docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}
+    pkgconfig.path = $${target.path}/pkgconfig
+    features.path ~= s!^/usr!$${INSTALL_PREFIX}!
     INSTALLS += \
         target \
         headers \
         docs \
+        pkgconfig \
         features
 }
 
