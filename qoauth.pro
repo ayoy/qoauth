@@ -67,7 +67,6 @@ else:unix {
     headers.path = $${INSTALL_PREFIX}/include/QtOAuth
     docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}
     pkgconfig.path = $${target.path}/pkgconfig
-    features.path ~= s!^/usr!$${INSTALL_PREFIX}!
     INSTALLS += \
         target \
         headers \
