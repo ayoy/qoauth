@@ -74,8 +74,8 @@
 <a name="l00061"></a>00061   
 <a name="l00062"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">00062</a>   <span class="keyword">enum</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">ParsingMode</a> {
 <a name="l00063"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a">00063</a>     ParseForInlineQuery,
-<a name="l00064"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3">00064</a>     ParseForSignatureBaseString = ParseForInlineQuery,
-<a name="l00065"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737">00065</a>     ParseForHeaderArguments
+<a name="l00064"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737">00064</a>     ParseForHeaderArguments,
+<a name="l00065"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3">00065</a>     ParseForSignatureBaseString
 <a name="l00066"></a>00066   };
 <a name="l00067"></a>00067 
 <a name="l00068"></a><a class="code" href="../../d2/ded/class_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137">00068</a>   <span class="keyword">enum</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137" title="This enum type defines error types that are assigned to the error property.">ErrorCode</a> {
@@ -123,20 +123,23 @@
 <a name="l00110"></a>00110                                      <span class="keyword">const</span> QByteArray &amp;tokenSecret, <a class="code" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">QOAuth::SignatureMethod</a> signatureMethod,
 <a name="l00111"></a>00111                                      <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;params, <a class="code" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">QOAuth::ParsingMode</a> mode );
 <a name="l00112"></a>00112 
-<a name="l00113"></a>00113 <span class="keyword">protected</span>:
-<a name="l00114"></a>00114   QOAuthPrivate * <span class="keyword">const</span> d_ptr;
-<a name="l00115"></a>00115 
-<a name="l00116"></a>00116 <span class="keyword">private</span>:  
-<a name="l00117"></a>00117   Q_DECLARE_PRIVATE(<a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>)
-<a name="l00118"></a>00118 
-<a name="l00119"></a>00119 <span class="preprocessor">#ifdef UNIT_TEST</span>
-<a name="l00120"></a>00120 <span class="preprocessor"></span>  <span class="keyword">friend</span> <span class="keyword">class </span>Ut_QOAuth;
-<a name="l00121"></a>00121 <span class="preprocessor">#endif</span>
-<a name="l00122"></a>00122 <span class="preprocessor"></span>};
-<a name="l00123"></a>00123 
-<a name="l00124"></a>00124 <span class="preprocessor">#endif // QOAUTH_H</span>
+<a name="l00113"></a>00113   QByteArray inlineParameters( <span class="keyword">const</span> <a class="code" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef of a data structure to store request paramters.">QOAuth::ParamMap</a> &amp;params );
+<a name="l00114"></a>00114 
+<a name="l00115"></a>00115 <span class="keyword">protected</span>:
+<a name="l00116"></a>00116   QOAuthPrivate * <span class="keyword">const</span> d_ptr;
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118 <span class="keyword">private</span>:  
+<a name="l00119"></a>00119   Q_DECLARE_PRIVATE(<a class="code" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>)
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121 <span class="preprocessor">#ifdef UNIT_TEST</span>
+<a name="l00122"></a>00122 <span class="preprocessor"></span>  <span class="keyword">friend</span> <span class="keyword">class </span>Ut_QOAuth;
+<a name="l00123"></a>00123   <span class="keyword">friend</span> <span class="keyword">class </span>Ft_QOAuth;
+<a name="l00124"></a>00124 <span class="preprocessor">#endif</span>
+<a name="l00125"></a>00125 <span class="preprocessor"></span>};
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127 <span class="preprocessor">#endif // QOAUTH_H</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 23 18:39:53 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jun 24 01:24:03 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="../../doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

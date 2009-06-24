@@ -1,1 +1,41 @@
-This is a simple library for making OAuth requests creation easy.
+QOAuth is an attempt to support interaction with OAuth-powered network services
+in a Qt way, i.e. simply, clearly and efficiently. It gives the application
+developer no more than 4 methods, namely:
+
+* requestToken() – to obtain an unauthorized Request Token,
+* accessToken() – to exchange Request Token for the Access Token,
+* createParametersString() – to construct a request according to OAuth
+                             authorization scheme,
+* inlineParemeters() - to construct a query string basing on given parameters
+                       (provided only for convenience).
+
+First two methods serve application authorization purposes, whilst the third one
+is used for accessing Protected Resources. The complete documentation is
+available locally as well as online:
+  http://files.ayoy.net/qoauth/doc
+
+QOAuth internally makes use of QCA (Qt Cryptographic Architecture). Here is the 
+complete list of its dependencies:
+
+1. Qt libraries 4.4 at least,
+2. QCA (Qt Cryptographic Architecture), available from Delta XMPP Project
+3. OpenSSL plugin to QCA, available from QCA homepage (this pulls in
+  a dependency on OpenSSL of course).
+Note: KDE users meet all the requirements out of the box.
+
+HOW TO INSTALL:
+  $ qmake
+  $ make
+  $ sudo make install
+
+HOW TO USE:
+Add these two lines to your project:
+* in project file:
+  CONFIG += oauth
+* in source code:
+  #include <QtOAuth>
+You can start using QOAuth.
+
+BUGS AND ISSUES:
+report them to QOAuth's bug tracking system:
+  http://ayoy.lighthouseapp.com/projects/32547-qoauth/tickets?q=all

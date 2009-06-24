@@ -18,32 +18,21 @@
  ***************************************************************************/
 
 
-#ifndef UT_QOAUTH_H
-#define UT_QOAUTH_H
+#ifndef FT_QOAUTH_H
+#define FT_QOAUTH_H
 
 #include <QObject>
 
 class QOAuth;
 
-class Ut_QOAuth : public QObject
+class Ft_QOAuth : public QObject
 {
   Q_OBJECT
+
 
 private slots:
   void init();
   void cleanup();
-  void constructor();
-
-  void consumerKey();
-  void setConsumerKey();
-
-  void consumerSecret();
-  void setConsumerSecret();
-
-  void requestTimeout();
-  void setRequestTimeout();
-
-  void error();
 
   void requestToken_data();
   void requestToken();
@@ -58,4 +47,4 @@ private:
   QOAuth *m;
 };
 
-#endif // UT_QOAUTH_H
+#endif // FT_QOAUTH_H

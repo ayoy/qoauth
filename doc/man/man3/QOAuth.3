@@ -1,4 +1,4 @@
-.TH "QOAuth" 3 "23 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
+.TH "QOAuth" 3 "24 Jun 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -22,7 +22,7 @@ QOAuth \- This class provides means for interaction with network services suppor
 .br
 .RI "\fIThis enum type specifies the HTTP method used for creating a \fCSignature Base String\fP and/or sending a request. \fP"
 .ti -1c
-.RI "enum \fBParsingMode\fP { \fBParseForInlineQuery\fP, \fBParseForSignatureBaseString\fP =  ParseForInlineQuery, \fBParseForHeaderArguments\fP }"
+.RI "enum \fBParsingMode\fP { \fBParseForInlineQuery\fP, \fBParseForHeaderArguments\fP, \fBParseForSignatureBaseString\fP }"
 .br
 .RI "\fIThis enum type specifies the method of parsing parameters into a parameter string. \fP"
 .ti -1c
@@ -52,6 +52,9 @@ QOAuth \- This class provides means for interaction with network services suppor
 .br
 .ti -1c
 .RI "QByteArray \fBcreateParametersString\fP (const QString &requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBQOAuth::SignatureMethod\fP signatureMethod, const \fBQOAuth::ParamMap\fP &params, \fBQOAuth::ParsingMode\fP mode)"
+.br
+.ti -1c
+.RI "QByteArray \fBinlineParameters\fP (const \fBQOAuth::ParamMap\fP &params)"
 .br
 .in -1c
 .SS "Static Public Attributes"
@@ -92,7 +95,7 @@ QOAuth \- This class provides means for interaction with network services suppor
 .in -1c
 .SH "Detailed Description"
 .PP 
-The \fBQOAuth\fP class is meant to enable OAuth support in applications in as simple way as possible. It provides 3 methods, two of which serve for authorization purposes: 
+The \fBQOAuth\fP class is meant to enable OAuth support in applications in as simple way as possible. It provides 4 basic methods, two of which serve for authorization purposes: 
 .PD 0
 
 .IP "\(bu" 2
@@ -100,11 +103,13 @@ The \fBQOAuth\fP class is meant to enable OAuth support in applications in as si
 .IP "\(bu" 2
 \fBaccessToken()\fP,
 .PP
-and the third one helps with creation of requests for accessing Protected Resources: 
+and the other two help with creation of requests for accessing Protected Resources: 
 .PD 0
 
 .IP "\(bu" 2
-\fBcreateParametersString()\fP.
+\fBcreateParametersString()\fP, 
+.IP "\(bu" 2
+\fBinlineParameters()\fP.
 .PP
 .SH "OAuth authorization scheme"
 .PP
@@ -297,11 +302,11 @@ According to what is stated in \fCOAuth 1.0 Core specification\fP, parameters ca
 \fB\fIParseForInlineQuery \fP\fP
 Inlne query format (parameters appended to the request URL). 
 .TP
-\fB\fIParseForSignatureBaseString \fP\fP
-\fCSignature Base String\fP format, meant for internal use. 
-.TP
 \fB\fIParseForHeaderArguments \fP\fP
 HTTP request header format (parameters to be put inside a request header). 
+.TP
+\fB\fIParseForSignatureBaseString \fP\fP
+\fCSignature Base String\fP format, meant for internal use. 
 .SS "enum \fBQOAuth::SignatureMethod\fP"
 .PP
 There are 3 different signature methods defined by the \fCOAuth protocol\fP. This enum is used to specify the method used by a specific request. Hence, one of its values must be passed as a parameter in any of the \fBrequestToken()\fP, \fBaccessToken()\fP or \fBcreateParametersString()\fP method.
@@ -369,6 +374,25 @@ The parsed parameters string, that depending on \fImode\fP and \fIhttpMethod\fP 
 .RE
 .PP
 \fB\fImode\fP \fP  \fB\fIhttpMode\fP \fP  \fBoutcome\fP  \fC\fBQOAuth::ParseForInlineQuery\fP\fP\fC\fBQOAuth::GET\fP\fPprepended with a \fI'?'\fP and ready to be appended to the \fIrequestUrl\fP  \fIothers\fP ready to be posted as a request body \fC\fBQOAuth::ParseForHeaderArguments\fP\fP irrelevant ready to be set as an argument for the \fCAuthorization\fP HTTP header \fC\fBQOAuth::ParseForSignatureBaseString\fP\fP irrelevant \fImeant for internal use\fP 
+.PP
+\fBSee also:\fP
+.RS 4
+\fBinlineParameters()\fP 
+.RE
+.PP
+
+.SS "QByteArray QOAuth::inlineParameters (const \fBQOAuth::ParamMap\fP & params)"
+.PP
+This method is provided for convenience. It generates an inline query string out of given parameter map and prepends it with '?'. The resulting string can be appended directly to a request URL as a query string.
+.PP
+Use this method together with \fBcreateParametersString()\fP, when you request a header parameters string (\fBQOAuth::ParseForHeaderArguments\fP) together with HTTP GET method. In such case, apart from header arguments, you must provide a query string containing custom request parameters (i.e. not OAuth-related). Pass the custom parameters map to this method to receive a query string to be appended to the URL.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBcreateParametersString()\fP 
+.RE
+.PP
+
 .SS "\fBQOAuth::ParamMap\fP QOAuth::requestToken (const QString & requestUrl, \fBHttpMethod\fP httpMethod, \fBSignatureMethod\fP signatureMethod = \fCHMAC_SHA1\fP, const \fBParamMap\fP & params = \fC\fBParamMap\fP()\fP)"
 .PP
 This method constructs and sends a request for obtaining an unauthorized Request Token from the Service Provider. This is the first step of the OAuth authentication flow, according to \fCOAuth 1.0 Core specification\fP. At the moment only HMAC-SHA1 signature method is supported. The HMAC-SHA1 \fCSignature Base String\fP is created using the given \fIrequestUrl\fP and \fIhttpMethod\fP. The optional request parameters specified by the Service Provider can be passed in the \fIparams\fP ParamMap.

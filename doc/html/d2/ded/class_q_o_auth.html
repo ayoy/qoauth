@@ -49,8 +49,8 @@
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This enum type specifies the HTTP method used for creating a <a href="http://oauth.net/core/1.0/#anchor14">Signature Base String</a> and/or sending a request.  <a href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">More...</a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">ParsingMode</a> { <a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a">ParseForInlineQuery</a>, 
-<a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3">ParseForSignatureBaseString</a> =  ParseForInlineQuery, 
-<a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737">ParseForHeaderArguments</a>
+<a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737">ParseForHeaderArguments</a>, 
+<a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3">ParseForSignatureBaseString</a>
  }</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This enum type specifies the method of parsing parameters into a parameter string.  <a href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">More...</a><br></td></tr>
@@ -91,6 +91,8 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href=".
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString</a> (const QString &amp;requestUrl, <a class="el" href="../../d2/ded/class_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">QOAuth::HttpMethod</a> httpMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, <a class="el" href="../../d2/ded/class_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">QOAuth::SignatureMethod</a> signatureMethod, const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">QOAuth::ParamMap</a> &amp;params, <a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4">QOAuth::ParsingMode</a> mode)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#c137ac5042356d2739c5a167d3964771">inlineParameters</a> (const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">QOAuth::ParamMap</a> &amp;params)</td></tr>
+
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="78a87a948839345c86a46b668cabff76"></a><!-- doxytag: member="QOAuth::OAuthVersion" ref="78a87a948839345c86a46b668cabff76" args="" -->
 static const QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/ded/class_q_o_auth.html#78a87a948839345c86a46b668cabff76">OAuthVersion</a> = &quot;1.0&quot;</td></tr>
@@ -119,12 +121,13 @@ static const QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a cl
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This property holds the error code.  <a href="#e37f754819efa2022a0d7afa4c62ad54"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The <a class="el" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a> class is meant to enable OAuth support in applications in as simple way as possible. It provides 3 methods, two of which serve for authorization purposes: <ul>
+The <a class="el" href="../../d2/ded/class_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a> class is meant to enable OAuth support in applications in as simple way as possible. It provides 4 basic methods, two of which serve for authorization purposes: <ul>
 <li><a class="el" href="../../d2/ded/class_q_o_auth.html#d5bfb9c24cbc8a3c5c9f84a7d69880f0">requestToken()</a>, </li>
 <li><a class="el" href="../../d2/ded/class_q_o_auth.html#7cd17ba5282b2d2c50179f5437953c20">accessToken()</a>,</li>
 </ul>
-and the third one helps with creation of requests for accessing Protected Resources: <ul>
-<li><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>.</li>
+and the other two help with creation of requests for accessing Protected Resources: <ul>
+<li><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>, </li>
+<li><a class="el" href="../../d2/ded/class_q_o_auth.html#c137ac5042356d2739c5a167d3964771">inlineParameters()</a>.</li>
 </ul>
 <h2><a class="anchor" name="sec_auth_scheme">
 OAuth authorization scheme</a></h2>
@@ -294,10 +297,10 @@ According to what is stated in <a href="http://oauth.net/core/1.0/#consumer_req_
 <table border="0" cellspacing="2" cellpadding="0">
 <tr><td valign="top"><em><a class="anchor" name="442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a"></a><!-- doxytag: member="ParseForInlineQuery" ref="442456118c9a45ac446554f17620def4a9445407d41e961fbc5411981301d23a" args="" -->ParseForInlineQuery</em>&nbsp;</td><td>
 Inlne query format (parameters appended to the request URL). </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3"></a><!-- doxytag: member="ParseForSignatureBaseString" ref="442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3" args="" -->ParseForSignatureBaseString</em>&nbsp;</td><td>
-<a href="http://oauth.net/core/1.0/#anchor14">Signature Base String</a> format, meant for internal use. </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737"></a><!-- doxytag: member="ParseForHeaderArguments" ref="442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737" args="" -->ParseForHeaderArguments</em>&nbsp;</td><td>
 HTTP request header format (parameters to be put inside a request header). </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3"></a><!-- doxytag: member="ParseForSignatureBaseString" ref="442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3" args="" -->ParseForSignatureBaseString</em>&nbsp;</td><td>
+<a href="http://oauth.net/core/1.0/#anchor14">Signature Base String</a> format, meant for internal use. </td></tr>
 </table>
 </dl>
 
@@ -466,6 +469,31 @@ The <em>mode</em> parameter specifies the format of the parameter string.<p>
 <tr>
 <td><code><a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def4cc083a93989ad8f5939bc369dd7b73c3" title="Signature Base String format, meant for internal use.">QOAuth::ParseForSignatureBaseString</a></code> </td><td>irrelevant </td><td><em>meant for internal use</em> </td></tr>
 </table>
+<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#c137ac5042356d2739c5a167d3964771">inlineParameters()</a> </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="c137ac5042356d2739c5a167d3964771"></a><!-- doxytag: member="QOAuth::inlineParameters" ref="c137ac5042356d2739c5a167d3964771" args="(const QOAuth::ParamMap &amp;params)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QByteArray QOAuth::inlineParameters           </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../d2/ded/class_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">QOAuth::ParamMap</a> &amp;&nbsp;</td>
+          <td class="paramname"> <em>params</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+This method is provided for convenience. It generates an inline query string out of given parameter map and prepends it with '?'. The resulting string can be appended directly to a request URL as a query string.<p>
+Use this method together with <a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a>, when you request a header parameters string (<a class="el" href="../../d2/ded/class_q_o_auth.html#442456118c9a45ac446554f17620def485b11fa4de3cd216046b546bc8c87737" title="HTTP request header format (parameters to be put inside a request header).">QOAuth::ParseForHeaderArguments</a>) together with HTTP GET method. In such case, apart from header arguments, you must provide a query string containing custom request parameters (i.e. not OAuth-related). Pass the custom parameters map to this method to receive a query string to be appended to the URL.<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="../../d2/ded/class_q_o_auth.html#78f7906f925465dfb6ffed2ebacd2a32">createParametersString()</a> </dd></dl>
 
 </div>
 </div><p>
@@ -603,7 +631,7 @@ Access functions: <ul>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="../../dc/db0/qoauth_8h-source.html">qoauth.h</a><li>qoauth.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 23 18:39:53 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Jun 24 01:24:03 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="../../doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

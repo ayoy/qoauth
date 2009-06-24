@@ -1,0 +1,4 @@
+v 0.1.0 (23/06/2009):
+* Initial release of the QOAuth library, implementation of the OAuth
+  authorization flow with support for encrypting QOAuth requests using HMAC-SHA1
+  algorithm.

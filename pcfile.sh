@@ -1,4 +1,7 @@
 #!/bin/sh
+# This "script" creates a pkg-config file basing on values set
+# in project file
+
 echo "prefix=$1
 exec_prefix=\${prefix}
 libdir=$1/lib

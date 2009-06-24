@@ -155,17 +155,6 @@ void Ut_QOAuth::requestToken_data()
                               << QByteArray()
                               << QByteArray();
 
-  // OAuth test server at http://term.ie/oauth/example
-  QTest::newRow("noError") << (uint) 10000
-                           << QByteArray( "key" )
-                           << QByteArray( "secret" )
-                           << QString( "http://term.ie/oauth/example/request_token.php" )
-                           << (int) QOAuth::GET
-                           << (int) QOAuth::HMAC_SHA1
-                           << (int) QOAuth::NoError
-                           << QByteArray( "requestkey" )
-                           << QByteArray( "requestsecret" );
-
 // timeout seems to be untestable for a moment
 //  QTest::newRow("timeout") << (uint) 100
 //                           << QByteArray( "key" )
@@ -267,19 +256,6 @@ void Ut_QOAuth::accessToken_data()
                               << (int) QOAuth::UnsupportedSignatureMethod
                               << QByteArray()
                               << QByteArray();
-
-  // OAuth test server at http://term.ie/oauth/example
-  QTest::newRow("noError") << (uint) 10000
-                           << QByteArray( "key" )
-                           << QByteArray( "secret" )
-                           << QByteArray( "requestkey" )
-                           << QByteArray( "requestsecret" )
-                           << QString( "http://term.ie/oauth/example/access_token.php" )
-                           << (int) QOAuth::GET
-                           << (int) QOAuth::HMAC_SHA1
-                           << (int) QOAuth::NoError
-                           << QByteArray( "accesskey" )
-                           << QByteArray( "accesssecret" );
 
 }
 
@@ -383,24 +359,7 @@ void Ut_QOAuth::createParametersString_data()
                               << (int) QOAuth::ParseForInlineQuery
                               << (int) QOAuth::UnsupportedSignatureMethod;
 
-  // OAuth test server at http://term.ie/oauth/example
-// this will be a functional test in the future :)
-//  QTest::newRow("noError") << (uint) 10000
-//                           << QByteArray( "key" )
-//                           << QByteArray( "secret" )
-//                           << QByteArray( "requestkey" )
-//                           << QByteArray( "requestsecret" )
-//                           << QString( "http://term.ie/oauth/example/access_token.php" )
-//                           << (int) QOAuth::GET
-//                           << (int) QOAuth::HMAC_SHA1
-//                           << QByteArray( "first" )
-//                           << QByteArray( "firstval" )
-//                           << QByteArray( "second" )
-//                           << QByteArray( "secondval" )
-//                           << QByteArray( "third" )
-//                           << QByteArray( "thirdval" )
-//                           << (int) QOAuth::ParseForInlineQuery
-//                           << (int) QOAuth::NoError;
+
 }
 
 void Ut_QOAuth::createParametersString()
@@ -433,6 +392,63 @@ void Ut_QOAuth::createParametersString()
                                                     (QOAuth::SignatureMethod) signMethod, map, (QOAuth::ParsingMode) parsingMode );
 
   QVERIFY( m->error() == error );
+}
+
+void Ut_QOAuth::inlineParameters_data()
+{
+  QTest::addColumn<QByteArray>("par1");
+  QTest::addColumn<QByteArray>("val1");
+  QTest::addColumn<QByteArray>("par2");
+  QTest::addColumn<QByteArray>("val2");
+  QTest::addColumn<QByteArray>("par3");
+  QTest::addColumn<QByteArray>("val3");
+  QTest::addColumn<QByteArray>("result");
+
+  QTest::newRow("empty") << QByteArray()
+                         << QByteArray()
+                         << QByteArray()
+                         << QByteArray()
+                         << QByteArray()
+                         << QByteArray()
+                         << QByteArray( "?=&=&=" );
+
+  QTest::newRow("easy") << QByteArray( "one" )
+                        << QByteArray( "two" )
+                        << QByteArray( "three" )
+                        << QByteArray( "four" )
+                        << QByteArray( "six" )
+                        << QByteArray( "ten" )
+                        << QByteArray( "?one=two&six=ten&three=four" );
+
+  QTest::newRow("tricky") << QByteArray( "arg1" )
+                          << QByteArray( "%%**_+%%" )
+                          << QByteArray( "arg2" )
+                          << QByteArray()
+                          << QByteArray( "arg2" )
+                          << QByteArray( "&+=" )
+                          << QByteArray( "?arg1=%%**_+%%&arg2=&arg2=&+=" );
+}
+
+void Ut_QOAuth::inlineParameters()
+{
+  QFETCH( QByteArray, par1 );
+  QFETCH( QByteArray, val1 );
+  QFETCH( QByteArray, par2 );
+  QFETCH( QByteArray, val2 );
+  QFETCH( QByteArray, par3 );
+  QFETCH( QByteArray, val3 );
+  QFETCH( QByteArray, result );
+
+  QOAuth::ParamMap map;
+
+  map.insert( par1, val1 );
+  map.insert( par2, val2 );
+  map.insert( par3, val3 );
+
+  QByteArray query = m->inlineParameters( map );
+  qDebug() << query;
+
+  QCOMPARE( query, result );
 }
 
 QTEST_MAIN(Ut_QOAuth)

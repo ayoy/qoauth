@@ -106,12 +106,13 @@
          OAuth authorization scheme.
 
   The QOAuth class is meant to enable OAuth support in applications in as simple way
-  as possible. It provides 3 methods, two of which serve for authorization purposes:
+  as possible. It provides 4 basic methods, two of which serve for authorization purposes:
     \li \ref requestToken(),
     \li \ref accessToken(),
 
-  and the third one helps with creation of requests for accessing Protected Resources:
-    \li \ref createParametersString().
+  and the other two help with creation of requests for accessing Protected Resources:
+    \li \ref createParametersString(),
+    \li \ref inlineParameters().
 
   \section sec_auth_scheme OAuth authorization scheme
 
@@ -458,12 +459,17 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
 {
   QByteArray middleString;
   QByteArray endString;
+
   switch ( mode ) {
-  // equals to QOAuth::ParseForInlineQuery
+  case QOAuth::ParseForInlineQuery:
   case QOAuth::ParseForSignatureBaseString:
     middleString = "=";
     endString = "&";
     break;
+//    // percent encode in place
+//    middleString = "%3D";
+//    endString = "%26";
+//    break;
   case QOAuth::ParseForHeaderArguments:
     middleString = "=\"";
     endString = "\",";
@@ -487,8 +493,16 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
       parametersString.append( middleString );
       parametersString.append( value );
       parametersString.append( endString );
+//      if ( mode == QOAuth::ParseForSignatureBaseString ||
+//           mode == QOAuth::ParseForInlineQuery ) {
+//        // encode for Signature Base String and for the query string
+//        parametersString.append( value.toPercentEncoding() );
+//      } else {
+//        parametersString.append( value );
+//      }
     }
   }
+
   parametersString.chop(1);
 
   // prepend with "OAuth " when asked to creating an HTTP header
@@ -745,6 +759,8 @@ QOAuth::ParamMap QOAuth::accessToken( const QString &requestUrl, HttpMethod http
     <tr><td><tt>QOAuth::ParseForHeaderArguments</tt></td>      <td>irrelevant</td>          <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
     <tr><td><tt>QOAuth::ParseForSignatureBaseString</tt></td>  <td>irrelevant</td>          <td><em>meant for internal use</em></td></tr>
   </table>
+
+  \sa inlineParameters()
 */
 
 QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
@@ -777,6 +793,28 @@ QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::Ht
   }
 
   return parametersString;
+}
+
+/*!
+  This method is provided for convenience. It generates an inline query string out of
+  given parameter map and prepends it with '?'. The resulting string can be appended
+  directly to a request URL as a query string.
+
+  Use this method together with createParametersString(), when you request a header
+  parameters string (QOAuth::ParseForHeaderArguments) together with HTTP GET method.
+  In such case, apart from header arguments, you must provide a query string containing
+  custom request parameters (i.e. not OAuth-related). Pass the custom parameters map
+  to this method to receive a query string to be appended to the URL.
+
+  \sa createParametersString()
+*/
+
+QByteArray QOAuth::inlineParameters( const QOAuth::ParamMap &params )
+{
+  Q_D(QOAuth);
+
+  QByteArray query = d->paramsToString( params, QOAuth::ParseForInlineQuery );
+  return query.prepend( '?' );
 }
 
 QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
@@ -878,7 +916,7 @@ QByteArray QOAuthPrivate::createSignature( const QString &requestUrl, QOAuth::Ht
 
   // create nonce
   QCA::InitializationVector iv( 16 );
-  QByteArray nonce = iv.toByteArray().toBase64().toPercentEncoding();
+  QByteArray nonce = iv.toByteArray().toHex();
 
   // create timestamp
   uint time = QDateTime::currentDateTime().toTime_t();

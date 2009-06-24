@@ -61,8 +61,8 @@ public:
   
   enum ParsingMode {
     ParseForInlineQuery,
-    ParseForSignatureBaseString = ParseForInlineQuery,
-    ParseForHeaderArguments
+    ParseForHeaderArguments,
+    ParseForSignatureBaseString
   };
 
   enum ErrorCode {
@@ -110,6 +110,8 @@ public:
                                      const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
                                      const QOAuth::ParamMap &params, QOAuth::ParsingMode mode );
 
+  QByteArray inlineParameters( const QOAuth::ParamMap &params );
+
 protected:
   QOAuthPrivate * const d_ptr;
 
@@ -118,6 +120,7 @@ private:
 
 #ifdef UNIT_TEST
   friend class Ut_QOAuth;
+  friend class Ft_QOAuth;
 #endif
 };
 
