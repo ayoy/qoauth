@@ -1,7 +1,7 @@
 prefix=/usr
 exec_prefix=${prefix}
-libdir=/usr/lib
-includedir=/usr/include/QtOAuth
+libdir=${prefix}/lib
+includedir=${prefix}/include/QtOAuth
 
 Name: QOAuth
 Description: Qt OAuth support library

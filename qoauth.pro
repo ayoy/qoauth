@@ -10,6 +10,8 @@ TEMPLATE = lib
 QT += network
 QT -= gui
 CONFIG += \
+    static_and_shared \
+    build_all \
     crypto \
     create_prl
 
@@ -59,6 +61,7 @@ macx {
 else:unix { 
     isEmpty( PREFIX ):INSTALL_PREFIX = /usr
     else:INSTALL_PREFIX = $${PREFIX}
+
     # this creates a pkgconfig file
     system( ./pcfile.sh $${INSTALL_PREFIX} $${VERSION} )
     pkgconfig.files = qoauth.pc

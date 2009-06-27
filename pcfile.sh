@@ -4,8 +4,8 @@
 
 echo "prefix=$1
 exec_prefix=\${prefix}
-libdir=$1/lib
-includedir=$1/include/QtOAuth
+libdir=\${prefix}/lib
+includedir=\${prefix}/include/QtOAuth
 
 Name: QOAuth
 Description: Qt OAuth support library
