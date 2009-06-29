@@ -12,7 +12,7 @@ CONFIG += \
     crypto \
     create_prl
 
-!macx: CONFIG += static_and_shared
+#!macx: CONFIG += static_and_shared
 
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
