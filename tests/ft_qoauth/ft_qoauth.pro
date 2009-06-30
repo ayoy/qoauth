@@ -13,7 +13,9 @@ macx {
                        ../../lib/qoauth.framework/Versions/0/qoauth $${TARGET}
 }
 else:unix {
-  LIBS += -Wl,-rpath,../../lib
+  # the second argument (after colon) is for
+  # being able to run make check from the root source directory
+  LIBS += -Wl,-rpath,../../lib:lib
 }
 
 INCLUDEPATH += .
