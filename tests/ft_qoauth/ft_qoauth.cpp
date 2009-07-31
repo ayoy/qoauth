@@ -30,17 +30,17 @@
 #include "qoauth_p.h"
 
 
-void Ft_QOAuth::init()
+void QOAuth::Ft_QOAuth::init()
 {
   m = new QOAuth;
 }
 
-void Ft_QOAuth::cleanup()
+void QOAuth::Ft_QOAuth::cleanup()
 {
   delete m;
 }
 
-void Ft_QOAuth::requestToken_data()
+void QOAuth::Ft_QOAuth::requestToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -76,7 +76,7 @@ void Ft_QOAuth::requestToken_data()
 
 }
 
-void Ft_QOAuth::requestToken()
+void QOAuth::Ft_QOAuth::requestToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -91,7 +91,7 @@ void Ft_QOAuth::requestToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  QOAuth::ParamMap map = m->requestToken( url, (QOAuth::HttpMethod) httpMethod, (QOAuth::SignatureMethod) signMethod );
+  ParamMap map = m->requestToken( url, (QOAuth::HttpMethod) httpMethod, (QOAuth::SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
 
@@ -102,7 +102,7 @@ void Ft_QOAuth::requestToken()
   }
 }
 
-void Ft_QOAuth::accessToken_data()
+void QOAuth::Ft_QOAuth::accessToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -131,7 +131,7 @@ void Ft_QOAuth::accessToken_data()
 
 }
 
-void Ft_QOAuth::accessToken()
+void QOAuth::Ft_QOAuth::accessToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -148,7 +148,7 @@ void Ft_QOAuth::accessToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  QOAuth::ParamMap map = m->accessToken( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
+  ParamMap map = m->accessToken( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
                                          (QOAuth::SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
@@ -160,7 +160,7 @@ void Ft_QOAuth::accessToken()
   }
 }
 
-void Ft_QOAuth::createParametersString_data()
+void QOAuth::Ft_QOAuth::createParametersString_data()
 {
   QTest::addColumn<QByteArray>("key");
   QTest::addColumn<QByteArray>("secret");
@@ -196,7 +196,7 @@ void Ft_QOAuth::createParametersString_data()
                            << (int) QOAuth::NoError;
 }
 
-void Ft_QOAuth::createParametersString()
+void QOAuth::Ft_QOAuth::createParametersString()
 {
   QFETCH( QByteArray, key );
   QFETCH( QByteArray, secret );
@@ -217,7 +217,7 @@ void Ft_QOAuth::createParametersString()
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
 
-  QOAuth::ParamMap map;
+  ParamMap map;
   map.insert( param1, value1 );
   map.insert( param2, value2 );
   map.insert( param3, value3 );
@@ -240,7 +240,7 @@ void Ft_QOAuth::createParametersString()
   QNetworkReply *reply = manager.get( rq );
   loop.exec();
 
-  QOAuth::ParamMap replyMap = m->d_ptr->replyToMap( reply->readAll() );
+  ParamMap replyMap = m->d_ptr->replyToMap( reply->readAll() );
 
   QCOMPARE( replyMap.value( param1 ), value1.toPercentEncoding() );
   QCOMPARE( replyMap.value( param2 ), value2.toPercentEncoding() );
@@ -249,4 +249,4 @@ void Ft_QOAuth::createParametersString()
   QVERIFY( m->error() == error );
 }
 
-QTEST_MAIN(Ft_QOAuth)
+QTEST_MAIN(QOAuth::Ft_QOAuth)

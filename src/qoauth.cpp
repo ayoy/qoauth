@@ -32,7 +32,6 @@
 #include <QEventLoop>
 #include <QTimer>
 
-
 /*!
   \mainpage
 
@@ -101,7 +100,17 @@
 */
 
 /*!
-  \class QOAuth qoauth.h <QtOAuth>
+  \namespace QOAuth
+  \brief This namespace encapsulates all classes and definitions provided by libqoauth.
+*/
+
+/*!
+  \typedef QOAuth::ParamMap
+  \brief A typedef of a data structure to store request paramters
+*/
+
+/*!
+  \class QOAuth::QOAuth qoauth.h <QtOAuth>
   \brief This class provides means for interaction with network services supporting
          OAuth authorization scheme.
 
@@ -167,7 +176,7 @@
 
 
 /*!
-  \enum QOAuth::SignatureMethod
+  \enum QOAuth::QOAuth::SignatureMethod
   \brief This enum type describes the signature method used by the request.
 
   There are 3 different signature methods defined by the
@@ -180,22 +189,22 @@
 */
 
 /*!
-  \var QOAuth::HMAC_SHA1
+  \var QOAuth::QOAuth::HMAC_SHA1
   \brief Sets the signature method to HMAC-SHA1
 */
 
 /*!
-  \var QOAuth::RSA_SHA1
+  \var QOAuth::QOAuth::RSA_SHA1
   \brief Sets the signature method to RSA-SHA1 (not implemented yet)
 */
 
 /*!
-  \var QOAuth::PLAINTEXT
+  \var QOAuth::QOAuth::PLAINTEXT
   \brief Sets the signature method to PLAINTEXT (not implemented yet)
 */
 
 /*!
-  \enum QOAuth::HttpMethod
+  \enum QOAuth::QOAuth::HttpMethod
   \brief This enum type specifies the HTTP method used for creating
          a <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a>
          and/or sending a request.
@@ -211,32 +220,32 @@
 */
 
 /*!
-  \var QOAuth::GET
+  \var QOAuth::QOAuth::GET
   \brief Sets the HTTP method to GET
 */
 
 /*!
-  \var QOAuth::POST
+  \var QOAuth::QOAuth::POST
   \brief Sets the HTTP method to POST
 */
 
 /*!
-  \var QOAuth::HEAD
+  \var QOAuth::QOAuth::HEAD
   \brief Sets the HTTP method to HEAD
 */
 
 /*!
-  \var QOAuth::PUT
+  \var QOAuth::QOAuth::PUT
   \brief Sets the HTTP method to PUT
 */
 
 /*!
-  \var QOAuth::DELETE
+  \var QOAuth::QOAuth::DELETE
   \brief Sets the HTTP method to DELETE
 */
 
 /*!
-  \enum QOAuth::ParsingMode
+  \enum QOAuth::QOAuth::ParsingMode
   \brief This enum type specifies the method of parsing parameters into
          a parameter string.
 
@@ -253,22 +262,22 @@
 */
 
 /*!
-  \var QOAuth::ParseForInlineQuery
+  \var QOAuth::QOAuth::ParseForInlineQuery
   \brief Inlne query format (parameters appended to the request URL)
 */
 
 /*!
-  \var QOAuth::ParseForSignatureBaseString
+  \var QOAuth::QOAuth::ParseForSignatureBaseString
   \brief <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> format, meant for internal use.
 */
 
 /*!
-  \var QOAuth::ParseForHeaderArguments
+  \var QOAuth::QOAuth::ParseForHeaderArguments
   \brief HTTP request header format (parameters to be put inside a request header)
 */
 
 /*!
-  \enum QOAuth::ErrorCode
+  \enum QOAuth::QOAuth::ErrorCode
   \brief This enum type defines error types that are assigned to the \ref error property
 
   This error codes collection contains both network-related errors and those that
@@ -278,87 +287,81 @@
 */
 
 /*!
-  \var QOAuth::NoError
+  \var QOAuth::QOAuth::NoError
   \brief No error occured (so far :-) )
 */
 
 /*!
-  \var QOAuth::BadRequest
+  \var QOAuth::QOAuth::BadRequest
   \brief Represents HTTP status code \c 400 (Bad Request)
 */
 
 /*!
-  \var QOAuth::Unauthorized
+  \var QOAuth::QOAuth::Unauthorized
   \brief Represents HTTP status code \c 401 (Unauthorized)
 */
 
 /*!
-  \var QOAuth::Forbidden
+  \var QOAuth::QOAuth::Forbidden
   \brief Represents HTTP status code \c 403 (Forbidden)
 */
 
 /*!
-  \var QOAuth::Timeout
+  \var QOAuth::QOAuth::Timeout
   \brief Represents a request timeout error
 */
 
 /*!
-  \var QOAuth::ConsumerKeyEmpty
+  \var QOAuth::QOAuth::ConsumerKeyEmpty
   \brief Consumer key has not been provided
 */
 
 /*!
-  \var QOAuth::ConsumerSecretEmpty
+  \var QOAuth::QOAuth::ConsumerSecretEmpty
   \brief Consumer secret has not been provided
 */
 
 /*!
-  \var QOAuth::UnsupportedSignatureMethod
+  \var QOAuth::QOAuth::UnsupportedSignatureMethod
   \brief The signature method is not supported by the library
 */
 
 /*!
-  \var QOAuth::UnsupportedHttpMethod
+  \var QOAuth::QOAuth::UnsupportedHttpMethod
   \brief The HTTP method is not supported by the request. Note that \ref requestToken()
          and \ref accessToken() accept only HTTP GET and POST requests.
 */
 
 /*!
-  \var QOAuth::OtherError
+  \var QOAuth::QOAuth::OtherError
   \brief A network-related error not specified above
-*/
-
-
-/*!
-  \typedef QOAuth::ParamMap
-  \brief A typedef of a data structure to store request paramters
 */
 
 
 /*!
   \brief The supported OAuth scheme version.
 */
-const QByteArray QOAuth::OAuthVersion = "1.0";
+const QByteArray QOAuth::QOAuth::OAuthVersion = "1.0";
 
 //! \brief The <em>token</em> request parameter string
-const QByteArray QOAuth::ParamToken           = "oauth_token";
+const QByteArray QOAuth::QOAuth::ParamToken           = "oauth_token";
 //! \brief The <em>token secret</em> request parameter string
-const QByteArray QOAuth::ParamTokenSecret     = "oauth_token_secret";
+const QByteArray QOAuth::QOAuth::ParamTokenSecret     = "oauth_token_secret";
 
 //! \brief The <em>consumer key</em> request parameter string
-const QByteArray QOAuthPrivate::ParamConsumerKey     = "oauth_consumer_key";
+const QByteArray QOAuth::QOAuthPrivate::ParamConsumerKey     = "oauth_consumer_key";
 //! \brief The <em>nonce</em> request parameter string
-const QByteArray QOAuthPrivate::ParamNonce           = "oauth_nonce";
+const QByteArray QOAuth::QOAuthPrivate::ParamNonce           = "oauth_nonce";
 //! \brief The <em>signature</em> request parameter string
-const QByteArray QOAuthPrivate::ParamSignature       = "oauth_signature";
+const QByteArray QOAuth::QOAuthPrivate::ParamSignature       = "oauth_signature";
 //! \brief The <em>signature method</em> request parameter string
-const QByteArray QOAuthPrivate::ParamSignatureMethod = "oauth_signature_method";
+const QByteArray QOAuth::QOAuthPrivate::ParamSignatureMethod = "oauth_signature_method";
 //! \brief The <em>timestamp</em> request parameter string
-const QByteArray QOAuthPrivate::ParamTimestamp       = "oauth_timestamp";
+const QByteArray QOAuth::QOAuthPrivate::ParamTimestamp       = "oauth_timestamp";
 //! \brief The <em>version</em> request parameter string
-const QByteArray QOAuthPrivate::ParamVersion         = "oauth_version";
+const QByteArray QOAuth::QOAuthPrivate::ParamVersion         = "oauth_version";
 
-QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
+QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     QObject( parent ),
     consumerKey( QByteArray() ),
     consumerSecret( QByteArray() ),
@@ -371,7 +374,7 @@ QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
   connect( manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(parseReply(QNetworkReply*)) );
 }
 
-QByteArray QOAuthPrivate::httpMethodToString( QOAuth::HttpMethod method )
+QByteArray QOAuth::QOAuthPrivate::httpMethodToString( QOAuth::HttpMethod method )
 {
   switch ( method ) {
   case QOAuth::GET:
@@ -390,7 +393,7 @@ QByteArray QOAuthPrivate::httpMethodToString( QOAuth::HttpMethod method )
   }
 }
 
-QByteArray QOAuthPrivate::signatureMethodToString( QOAuth::SignatureMethod method )
+QByteArray QOAuth::QOAuthPrivate::signatureMethodToString( QOAuth::SignatureMethod method )
 {
   switch ( method ) {
   case QOAuth::HMAC_SHA1:
@@ -405,12 +408,12 @@ QByteArray QOAuthPrivate::signatureMethodToString( QOAuth::SignatureMethod metho
   }
 }
 
-QOAuth::ParamMap QOAuthPrivate::replyToMap( const QByteArray &data )
+QOAuth::ParamMap QOAuth::QOAuthPrivate::replyToMap( const QByteArray &data )
 {
   // split reply to name=value strings
   QList<QByteArray> replyParams = data.split( '&' );
   // we'll store them in a map
-  QOAuth::ParamMap parameters;
+  ParamMap parameters;
 
   QByteArray replyParam;
   QByteArray key;
@@ -429,7 +432,7 @@ QOAuth::ParamMap QOAuthPrivate::replyToMap( const QByteArray &data )
   return parameters;
 }
 
-void QOAuthPrivate::parseReply( QNetworkReply *reply )
+void QOAuth::QOAuthPrivate::parseReply( QNetworkReply *reply )
 {
   int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
 
@@ -455,7 +458,7 @@ void QOAuthPrivate::parseReply( QNetworkReply *reply )
   reply->close();
 }
 
-QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QOAuth::ParsingMode mode )
+QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, QOAuth::ParsingMode mode )
 {
   QByteArray middleString;
   QByteArray endString;
@@ -493,8 +496,8 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
       parametersString.append( middleString );
       parametersString.append( value );
       parametersString.append( endString );
-//      if ( mode == QOAuth::ParseForSignatureBaseString ||
-//           mode == QOAuth::ParseForInlineQuery ) {
+//      if ( mode == QOAuth::QOAuth::ParseForSignatureBaseString ||
+//           mode == QOAuth::QOAuth::ParseForInlineQuery ) {
 //        // encode for Signature Base String and for the query string
 //        parametersString.append( value.toPercentEncoding() );
 //      } else {
@@ -505,7 +508,7 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
 
   parametersString.chop(1);
 
-  // prepend with "OAuth " when asked to creating an HTTP header
+  // prepend with "OAuth " when asked to create an HTTP header
   if ( mode == QOAuth::ParseForHeaderArguments ) {
     parametersString.prepend( "OAuth " );
   }
@@ -518,7 +521,7 @@ QByteArray QOAuthPrivate::paramsToString( const QOAuth::ParamMap &parameters, QO
   \brief Creates a new QOAuth class instance with the given \a parent
 */
 
-QOAuth::QOAuth( QObject *parent ) :
+QOAuth::QOAuth::QOAuth( QObject *parent ) :
     QObject( parent ),
     d_ptr( new QOAuthPrivate( this ) )
 {
@@ -531,13 +534,13 @@ QOAuth::QOAuth( QObject *parent ) :
   \brief Destroys the QOAuth object
 */
 
-QOAuth::~QOAuth()
+QOAuth::QOAuth::~QOAuth()
 {
   delete d_ptr;
 }
 
 /*!
-  \property QOAuth::consumerKey
+  \property QOAuth::QOAuth::consumerKey
   \brief This property holds the consumer key
 
   The consumer key is used by the application to identify itself to the Service Provider
@@ -547,14 +550,14 @@ QOAuth::~QOAuth()
   \li <b>void setConsumerKey( const QByteArray &consumerKey )</b>
 */
 
-QByteArray QOAuth::consumerKey() const
+QByteArray QOAuth::QOAuth::consumerKey() const
 {
   Q_D(const QOAuth);
 
   return d->consumerKey;
 }
 
-void QOAuth::setConsumerKey( const QByteArray &consumerKey )
+void QOAuth::QOAuth::setConsumerKey( const QByteArray &consumerKey )
 {
   Q_D(QOAuth);
 
@@ -562,7 +565,7 @@ void QOAuth::setConsumerKey( const QByteArray &consumerKey )
 }
 
 /*!
-  \property QOAuth::consumerSecret
+  \property QOAuth::QOAuth::consumerSecret
   \brief This property holds the consumer secret
 
   The consumerSecret is used by the application for signing outgoing requests
@@ -572,14 +575,14 @@ void QOAuth::setConsumerKey( const QByteArray &consumerKey )
   \li <b>void setConsumerSecret( const QByteArray &consumerSecret )</b>
 */
 
-QByteArray QOAuth::consumerSecret() const
+QByteArray QOAuth::QOAuth::consumerSecret() const
 {
   Q_D(const QOAuth);
 
   return d->consumerSecret;
 }
 
-void QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
+void QOAuth::QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
 {
   Q_D(QOAuth);
 
@@ -587,7 +590,7 @@ void QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
 }
 
 /*!
-  \property QOAuth::requestTimeout
+  \property QOAuth::QOAuth::requestTimeout
   \brief This property holds the timeout value for issued network requests.
 
   The QOAuth class can send network requests when asked to do so by calling either
@@ -601,14 +604,14 @@ void QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
   \li <b>void setRequestTimeout( uint requestTimeout )</b>
 */
 
-uint QOAuth::requestTimeout() const
+uint QOAuth::QOAuth::requestTimeout() const
 {
   Q_D(const QOAuth);
 
   return d->requestTimeout;
 }
 
-void QOAuth::setRequestTimeout( uint requestTimeout )
+void QOAuth::QOAuth::setRequestTimeout( uint requestTimeout )
 {
   Q_D(QOAuth);
 
@@ -617,7 +620,7 @@ void QOAuth::setRequestTimeout( uint requestTimeout )
 
 
 /*!
-  \property QOAuth::error
+  \property QOAuth::QOAuth::error
   \brief This property holds the error code
 
   The error code is initially set to \ref NoError, and its value is updated with every
@@ -629,7 +632,7 @@ void QOAuth::setRequestTimeout( uint requestTimeout )
   \sa ErrorCode
 */
 
-int QOAuth::error() const
+int QOAuth::QOAuth::error() const
 {
   Q_D(const QOAuth);
 
@@ -671,7 +674,7 @@ int QOAuth::error() const
   \sa accessToken(), error
 */
 
-QOAuth::ParamMap QOAuth::requestToken( const QString &requestUrl, HttpMethod httpMethod,
+QOAuth::ParamMap QOAuth::QOAuth::requestToken( const QString &requestUrl, HttpMethod httpMethod,
                                        SignatureMethod signatureMethod, const ParamMap &params )
 {
   Q_D(QOAuth);
@@ -719,7 +722,7 @@ QOAuth::ParamMap QOAuth::requestToken( const QString &requestUrl, HttpMethod htt
   \sa requestToken(), createParametersString(), error
 */
 
-QOAuth::ParamMap QOAuth::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                                       const QByteArray &tokenSecret, SignatureMethod signatureMethod,
                                       const ParamMap &params )
 {
@@ -754,25 +757,25 @@ QOAuth::ParamMap QOAuth::accessToken( const QString &requestUrl, HttpMethod http
 
   <table>
     <tr><td>\b \a mode </td>                                   <td>\b \a httpMode </td>     <td>\b outcome </td></tr>
-    <tr><td rowspan=2><tt>QOAuth::ParseForInlineQuery</tt></td><td><tt>QOAuth::GET</tt></td><td>prepended with a <em>'?'</em> and ready to be appended to the \a requestUrl</td></tr>
+    <tr><td rowspan=2><tt>QOAuth::QOAuth::ParseForInlineQuery</tt></td><td><tt>QOAuth::QOAuth::GET</tt></td><td>prepended with a <em>'?'</em> and ready to be appended to the \a requestUrl</td></tr>
     <tr>                                                       <td><em>others</em></td>     <td>ready to be posted as a request body</td></tr>
-    <tr><td><tt>QOAuth::ParseForHeaderArguments</tt></td>      <td>irrelevant</td>          <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
-    <tr><td><tt>QOAuth::ParseForSignatureBaseString</tt></td>  <td>irrelevant</td>          <td><em>meant for internal use</em></td></tr>
+    <tr><td><tt>QOAuth::QOAuth::ParseForHeaderArguments</tt></td>      <td>irrelevant</td>          <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
+    <tr><td><tt>QOAuth::QOAuth::ParseForSignatureBaseString</tt></td>  <td>irrelevant</td>          <td><em>meant for internal use</em></td></tr>
   </table>
 
   \sa inlineParameters()
 */
 
-QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
+QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
                                            const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
-                                           const QOAuth::ParamMap &params, QOAuth::ParsingMode mode )
+                                           const ParamMap &params, QOAuth::ParsingMode mode )
 {
   Q_D(QOAuth);
 
   d->error = NoError;
 
   // copy parameters to a writable object
-  QOAuth::ParamMap parameters = params;
+  ParamMap parameters = params;
   // calculate the signature
   QByteArray signature = d->createSignature( requestUrl, httpMethod, signatureMethod,
                                              token, tokenSecret, &parameters );
@@ -801,7 +804,7 @@ QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::Ht
   directly to a request URL as a query string.
 
   Use this method together with createParametersString(), when you request a header
-  parameters string (QOAuth::ParseForHeaderArguments) together with HTTP GET method.
+  parameters string (QOAuth::QOAuth::ParseForHeaderArguments) together with HTTP GET method.
   In such case, apart from header arguments, you must provide a query string containing
   custom request parameters (i.e. not OAuth-related). Pass the custom parameters map
   to this method to receive a query string to be appended to the URL.
@@ -809,7 +812,7 @@ QByteArray QOAuth::createParametersString( const QString &requestUrl, QOAuth::Ht
   \sa createParametersString()
 */
 
-QByteArray QOAuth::inlineParameters( const QOAuth::ParamMap &params )
+QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params )
 {
   Q_D(QOAuth);
 
@@ -817,25 +820,25 @@ QByteArray QOAuth::inlineParameters( const QOAuth::ParamMap &params )
   return query.prepend( '?' );
 }
 
-QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
-                                             const QByteArray &token, const QByteArray &tokenSecret, const QOAuth::ParamMap &params )
+QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
+                                             const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params )
 {
   if ( httpMethod != QOAuth::GET && httpMethod != QOAuth::POST ) {
     qWarning() << __FUNCTION__ << "- requestToken() and accessToken() accept only GET and POST methods";
     error = QOAuth::UnsupportedHttpMethod;
-    return QOAuth::ParamMap();
+    return ParamMap();
   }
 
   error = QOAuth::NoError;
 
-  QOAuth::ParamMap parameters = params;
+  ParamMap parameters = params;
   // create signature
   QByteArray signature = createSignature( requestUrl, httpMethod, signatureMethod,
                                              token, tokenSecret, &parameters );
 
   // if signature wasn't created, return an empty map
   if ( error != QOAuth::NoError ) {
-    return QOAuth::ParamMap();
+    return ParamMap();
   }
 
   // add signature to parameters
@@ -860,7 +863,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   if ( requestTimeout > 0 ) {
     QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
     // if the request finishes on time, the error value is overriden
-    // if not, it remains equal to QOAuth::Timeout
+    // if not, it remains equal to QOAuth::QOAuth::Timeout
     error = QOAuth::Timeout;
   }
 
@@ -876,7 +879,7 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   // start the event loop and wait for the response
   loop->exec();
 
-  // if request completed successfully, error is different than QOAuth::Timeout
+  // if request completed successfully, error is different than QOAuth::QOAuth::Timeout
   // if it failed, we have to abort the request
   if ( error == QOAuth::Timeout ) {
     reply->abort();
@@ -885,24 +888,24 @@ QOAuth::ParamMap QOAuthPrivate::sendRequest( const QString &requestUrl, QOAuth::
   return replyParams;
 }
 
-QByteArray QOAuthPrivate::createSignature( const QString &requestUrl, QOAuth::HttpMethod httpMethod,
+QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, QOAuth::HttpMethod httpMethod,
                                            QOAuth::SignatureMethod signatureMethod, const QByteArray &token,
-                                           const QByteArray &tokenSecret, QOAuth::ParamMap *params )
+                                           const QByteArray &tokenSecret, ParamMap *params )
 {
   if ( consumerKey.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it with QOAuth::setConsumerKey()";
+    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it with QOAuth::QOAuth::setConsumerKey()";
     error = QOAuth::ConsumerKeyEmpty;
     return QByteArray();
   }
   if ( consumerSecret.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it with QOAuth::setConsumerSecret()";
+    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it with QOAuth::QOAuth::setConsumerSecret()";
     error = QOAuth::ConsumerSecretEmpty;
     return QByteArray();
   }
 
   // temporarily only HMAC-SHA1 is supported
   if ( signatureMethod != QOAuth::HMAC_SHA1 ) {
-    qWarning() << __FUNCTION__ << "- Sorry, we're currently supporting only HMAC-SHA1 method...";
+    qWarning() << __FUNCTION__ << "- Sorry, we currently support only HMAC-SHA1 method...";
     error = QOAuth::UnsupportedSignatureMethod;
     return QByteArray();
   }

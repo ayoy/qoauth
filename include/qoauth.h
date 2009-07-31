@@ -33,7 +33,12 @@
 
 #include "qoauth_global.h"
 
+namespace QOAuth {
+
 class QOAuthPrivate;
+
+typedef QMultiMap<QByteArray,QByteArray> ParamMap;
+
 
 class QOAUTH_EXPORT QOAuth : public QObject
 {
@@ -78,8 +83,6 @@ public:
     OtherError
   };
 
-  typedef QMultiMap<QByteArray,QByteArray> ParamMap;
-
   static const QByteArray OAuthVersion;
 
   static const QByteArray ParamToken;
@@ -108,9 +111,9 @@ public:
 
   QByteArray createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
                                      const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
-                                     const QOAuth::ParamMap &params, QOAuth::ParsingMode mode );
+                                     const ParamMap &params, QOAuth::ParsingMode mode );
 
-  QByteArray inlineParameters( const QOAuth::ParamMap &params );
+  QByteArray inlineParameters( const ParamMap &params );
 
 protected:
   QOAuthPrivate * const d_ptr;
@@ -123,5 +126,7 @@ private:
   friend class Ft_QOAuth;
 #endif
 };
+
+} // namespace QOAuth
 
 #endif // QOAUTH_H

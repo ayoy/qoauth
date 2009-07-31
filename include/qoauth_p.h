@@ -27,6 +27,9 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 class QEventLoop;
+
+namespace QOAuth {
+
 class QOAuth;
 
 
@@ -54,22 +57,22 @@ public:
   QOAuthPrivate( QObject *parent = 0 );
   QByteArray httpMethodToString( QOAuth::HttpMethod method );
   QByteArray signatureMethodToString( QOAuth::SignatureMethod method );
-  QOAuth::ParamMap replyToMap( const QByteArray &data );
-  QByteArray paramsToString( const QOAuth::ParamMap &parameters, QOAuth::ParsingMode mode );
+  ParamMap replyToMap( const QByteArray &data );
+  QByteArray paramsToString( const ParamMap &parameters, QOAuth::ParsingMode mode );
 
 
   QByteArray createSignature( const QString &requestUrl, QOAuth::HttpMethod httpMethod,
                               QOAuth::SignatureMethod signatureMethod, const QByteArray &token,
-                              const QByteArray &tokenSecret, QOAuth::ParamMap *params );
+                              const QByteArray &tokenSecret, ParamMap *params );
 
-  QOAuth::ParamMap sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
-                                const QByteArray &token, const QByteArray &tokenSecret, const QOAuth::ParamMap &params );
+  ParamMap sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
+                                const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 
 
   QByteArray consumerKey;
   QByteArray consumerSecret;
 
-  QOAuth::ParamMap replyParams;
+  ParamMap replyParams;
 
   QNetworkAccessManager *manager;
   QEventLoop *loop;
@@ -84,5 +87,7 @@ public slots:
 protected:
   QOAuth *q_ptr;
 };
+
+} // namespace QOAuth
 
 #endif // QOAUTH_P_H

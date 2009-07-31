@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+namespace QOAuth {
+
 class QOAuth;
 
 class Ft_QOAuth : public QObject
@@ -46,5 +48,7 @@ private slots:
 private:
   QOAuth *m;
 };
+
+} // namespace QOAuth
 
 #endif // FT_QOAUTH_H

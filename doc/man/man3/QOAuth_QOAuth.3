@@ -1,0 +1,479 @@
+.TH "QOAuth::QOAuth" 3 "31 Jul 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+QOAuth::QOAuth \- This class provides means for interaction with network services supporting OAuth authorization scheme.  
+
+.PP
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <QtOAuth>\fP
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSignatureMethod\fP { \fBHMAC_SHA1\fP, \fBRSA_SHA1\fP, \fBPLAINTEXT\fP }"
+.br
+.RI "\fIThis enum type describes the signature method used by the request. \fP"
+.ti -1c
+.RI "enum \fBHttpMethod\fP { \fBGET\fP, \fBPOST\fP, \fBHEAD\fP, \fBPUT\fP, \fBDELETE\fP }"
+.br
+.RI "\fIThis enum type specifies the HTTP method used for creating a \fCSignature Base String\fP and/or sending a request. \fP"
+.ti -1c
+.RI "enum \fBParsingMode\fP { \fBParseForInlineQuery\fP, \fBParseForHeaderArguments\fP, \fBParseForSignatureBaseString\fP }"
+.br
+.RI "\fIThis enum type specifies the method of parsing parameters into a parameter string. \fP"
+.ti -1c
+.RI "enum \fBErrorCode\fP { \fBNoError\fP =  200, \fBBadRequest\fP =  400, \fBUnauthorized\fP =  401, \fBForbidden\fP =  403, \fBTimeout\fP =  1, \fBConsumerKeyEmpty\fP, \fBConsumerSecretEmpty\fP, \fBUnsupportedSignatureMethod\fP, \fBUnsupportedHttpMethod\fP, \fBOtherError\fP }"
+.br
+.RI "\fIThis enum type defines error types that are assigned to the \fBerror\fP property. \fP"
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBQOAuth\fP (QObject *parent=0)"
+.br
+.RI "\fICreates a new \fBQOAuth\fP class instance with the given \fIparent\fP. \fP"
+.ti -1c
+.RI "virtual \fB~QOAuth\fP ()"
+.br
+.RI "\fIDestroys the \fBQOAuth\fP object. \fP"
+.ti -1c
+.RI "\fBParamMap\fP \fBrequestToken\fP (const QString &requestUrl, \fBHttpMethod\fP httpMethod, \fBSignatureMethod\fP signatureMethod=HMAC_SHA1, const \fBParamMap\fP &params=\fBParamMap\fP())"
+.br
+.ti -1c
+.RI "\fBParamMap\fP \fBaccessToken\fP (const QString &requestUrl, \fBHttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBSignatureMethod\fP signatureMethod=HMAC_SHA1, const \fBParamMap\fP &params=\fBParamMap\fP())"
+.br
+.ti -1c
+.RI "QByteArray \fBcreateParametersString\fP (const QString &requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBQOAuth::SignatureMethod\fP signatureMethod, const \fBParamMap\fP &params, \fBQOAuth::ParsingMode\fP mode)"
+.br
+.ti -1c
+.RI "QByteArray \fBinlineParameters\fP (const \fBParamMap\fP &params)"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const QByteArray \fBOAuthVersion\fP = '1.0'"
+.br
+.RI "\fIThe supported OAuth scheme version. \fP"
+.ti -1c
+.RI "static const QByteArray \fBParamToken\fP = 'oauth_token'"
+.br
+.RI "\fIThe \fItoken\fP request parameter string. \fP"
+.ti -1c
+.RI "static const QByteArray \fBParamTokenSecret\fP = 'oauth_token_secret'"
+.br
+.RI "\fIThe \fItoken secret\fP request parameter string. \fP"
+.in -1c
+.SS "Properties"
+
+.in +1c
+.ti -1c
+.RI "QByteArray \fBconsumerKey\fP"
+.br
+.RI "\fIThis property holds the consumer key. \fP"
+.ti -1c
+.RI "QByteArray \fBconsumerSecret\fP"
+.br
+.RI "\fIThis property holds the consumer secret. \fP"
+.ti -1c
+.RI "uint \fBrequestTimeout\fP"
+.br
+.RI "\fIThis property holds the timeout value for issued network requests. \fP"
+.ti -1c
+.RI "int \fBerror\fP"
+.br
+.RI "\fIThis property holds the error code. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+The \fBQOAuth\fP class is meant to enable OAuth support in applications in as simple way as possible. It provides 4 basic methods, two of which serve for authorization purposes: 
+.PD 0
+
+.IP "\(bu" 2
+\fBrequestToken()\fP, 
+.IP "\(bu" 2
+\fBaccessToken()\fP,
+.PP
+and the other two help with creation of requests for accessing Protected Resources: 
+.PD 0
+
+.IP "\(bu" 2
+\fBcreateParametersString()\fP, 
+.IP "\(bu" 2
+\fBinlineParameters()\fP.
+.PP
+.SH "OAuth authorization scheme"
+.PP
+According to \fCOAuth 1.0 Core specification\fP, \fIthe OAuth protocol enables websites or applications (Consumers) to access Protected Resources from a web service (Service Provider) via an API, without requiring Users to disclose their Service Provider credentials to the Consumers\fP. Simply, OAuth is a way of connecting an application to the Service Provider's API without needing to provide User's login or password. The authorization is based on an exchange of a Token (user-specific) together with a Consumer Key (application-specific), encrypted with a combination of so called Token Secret and Customer Secret. Getting access to Protected Resources consists in three basic steps: 
+.PD 0
+
+.IP "1." 4
+obtaining an unauthorized Request Token from the Service Provider, 
+.IP "2." 4
+asking the User to authorize the Request Token, 
+.IP "3." 4
+exchanging the Request Token for an Access Token. 
+.PP
+Details are covered in \fCSection 6\fP of the OAuth 1.0 Core Specification. As the authorization procedure is quite complex, the \fBQOAuth\fP library helps to simplify it by doing all the dirty work behind the scenes.
+.SH "OAuth authorization with QOAuth"
+.PP
+First step of OAuth authorization can be done in one line using \fBQOAuth\fP library. Consult the example:
+.PP
+.PP
+.nf
+QByteArray token;
+QByteArray tokenSecret;
+
+QOAuth qoauth = new QOAuth;
+// set the consumer key and secret
+qoauth->setConsumerKey( '75b3d557c9268c49cfdf041a' );
+qoauth->setConsumerSecret( 'fd12803fbf0760d34cd2ceb9955199ce' );
+// set a timeout for requests (in msecs)
+qoauth->setRequestTimeout( 10000 );
+
+// send a request for an unauthorized token
+QOAuth::ParamMap reply =
+    qoauth->requestToken( 'http://example.com/request_token',
+                          QOAuth::GET, QOAuth::HMAC_SHA1 );
+
+// if no error occurred, read the received token and token secret
+if ( qoauth->error() == QOAuth::NoError ) {
+  token = reply.value( QOAuth::ParamToken );
+  tokenSecret = reply.value( QOAuth::ParamTokenSecret );
+}
+
+.fi
+.PP
+.PP
+After the unauthorized Request Token is received, User has to authorize it using Service Provider-defined method. This is beyond the scope of this library. Once User authorizes the Request Token, it can be exchanged for an Access Token that authorizes the application to access User's Protected Resources. This can be done with another one line:
+.PP
+.PP
+.nf
+// if necessary, create a map of additional arguments required by the Service Provider
+QOAuth::ParamMap otherArgs;
+otherArgs.insert( 'misc_arg1', 'value1' );
+otherArgs.insert( 'misc_arg2', 'value2' );
+
+// send a request to exchange Request Token for an Access Token
+QOAuth::ParamMap reply =
+    qoauth->accessToken( 'http://example.com/access_token', QOAuth::POST, token,
+                         tokenSecret, QOAuth::HMAC_SHA1, otherArgs );
+
+// if no error occurred, read the Access Token (and other arguments, if applicable)
+if ( qoauth->error() == QOAuth::NoError ) {
+  token = reply.value( QOAuth::ParamToken );
+  tokenSecret = reply.value( QOAuth::ParamTokenSecret );
+  otherInfo = reply.value( 'misc_arg3' );
+}
+.fi
+.PP
+.PP
+Once the Access Token is received, the application is authorized.
+.SH "Requesting Protected Resources with QOAuth"
+.PP
+In order to access Protected Resources, the application has to send a request containing arguments including Customer Key and Access Token, and encrypt them with Customer Secret and Token Secret. The process of constructing such a request can be reduced to another one-line call with \fBQOAuth\fP:
+.PP
+.PP
+.nf
+QByteArray url( 'http://example.com/get_photo');
+// create a request parameters map
+QOAuth::ParamMap map;
+map.insert( 'file', 'flower_48.jpg' );
+map.insert( 'size', 'small' );
+
+// construct the parameters string
+QByteArray content =
+    qoauth->createParametersString( requestUrl, QOAuth::GET, QOAuth::HMAC_SHA1,
+                                    token, tokenSecret, map,
+                                    QOAuth::ParseForInlineQuery );
+// append parameters string to the URL
+url.append( content );
+QNetworkRequest request( QUrl( url ) );
+// etc...
+.fi
+.PP
+.SH "Capabilities"
+.PP
+Out of 3 signature methods supported by OAuth protocol, \fBQOAuth\fP library supports only HMAC-SHA1 at the moment. This is subject to change in future releases. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBQOAuth::QOAuth::ErrorCode\fP"
+.PP
+This error codes collection contains both network-related errors and those that can occur when incorrect arguments are provided to any of the class's methods.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBerror\fP 
+.RE
+.PP
+
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fINoError \fP\fP
+No error occured (so far :-) ). 
+.TP
+\fB\fIBadRequest \fP\fP
+Represents HTTP status code \fC400\fP (Bad Request). 
+.TP
+\fB\fIUnauthorized \fP\fP
+Represents HTTP status code \fC401\fP (Unauthorized). 
+.TP
+\fB\fIForbidden \fP\fP
+Represents HTTP status code \fC403\fP (Forbidden). 
+.TP
+\fB\fITimeout \fP\fP
+Represents a request timeout error. 
+.TP
+\fB\fIConsumerKeyEmpty \fP\fP
+Consumer key has not been provided. 
+.TP
+\fB\fIConsumerSecretEmpty \fP\fP
+Consumer secret has not been provided. 
+.TP
+\fB\fIUnsupportedSignatureMethod \fP\fP
+The signature method is not supported by the library. 
+.TP
+\fB\fIUnsupportedHttpMethod \fP\fP
+The HTTP method is not supported by the request. Note that \fBrequestToken()\fP and \fBaccessToken()\fP accept only HTTP GET and POST requests. 
+.TP
+\fB\fIOtherError \fP\fP
+A network-related error not specified above. 
+.SS "enum \fBQOAuth::QOAuth::HttpMethod\fP"
+.PP
+The HTTP method has to be specified in \fBQOAuth\fP class for two reasons: 
+.PD 0
+
+.IP "\(bu" 2
+to know what type of request should be prepared and sent (\fBrequestToken()\fP and \fBaccessToken()\fP), 
+.IP "\(bu" 2
+to prepare a correct signature, as the Signature Base String contains a parameter specifying the HTTP method used for request (\fBcreateParametersString()\fP).
+.PP
+\fBNote:\fP
+.RS 4
+For \fBrequestToken()\fP and \fBaccessToken()\fP methods only \fBGET\fP and \fBPOST\fP methods are allowed. 
+.RE
+.PP
+
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIGET \fP\fP
+Sets the HTTP method to GET. 
+.TP
+\fB\fIPOST \fP\fP
+Sets the HTTP method to POST. 
+.TP
+\fB\fIHEAD \fP\fP
+Sets the HTTP method to HEAD. 
+.TP
+\fB\fIPUT \fP\fP
+Sets the HTTP method to PUT. 
+.TP
+\fB\fIDELETE \fP\fP
+Sets the HTTP method to DELETE. 
+.SS "enum \fBQOAuth::QOAuth::ParsingMode\fP"
+.PP
+When creating a parameters string for a custom request using \fBcreateParametersString()\fP the parsing mode must be defined in order to prepare the string correctly.
+.PP
+According to what is stated in \fCOAuth 1.0 Core specification\fP, parameters can be passed in a request to the Service Provider in 3 different ways. When using \fBcreateParametersString()\fP, choose the one that suits you by setting \fIParsingMode\fP appropriatelly.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBcreateParametersString()\fP 
+.RE
+.PP
+
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIParseForInlineQuery \fP\fP
+Inlne query format (parameters appended to the request URL). 
+.TP
+\fB\fIParseForHeaderArguments \fP\fP
+HTTP request header format (parameters to be put inside a request header). 
+.TP
+\fB\fIParseForSignatureBaseString \fP\fP
+\fCSignature Base String\fP format, meant for internal use. 
+.SS "enum \fBQOAuth::QOAuth::SignatureMethod\fP"
+.PP
+There are 3 different signature methods defined by the \fCOAuth protocol\fP. This enum is used to specify the method used by a specific request. Hence, one of its values must be passed as a parameter in any of the \fBrequestToken()\fP, \fBaccessToken()\fP or \fBcreateParametersString()\fP method.
+.PP
+\fBNote:\fP
+.RS 4
+The current implementation of the library supports only HMAC-SHA1 signature algorithm. 
+.RE
+.PP
+
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIHMAC_SHA1 \fP\fP
+Sets the signature method to HMAC-SHA1. 
+.TP
+\fB\fIRSA_SHA1 \fP\fP
+Sets the signature method to RSA-SHA1 (not implemented yet). 
+.TP
+\fB\fIPLAINTEXT \fP\fP
+Sets the signature method to PLAINTEXT (not implemented yet). 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBQOAuth::ParamMap\fP QOAuth::QOAuth::accessToken (const QString & requestUrl, \fBHttpMethod\fP httpMethod, const QByteArray & token, const QByteArray & tokenSecret, \fBSignatureMethod\fP signatureMethod = \fCHMAC_SHA1\fP, const \fBParamMap\fP & params = \fC\fBParamMap\fP()\fP)"
+.PP
+This method constructs and sends a request for exchanging a Request Token (obtained previously with a call to \fBrequestToken()\fP) for an Access Token, that authorizes the application to access Protected Resources. This is the third step of the OAuth authentication flow, according to \fCOAuth 1.0 Core specification\fP. At the moment only HMAC-SHA1 signature method is supported. The HMAC-SHA1 \fCSignature Base String\fP is created using the given \fIrequestUrl\fP, \fIhttpMethod\fP, \fItoken\fP and \fItokenSecret\fP. The optional request parameters specified by the Service Provider can be passed in the \fIparams\fP ParamMap.
+.PP
+The Signature Base String contains the \fBconsumerKey\fP and uses \fBconsumerSecret\fP for encrypting the message, so it's necessary to provide them both before issuing this request. The method will check if both \fBconsumerKey\fP and \fBconsumerSecret\fP are provided, and fail if any of them is missing.
+.PP
+When the signature is created, the appropriate request is sent to the Service Provider (namely, the \fIrequestUrl\fP). Depending on the type of the request, the parameters are passed according to the \fCConsumer Request Parametes\fP section of the OAuth specification, i.e.: 
+.PD 0
+
+.IP "\(bu" 2
+for GET requests, in the HTTP Authorization header, as defined in \fCOAuth HTTP Authorization Scheme\fP, 
+.IP "\(bu" 2
+for POST requests, as a request body with \fCcontent-type\fP set to \fCapplication/x-www-form-urlencoded\fP.
+.PP
+Once the request is sent, a local event loop is executed and set up to wait for the request to complete. If the \fBrequestTimeout\fP property is set to a non-zero value, its vaue is applied as a request timeout, after which the request is aborted.
+.PP
+\fBReturns:\fP
+.RS 4
+If request succeded, the method returns all the data passed in the Service Provider response (including an authorized Access Token and Token Secret), formed in a ParamMap. This request ends the authorization process, and the obtained Access Token and Token Secret should be kept by the application and provided with every future request authorized by OAuth, e.g. using \fBcreateParametersString()\fP. If request fails, the \fBerror\fP property is set to an appropriate value, and an empty ParamMap is returned.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBrequestToken()\fP, \fBcreateParametersString()\fP, \fBerror\fP 
+.RE
+.PP
+
+.SS "QByteArray QOAuth::QOAuth::createParametersString (const QString & requestUrl, \fBQOAuth::HttpMethod\fP httpMethod, const QByteArray & token, const QByteArray & tokenSecret, \fBQOAuth::SignatureMethod\fP signatureMethod, const \fBParamMap\fP & params, \fBQOAuth::ParsingMode\fP mode)"
+.PP
+This method generates a parameters string required to access Protected Resources using OAuth authorization. According to \fCOAuth 1.0 Core specification\fP, every outgoing request for accessing Protected Resources must contain information like consumer key and Access Token, and has to be signed using one of the supported signature methods.
+.PP
+At the moment only HMAC-SHA1 signature method is supported by the library. The HMAC-SHA1 \fCSignature Base String\fP is created using the given \fIrequestUrl\fP, \fIhttpMethod\fP, \fItoken\fP and \fItokenSecret\fP. The optional request parameters specified by the Service Provider can be passed in the \fIparams\fP \fBParamMap\fP.
+.PP
+The Signature Base String contains the \fBconsumerKey\fP and uses \fBconsumerSecret\fP for encrypting the message, so it's necessary to provide them both before issuing this request. The method will check if both \fBconsumerKey\fP and \fBconsumerSecret\fP are provided, and fail if any of them is missing.
+.PP
+The \fImode\fP parameter specifies the format of the parameter string.
+.PP
+\fBReturns:\fP
+.RS 4
+The parsed parameters string, that depending on \fImode\fP and \fIhttpMethod\fP is:
+.RE
+.PP
+\fB\fImode\fP \fP  \fB\fIhttpMode\fP \fP  \fBoutcome\fP  \fC\fBQOAuth::QOAuth::ParseForInlineQuery\fP\fP\fC\fBQOAuth::QOAuth::GET\fP\fPprepended with a \fI'?'\fP and ready to be appended to the \fIrequestUrl\fP  \fIothers\fP ready to be posted as a request body \fC\fBQOAuth::QOAuth::ParseForHeaderArguments\fP\fP irrelevant ready to be set as an argument for the \fCAuthorization\fP HTTP header \fC\fBQOAuth::QOAuth::ParseForSignatureBaseString\fP\fP irrelevant \fImeant for internal use\fP 
+.PP
+\fBSee also:\fP
+.RS 4
+\fBinlineParameters()\fP 
+.RE
+.PP
+
+.SS "QByteArray QOAuth::QOAuth::inlineParameters (const \fBParamMap\fP & params)"
+.PP
+This method is provided for convenience. It generates an inline query string out of given parameter map and prepends it with '?'. The resulting string can be appended directly to a request URL as a query string.
+.PP
+Use this method together with \fBcreateParametersString()\fP, when you request a header parameters string (\fBQOAuth::QOAuth::ParseForHeaderArguments\fP) together with HTTP GET method. In such case, apart from header arguments, you must provide a query string containing custom request parameters (i.e. not OAuth-related). Pass the custom parameters map to this method to receive a query string to be appended to the URL.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBcreateParametersString()\fP 
+.RE
+.PP
+
+.SS "\fBQOAuth::ParamMap\fP QOAuth::QOAuth::requestToken (const QString & requestUrl, \fBHttpMethod\fP httpMethod, \fBSignatureMethod\fP signatureMethod = \fCHMAC_SHA1\fP, const \fBParamMap\fP & params = \fC\fBParamMap\fP()\fP)"
+.PP
+This method constructs and sends a request for obtaining an unauthorized Request Token from the Service Provider. This is the first step of the OAuth authentication flow, according to \fCOAuth 1.0 Core specification\fP. At the moment only HMAC-SHA1 signature method is supported. The HMAC-SHA1 \fCSignature Base String\fP is created using the given \fIrequestUrl\fP and \fIhttpMethod\fP. The optional request parameters specified by the Service Provider can be passed in the \fIparams\fP ParamMap.
+.PP
+The Signature Base String contains the \fBconsumerKey\fP and uses \fBconsumerSecret\fP for encrypting the message, so it's necessary to provide them both before issuing this request. The method will check if both \fBconsumerKey\fP and \fBconsumerSecret\fP are provided, and fail if any of them is missing.
+.PP
+When the signature is created, the appropriate request is sent to the Service Provider (namely, the \fIrequestUrl\fP). Depending on the type of the request, the parameters are passed according to the \fCConsumer Request Parametes\fP section of the OAuth specification, i.e.: 
+.PD 0
+
+.IP "\(bu" 2
+for GET requests, in the HTTP Authorization header, as defined in \fCOAuth HTTP Authorization Scheme\fP, 
+.IP "\(bu" 2
+for POST requests, as a request body with \fCcontent-type\fP set to \fCapplication/x-www-form-urlencoded\fP.
+.PP
+Once the request is sent, a local event loop is executed and set up to wait for the request to complete. If the \fBrequestTimeout\fP property is set to a non-zero value, its vaue is applied as a request timeout, after which the request is aborted.
+.PP
+\fBReturns:\fP
+.RS 4
+If request succeded, the method returns all the data passed in the Service Provider response (including a Request Token and Token Secret), formed in a ParamMap. If request fails, the \fBerror\fP property is set to an appropriate value, and an empty ParamMap is returned.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBaccessToken()\fP, \fBerror\fP 
+.RE
+.PP
+
+.SH "Property Documentation"
+.PP 
+.SS "QByteArray QOAuth::QOAuth::consumerKey\fC [read, write]\fP"
+.PP
+The consumer key is used by the application to identify itself to the Service Provider
+.PP
+Access functions: 
+.PD 0
+
+.IP "\(bu" 2
+\fBQByteArray consumerKey() const\fP 
+.IP "\(bu" 2
+\fBvoid setConsumerKey( const QByteArray &consumerKey )\fP 
+.PP
+
+.SS "QByteArray QOAuth::QOAuth::consumerSecret\fC [read, write]\fP"
+.PP
+The consumerSecret is used by the application for signing outgoing requests
+.PP
+Access functions: 
+.PD 0
+
+.IP "\(bu" 2
+\fBQByteArray consumerSecret() const\fP 
+.IP "\(bu" 2
+\fBvoid setConsumerSecret( const QByteArray &consumerSecret )\fP 
+.PP
+
+.SS "int QOAuth::QOAuth::error\fC [read]\fP"
+.PP
+The error code is initially set to \fBNoError\fP, and its value is updated with every request, i.e. \fBrequestToken()\fP, \fBaccessToken()\fP or \fBcreateParametersString()\fP.
+.PP
+Access functions: 
+.PD 0
+
+.IP "\(bu" 2
+\fBint error() const\fP
+.PP
+\fBSee also:\fP
+.RS 4
+\fBErrorCode\fP 
+.RE
+.PP
+
+.SS "uint QOAuth::QOAuth::requestTimeout\fC [read, write]\fP"
+.PP
+The \fBQOAuth\fP class can send network requests when asked to do so by calling either \fBrequestToken()\fP or \fBaccessToken()\fP method. By defining the \fIrequestTimeout\fP, requests can have the time constraint applied, after which they fail, setting \fBerror\fP to \fBTimeout\fP. The \fIrequestTimeout\fP value is initially set to \fC0\fP, which in this case means that no timeout is applied to outgoing requests.
+.PP
+Access functions: 
+.PD 0
+
+.IP "\(bu" 2
+\fBuint requestTimeout() const\fP 
+.IP "\(bu" 2
+\fBvoid setRequestTimeout( uint requestTimeout )\fP 
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for QOAuth from the source code.
