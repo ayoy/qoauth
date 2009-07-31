@@ -46,6 +46,10 @@ public:
     AccessToken
   };
 
+  static const QByteArray OAuthVersion;
+  static const QByteArray ParamToken;
+  static const QByteArray ParamTokenSecret;
+
   static const QByteArray ParamConsumerKey;
   static const QByteArray ParamNonce;
   static const QByteArray ParamSignature;
@@ -55,17 +59,17 @@ public:
 
 
   QOAuthPrivate( QObject *parent = 0 );
-  QByteArray httpMethodToString( QOAuth::HttpMethod method );
-  QByteArray signatureMethodToString( QOAuth::SignatureMethod method );
+  QByteArray httpMethodToString( HttpMethod method );
+  QByteArray signatureMethodToString( SignatureMethod method );
   ParamMap replyToMap( const QByteArray &data );
-  QByteArray paramsToString( const ParamMap &parameters, QOAuth::ParsingMode mode );
+  QByteArray paramsToString( const ParamMap &parameters, ParsingMode mode );
 
 
-  QByteArray createSignature( const QString &requestUrl, QOAuth::HttpMethod httpMethod,
-                              QOAuth::SignatureMethod signatureMethod, const QByteArray &token,
+  QByteArray createSignature( const QString &requestUrl, HttpMethod httpMethod,
+                              SignatureMethod signatureMethod, const QByteArray &token,
                               const QByteArray &tokenSecret, ParamMap *params );
 
-  ParamMap sendRequest( const QString &requestUrl, QOAuth::HttpMethod httpMethod, QOAuth::SignatureMethod signatureMethod,
+  ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
                                 const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 
 

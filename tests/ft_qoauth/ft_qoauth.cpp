@@ -57,9 +57,9 @@ void QOAuth::Ft_QOAuth::requestToken_data()
                            << QByteArray( "key" )
                            << QByteArray( "secret" )
                            << QString( "http://term.ie/oauth/example/request_token.php" )
-                           << (int) QOAuth::GET
-                           << (int) QOAuth::HMAC_SHA1
-                           << (int) QOAuth::NoError
+                           << (int) GET
+                           << (int) HMAC_SHA1
+                           << (int) NoError
                            << QByteArray( "requestkey" )
                            << QByteArray( "requestsecret" );
 
@@ -91,14 +91,14 @@ void QOAuth::Ft_QOAuth::requestToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  ParamMap map = m->requestToken( url, (QOAuth::HttpMethod) httpMethod, (QOAuth::SignatureMethod) signMethod );
+  ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
 
   //check the reply if request finished with no errors
-  if ( m->error() == QOAuth::NoError ) {
-    QCOMPARE( map.value( QOAuth::ParamToken ), requestToken );
-    QCOMPARE( map.value( QOAuth::ParamTokenSecret ), requestTokenSecret );
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), requestToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
   }
 }
 
@@ -123,9 +123,9 @@ void QOAuth::Ft_QOAuth::accessToken_data()
                            << QByteArray( "requestkey" )
                            << QByteArray( "requestsecret" )
                            << QString( "http://term.ie/oauth/example/access_token.php" )
-                           << (int) QOAuth::GET
-                           << (int) QOAuth::HMAC_SHA1
-                           << (int) QOAuth::NoError
+                           << (int) GET
+                           << (int) HMAC_SHA1
+                           << (int) NoError
                            << QByteArray( "accesskey" )
                            << QByteArray( "accesssecret" );
 
@@ -148,15 +148,15 @@ void QOAuth::Ft_QOAuth::accessToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  ParamMap map = m->accessToken( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
-                                         (QOAuth::SignatureMethod) signMethod );
+  ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                 (SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
 
   //check the reply if request finished with no errors
-  if ( m->error() == QOAuth::NoError ) {
-    QCOMPARE( map.value( QOAuth::ParamToken ), accessToken );
-    QCOMPARE( map.value( QOAuth::ParamTokenSecret ), accessTokenSecret );
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), accessToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
   }
 }
 
@@ -184,16 +184,16 @@ void QOAuth::Ft_QOAuth::createParametersString_data()
                            << QByteArray( "accesskey" )
                            << QByteArray( "accesssecret" )
                            << QString( "http://term.ie/oauth/example/echo_api.php" )
-                           << (int) QOAuth::GET
-                           << (int) QOAuth::HMAC_SHA1
+                           << (int) GET
+                           << (int) HMAC_SHA1
                            << QByteArray( "first" )
                            << QByteArray( "first" )
                            << QByteArray( "second" )
                            << QByteArray( "second" )
                            << QByteArray( "third" )
                            << QByteArray( "third" )
-                           << (int) QOAuth::ParseForHeaderArguments
-                           << (int) QOAuth::NoError;
+                           << (int) ParseForHeaderArguments
+                           << (int) NoError;
 }
 
 void QOAuth::Ft_QOAuth::createParametersString()
@@ -222,8 +222,8 @@ void QOAuth::Ft_QOAuth::createParametersString()
   map.insert( param2, value2 );
   map.insert( param3, value3 );
 
-  QByteArray parameters = m->createParametersString( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
-                                                    (QOAuth::SignatureMethod) signMethod, map, (QOAuth::ParsingMode) parsingMode );
+  QByteArray parameters = m->createParametersString( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                                    (SignatureMethod) signMethod, map, (ParsingMode) parsingMode );
 
   url.append( m->inlineParameters( map ) );
 

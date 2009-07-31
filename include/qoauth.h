@@ -32,13 +32,11 @@
 #include <QMultiMap>
 
 #include "qoauth_global.h"
+#include "qoauth_namespace.h"
 
 namespace QOAuth {
 
 class QOAuthPrivate;
-
-typedef QMultiMap<QByteArray,QByteArray> ParamMap;
-
 
 class QOAUTH_EXPORT QOAuth : public QObject
 {
@@ -50,44 +48,6 @@ class QOAUTH_EXPORT QOAuth : public QObject
   Q_PROPERTY( int error READ error )
 
 public:
-  enum SignatureMethod {
-    HMAC_SHA1,
-    RSA_SHA1,
-    PLAINTEXT
-  };
-
-  enum HttpMethod {
-    GET,
-    POST,
-    HEAD,
-    PUT,
-    DELETE
-  };
-  
-  enum ParsingMode {
-    ParseForInlineQuery,
-    ParseForHeaderArguments,
-    ParseForSignatureBaseString
-  };
-
-  enum ErrorCode {
-    NoError = 200,
-    BadRequest = 400,
-    Unauthorized = 401,
-    Forbidden = 403,
-    Timeout = 1,
-    ConsumerKeyEmpty,
-    ConsumerSecretEmpty,
-    UnsupportedSignatureMethod,
-    UnsupportedHttpMethod,
-    OtherError
-  };
-
-  static const QByteArray OAuthVersion;
-
-  static const QByteArray ParamToken;
-  static const QByteArray ParamTokenSecret;
-
   QOAuth( QObject *parent = 0 );
   virtual ~QOAuth();
 
@@ -98,7 +58,7 @@ public:
   void setConsumerSecret( const QByteArray &consumerSecret );
 
   uint requestTimeout() const;
-  void setRequestTimeout( uint requestTimeout );
+  void setRequestTimeout( uint msec );
 
   int error() const;
 
@@ -109,9 +69,9 @@ public:
                         const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
                         const ParamMap &params = ParamMap() );
 
-  QByteArray createParametersString( const QString &requestUrl, QOAuth::HttpMethod httpMethod, const QByteArray &token,
-                                     const QByteArray &tokenSecret, QOAuth::SignatureMethod signatureMethod,
-                                     const ParamMap &params, QOAuth::ParsingMode mode );
+  QByteArray createParametersString( const QString &requestUrl, HttpMethod httpMethod,
+                                     const QByteArray &token, const QByteArray &tokenSecret,
+                                     SignatureMethod signatureMethod, const ParamMap &params, ParsingMode mode );
 
   QByteArray inlineParameters( const ParamMap &params );
 

@@ -1,0 +1,68 @@
+.TH "qoauth_namespace.h" 3 "31 Jul 2009" "Version 0.1.0" "QOAuth" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+qoauth_namespace.h \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI "namespace \fBQOAuth\fP"
+.br
+.RI "\fIThis namespace encapsulates all classes and definitions provided by libqoauth. \fP"
+.PP
+
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef QMultiMap< QByteArray, QByteArray > \fBQOAuth::ParamMap\fP"
+.br
+.RI "\fIA typedef for the data structure to store request parameters. \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBQOAuth::SignatureMethod\fP { \fBQOAuth::HMAC_SHA1\fP, \fBQOAuth::RSA_SHA1\fP, \fBQOAuth::PLAINTEXT\fP }"
+.br
+.RI "\fIThis enum type describes the signature method used by the request. \fP"
+.ti -1c
+.RI "enum \fBQOAuth::HttpMethod\fP { \fBQOAuth::GET\fP, \fBQOAuth::POST\fP, \fBQOAuth::HEAD\fP, \fBQOAuth::PUT\fP, \fBQOAuth::DELETE\fP }"
+.br
+.RI "\fIThis enum type specifies the HTTP method used for creating a \fCSignature Base String\fP and/or sending a request. \fP"
+.ti -1c
+.RI "enum \fBQOAuth::ParsingMode\fP { \fBQOAuth::ParseForInlineQuery\fP, \fBQOAuth::ParseForHeaderArguments\fP, \fBQOAuth::ParseForSignatureBaseString\fP }"
+.br
+.RI "\fIThis enum type specifies the method of parsing parameters into a parameter string. \fP"
+.ti -1c
+.RI "enum \fBQOAuth::ErrorCode\fP { \fBQOAuth::NoError\fP =  200, \fBQOAuth::BadRequest\fP =  400, \fBQOAuth::Unauthorized\fP =  401, \fBQOAuth::Forbidden\fP =  403, \fBQOAuth::Timeout\fP =  1, \fBQOAuth::ConsumerKeyEmpty\fP, \fBQOAuth::ConsumerSecretEmpty\fP, \fBQOAuth::UnsupportedSignatureMethod\fP, \fBQOAuth::UnsupportedHttpMethod\fP, \fBQOAuth::OtherError\fP }"
+.br
+.RI "\fIThis enum type defines error types that are assigned to the \fBQOAuth::QOAuth::error\fP property. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "QByteArray \fBQOAuth::supportedOAuthVersion\fP ()"
+.br
+.RI "\fIReturns the supported OAuth protocol version. \fP"
+.ti -1c
+.RI "QByteArray \fBQOAuth::tokenParameterName\fP ()"
+.br
+.RI "\fIReturns the name of the Access Token argument parameter. \fP"
+.ti -1c
+.RI "QByteArray \fBQOAuth::tokenSecretParameterName\fP ()"
+.br
+.RI "\fIReturns the name of the Token Secret argument parameter. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+This file is a part of libqoauth. You should not include it directly in your application. Instead please use \fC#include <QtOAuth>\fP. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for QOAuth from the source code.

@@ -10,7 +10,7 @@ QOAuth::ParamMap reply =
 
 // if no error occurred, read the Access Token (and other arguments, if applicable)
 if ( qoauth->error() == QOAuth::NoError ) {
-  token = reply.value( QOAuth::ParamToken );
-  tokenSecret = reply.value( QOAuth::ParamTokenSecret );
+  token = reply.value( QOAuth::tokenParameterName() );
+  tokenSecret = reply.value( QOAuth::tokenSecretParameterName() );
   otherInfo = reply.value( "misc_arg3" );
 }

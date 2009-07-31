@@ -42,7 +42,7 @@ void QOAuth::Ut_QOAuth::constructor()
   QVERIFY( m );
   QVERIFY( m->consumerKey().isEmpty() );
   QVERIFY( m->consumerSecret().isEmpty() );
-  QVERIFY( m->error() == QOAuth::NoError );
+  QVERIFY( m->error() == NoError );
   QVERIFY( m->requestTimeout() == 0 );
   QVERIFY( m->d_ptr );
 }
@@ -97,8 +97,8 @@ void QOAuth::Ut_QOAuth::setRequestTimeout()
 
 void QOAuth::Ut_QOAuth::error()
 {
-  m->d_ptr->error = QOAuth::Forbidden;
-  QVERIFY( m->error() == QOAuth::Forbidden );
+  m->d_ptr->error = Forbidden;
+  QVERIFY( m->error() == Forbidden );
 }
 
 void QOAuth::Ut_QOAuth::requestToken_data()
@@ -118,9 +118,9 @@ void QOAuth::Ut_QOAuth::requestToken_data()
                              << QByteArray()
                              << QByteArray( "135432" )
                              << QString( "http://wtf&(^%)$&#.com" )
-                             << (int) QOAuth::GET
-                             << (int) QOAuth::HMAC_SHA1
-                             << (int) QOAuth::ConsumerKeyEmpty
+                             << (int) GET
+                             << (int) HMAC_SHA1
+                             << (int) ConsumerKeyEmpty
                              << QByteArray()
                              << QByteArray();
 
@@ -129,9 +129,9 @@ void QOAuth::Ut_QOAuth::requestToken_data()
                                 << QByteArray( "135432" )
                                 << QByteArray()
                                 << QString( "http://wtf&(^%)$&#.com" )
-                                << (int) QOAuth::GET
-                                << (int) QOAuth::HMAC_SHA1
-                                << (int) QOAuth::ConsumerSecretEmpty
+                                << (int) GET
+                                << (int) HMAC_SHA1
+                                << (int) ConsumerSecretEmpty
                                 << QByteArray()
                                 << QByteArray();
 
@@ -139,9 +139,9 @@ void QOAuth::Ut_QOAuth::requestToken_data()
                               << QByteArray( "135432" )
                               << QByteArray( "654316" )
                               << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) QOAuth::DELETE
-                              << (int) QOAuth::HMAC_SHA1
-                              << (int) QOAuth::UnsupportedHttpMethod
+                              << (int) DELETE
+                              << (int) HMAC_SHA1
+                              << (int) UnsupportedHttpMethod
                               << QByteArray()
                               << QByteArray();
 
@@ -149,9 +149,9 @@ void QOAuth::Ut_QOAuth::requestToken_data()
                               << QByteArray( "135432" )
                               << QByteArray( "654316" )
                               << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) QOAuth::GET
+                              << (int) GET
                               << 8
-                              << (int) QOAuth::UnsupportedSignatureMethod
+                              << (int) UnsupportedSignatureMethod
                               << QByteArray()
                               << QByteArray();
 
@@ -183,14 +183,14 @@ void QOAuth::Ut_QOAuth::requestToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  ParamMap map = m->requestToken( url, (QOAuth::HttpMethod) httpMethod, (QOAuth::SignatureMethod) signMethod );
+  ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
 
   //check the reply if request finished with no errors
-  if ( m->error() == QOAuth::NoError ) {
-    QCOMPARE( map.value( QOAuth::ParamToken ), requestToken );
-    QCOMPARE( map.value( QOAuth::ParamTokenSecret ), requestTokenSecret );
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), requestToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
   }
 }
 
@@ -214,9 +214,9 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                              << QByteArray( "token" )
                              << QByteArray( "tokensecret" )
                              << QString( "http://wtf&(^%)$&#.com" )
-                             << (int) QOAuth::GET
-                             << (int) QOAuth::HMAC_SHA1
-                             << (int) QOAuth::ConsumerKeyEmpty
+                             << (int) GET
+                             << (int) HMAC_SHA1
+                             << (int) ConsumerKeyEmpty
                              << QByteArray()
                              << QByteArray();
 
@@ -227,9 +227,9 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                                 << QByteArray( "token" )
                                 << QByteArray( "tokensecret" )
                                 << QString( "http://wtf&(^%)$&#.com" )
-                                << (int) QOAuth::GET
-                                << (int) QOAuth::HMAC_SHA1
-                                << (int) QOAuth::ConsumerSecretEmpty
+                                << (int) GET
+                                << (int) HMAC_SHA1
+                                << (int) ConsumerSecretEmpty
                                 << QByteArray()
                                 << QByteArray();
 
@@ -239,9 +239,9 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                               << QByteArray( "token" )
                               << QByteArray( "tokensecret" )
                               << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) QOAuth::DELETE
-                              << (int) QOAuth::HMAC_SHA1
-                              << (int) QOAuth::UnsupportedHttpMethod
+                              << (int) DELETE
+                              << (int) HMAC_SHA1
+                              << (int) UnsupportedHttpMethod
                               << QByteArray()
                               << QByteArray();
 
@@ -251,9 +251,9 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                               << QByteArray( "token" )
                               << QByteArray( "tokensecret" )
                               << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) QOAuth::GET
+                              << (int) GET
                               << 8
-                              << (int) QOAuth::UnsupportedSignatureMethod
+                              << (int) UnsupportedSignatureMethod
                               << QByteArray()
                               << QByteArray();
 
@@ -276,15 +276,15 @@ void QOAuth::Ut_QOAuth::accessToken()
   m->setRequestTimeout( timeout );
   m->setConsumerKey( key );
   m->setConsumerSecret( secret );
-  ParamMap map = m->accessToken( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
-                                         (QOAuth::SignatureMethod) signMethod );
+  ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                 (SignatureMethod) signMethod );
 
   QVERIFY( m->error() == error );
 
   //check the reply if request finished with no errors
-  if ( m->error() == QOAuth::NoError ) {
-    QCOMPARE( map.value( QOAuth::ParamToken ), accessToken );
-    QCOMPARE( map.value( QOAuth::ParamTokenSecret ), accessTokenSecret );
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), accessToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
   }
 }
 
@@ -313,16 +313,16 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                              << QByteArray( "token" )
                              << QByteArray( "tokensecret" )
                              << QString( "http://wtf&(^%)$&#.com" )
-                             << (int) QOAuth::GET
-                             << (int) QOAuth::HMAC_SHA1
+                             << (int) GET
+                             << (int) HMAC_SHA1
                              << QByteArray()
                              << QByteArray()
                              << QByteArray()
                              << QByteArray()
                              << QByteArray()
                              << QByteArray()
-                             << (int) QOAuth::ParseForInlineQuery
-                             << (int) QOAuth::ConsumerKeyEmpty;
+                             << (int) ParseForInlineQuery
+                             << (int) ConsumerKeyEmpty;
 
 
   QTest::newRow("secret empty") << (uint) 0
@@ -331,16 +331,16 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                                 << QByteArray( "token" )
                                 << QByteArray( "tokensecret" )
                                 << QString( "http://wtf&(^%)$&#.com" )
-                                << (int) QOAuth::GET
-                                << (int) QOAuth::HMAC_SHA1
+                                << (int) GET
+                                << (int) HMAC_SHA1
                                 << QByteArray()
                                 << QByteArray()
                                 << QByteArray()
                                 << QByteArray()
                                 << QByteArray()
                                 << QByteArray()
-                                << (int) QOAuth::ParseForInlineQuery
-                                << (int) QOAuth::ConsumerSecretEmpty;
+                                << (int) ParseForInlineQuery
+                                << (int) ConsumerSecretEmpty;
 
   QTest::newRow("signMethod") << (uint) 0
                               << QByteArray( "135432" )
@@ -348,7 +348,7 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                               << QByteArray( "token" )
                               << QByteArray( "tokensecret" )
                               << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) QOAuth::GET
+                              << (int) GET
                               << 8
                               << QByteArray()
                               << QByteArray()
@@ -356,8 +356,8 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                               << QByteArray()
                               << QByteArray()
                               << QByteArray()
-                              << (int) QOAuth::ParseForInlineQuery
-                              << (int) QOAuth::UnsupportedSignatureMethod;
+                              << (int) ParseForInlineQuery
+                              << (int) UnsupportedSignatureMethod;
 
 
 }
@@ -388,8 +388,8 @@ void QOAuth::Ut_QOAuth::createParametersString()
   map.insert( param1, value1 );
   map.insert( param2, value2 );
   map.insert( param3, value3 );
-  QByteArray parameters = m->createParametersString( url, (QOAuth::HttpMethod) httpMethod, token, tokenSecret,
-                                                    (QOAuth::SignatureMethod) signMethod, map, (QOAuth::ParsingMode) parsingMode );
+  QByteArray parameters = m->createParametersString( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                                    (SignatureMethod) signMethod, map, (ParsingMode) parsingMode );
 
   QVERIFY( m->error() == error );
 }

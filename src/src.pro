@@ -22,6 +22,7 @@ INCLUDEPATH += $${INC_DIR}
 
 PUBLIC_HEADERS += \
     $${INC_DIR}/qoauth_global.h \
+    $${INC_DIR}/qoauth_namespace.h \
     $${INC_DIR}/qoauth.h
 PRIVATE_HEADERS += \
     $${INC_DIR}/qoauth_p.h
@@ -44,9 +45,7 @@ docs.files = ../doc/html
 macx {
     CONFIG += lib_bundle
     QMAKE_FRAMEWORK_BUNDLE_NAME = $$TARGET
-    CONFIG(debug, debug|release) {
-      CONFIG += build_all
-    }
+    CONFIG(debug, debug|release): CONFIG += build_all
     FRAMEWORK_HEADERS.version = Versions
     FRAMEWORK_HEADERS.files = $$headers.files
     FRAMEWORK_HEADERS.path = Headers
