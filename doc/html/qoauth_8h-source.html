@@ -76,8 +76,8 @@
 <a name="l00062"></a>00062 
 <a name="l00063"></a>00063   <span class="keywordtype">int</span> error() const;
 <a name="l00064"></a>00064 
-<a name="l00065"></a>00065   <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">ParamMap</a> requestToken( const QString &amp;requestUrl, <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">HttpMethod</a> httpMethod,
-<a name="l00066"></a>00066                          <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">SignatureMethod</a> signatureMethod = <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>, const <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">ParamMap</a> &amp;params = <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">ParamMap</a>() );
+<a name="l00065"></a>00065   <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">ParamMap</a> requestToken( const QString &amp;requestUrl, <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">HttpMethod</a> httpMethod,
+<a name="l00066"></a>00066                          <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">SignatureMethod</a> signatureMethod = <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>, const <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">ParamMap</a> &amp;params = <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">ParamMap</a>() );
 <a name="l00067"></a>00067 
 <a name="l00068"></a>00068   ParamMap accessToken( const QString &amp;requestUrl, <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319" title="This enum type specifies the HTTP method used for creating a Signature Base String...">HttpMethod</a> httpMethod, const QByteArray &amp;token,
 <a name="l00069"></a>00069                         const QByteArray &amp;tokenSecret, <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">SignatureMethod</a> signatureMethod = HMAC_SHA1,
@@ -87,7 +87,7 @@
 <a name="l00073"></a>00073                                      const QByteArray &amp;token, const QByteArray &amp;tokenSecret,
 <a name="l00074"></a>00074                                      <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">SignatureMethod</a> signatureMethod, const ParamMap &amp;params, <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">ParsingMode</a> mode );
 <a name="l00075"></a>00075 
-<a name="l00076"></a>00076   QByteArray inlineParameters( const ParamMap &amp;params );
+<a name="l00076"></a>00076   QByteArray inlineParameters( const ParamMap &amp;params, <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">ParsingMode</a> mode = <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d28f70298ea8c4c1bec8c9c27b0aeaf5" title="Inline query format (foo=bar&amp;amp;bar=baz&amp;amp;baz=foo ...), suitable for POST requests...">ParseForRequestContent</a> );
 <a name="l00077"></a>00077 
 <a name="l00078"></a>00078 protected:
 <a name="l00079"></a>00079   QOAuthPrivate * const d_ptr;
@@ -105,7 +105,7 @@
 <a name="l00091"></a>00091 
 <a name="l00092"></a>00092 <span class="preprocessor">#endif // QOAUTH_H</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 19:08:41 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 20:31:37 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

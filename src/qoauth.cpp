@@ -305,18 +305,18 @@ QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, Pa
 {
   QByteArray middleString;
   QByteArray endString;
+  QByteArray prependString;
 
   switch ( mode ) {
   case ParseForInlineQuery:
+    prependString = "?";
+  case ParseForRequestContent:
   case ParseForSignatureBaseString:
     middleString = "=";
     endString = "&";
     break;
-//    // percent encode in place
-//    middleString = "%3D";
-//    endString = "%26";
-//    break;
   case ParseForHeaderArguments:
+    prependString = "OAuth ";
     middleString = "=\"";
     endString = "\",";
     break;
@@ -339,22 +339,14 @@ QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, Pa
       parametersString.append( middleString );
       parametersString.append( value );
       parametersString.append( endString );
-//      if ( mode == QOAuth::QOAuth::ParseForSignatureBaseString ||
-//           mode == QOAuth::QOAuth::ParseForInlineQuery ) {
-//        // encode for Signature Base String and for the query string
-//        parametersString.append( value.toPercentEncoding() );
-//      } else {
-//        parametersString.append( value );
-//      }
     }
   }
 
+  // remove the trailing end character (comma or ampersand)
   parametersString.chop(1);
 
-  // prepend with "OAuth " when asked to create an HTTP header
-  if ( mode == ParseForHeaderArguments ) {
-    parametersString.prepend( "OAuth " );
-  }
+  // prepend with the suitable string (or none)
+  parametersString.prepend( prependString );
 
   return parametersString;
 }
@@ -633,18 +625,17 @@ QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, Ht
   // convert the map to bytearray, according to requested mode
   QByteArray parametersString = d->paramsToString( parameters, mode );
 
-  // add a query separator, this will be a query part of the URL
-  if ( httpMethod == GET && mode == ParseForInlineQuery ) {
-    parametersString.prepend( '?' );
-  }
-
   return parametersString;
 }
 
 /*!
   This method is provided for convenience. It generates an inline query string out of
-  given parameter map and prepends it with '?'. The resulting string can be appended
-  directly to a request URL as a query string.
+  given parameter map. The resulting string can be either sent in an HTTP POST request
+  as a request content, or appended directly to an HTTP GET request's URL as a query string.
+  When using this method for preparing an HTTP GET query string you can set the \a mode
+  to ParseForInlineQuery to have the string prepended with a question mark (separating
+  the URL path from the query string). Modes other than QOAuth::ParseForRequestContent and
+  QOAuth::ParseForInlineQuery produce an empty byte array.
 
   Use this method together with createParametersString(), when you request a header
   parameters string (QOAuth::ParseForHeaderArguments) together with HTTP GET method.
@@ -655,12 +646,25 @@ QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, Ht
   \sa createParametersString()
 */
 
-QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params )
+QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params, ParsingMode mode )
 {
   Q_D(QOAuth);
 
-  QByteArray query = d->paramsToString( params, ParseForInlineQuery );
-  return query.prepend( '?' );
+  QByteArray query;
+
+  switch (mode) {
+  case ParseForInlineQuery:
+    query = d->paramsToString( params, ParseForInlineQuery );
+    break;
+  case ParseForRequestContent:
+    query = d->paramsToString( params, ParseForRequestContent );
+    break;
+  case ParseForHeaderArguments:
+  case ParseForSignatureBaseString:
+    break;
+  }
+
+  return query;
 }
 
 QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,

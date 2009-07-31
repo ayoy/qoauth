@@ -22,7 +22,7 @@ QOAuth \- This namespace encapsulates all classes and definitions provided by li
 .ti -1c
 .RI "typedef QMultiMap< QByteArray, QByteArray > \fBParamMap\fP"
 .br
-.RI "\fIA typedef for the data structure to store request parameters. \fP"
+.RI "\fIA typedef for the data structure for storing request parameters. \fP"
 .in -1c
 .SS "Enumerations"
 
@@ -36,7 +36,7 @@ QOAuth \- This namespace encapsulates all classes and definitions provided by li
 .br
 .RI "\fIThis enum type specifies the HTTP method used for creating a \fCSignature Base String\fP and/or sending a request. \fP"
 .ti -1c
-.RI "enum \fBParsingMode\fP { \fBParseForInlineQuery\fP, \fBParseForHeaderArguments\fP, \fBParseForSignatureBaseString\fP }"
+.RI "enum \fBParsingMode\fP { \fBParseForRequestContent\fP, \fBParseForInlineQuery\fP, \fBParseForHeaderArguments\fP, \fBParseForSignatureBaseString\fP }"
 .br
 .RI "\fIThis enum type specifies the method of parsing parameters into a parameter string. \fP"
 .ti -1c
@@ -155,8 +155,15 @@ According to what is stated in \fCOAuth 1.0 Core specification\fP, parameters ca
 \fBEnumerator: \fP
 .in +1c
 .TP
+\fB\fIParseForRequestContent \fP\fP
+Inline query format (\fCfoo=bar&bar=baz&baz=foo ...\fP), suitable for POST requests. 
+.TP
 \fB\fIParseForInlineQuery \fP\fP
-Inlne query format (parameters appended to the request URL). 
+Same as ParseForRequestContent, but prepends the string with a question mark
+.IP "\(bu" 2
+suitable for GET requests (appending parameters to the request URL) 
+.PP
+
 .TP
 \fB\fIParseForHeaderArguments \fP\fP
 HTTP request header format (parameters to be put inside a request header). 
@@ -187,7 +194,7 @@ Sets the signature method to RSA-SHA1 (not implemented yet).
 Sets the signature method to PLAINTEXT (not implemented yet). 
 .SH "Function Documentation"
 .PP 
-.SS "QByteArray QOAuth::tokenParameterName ()\fC [inline]\fP"
+.SS "QByteArray QOAuth::tokenParameterName ()"
 .PP
 Useful when reading Service Provider's reply for \fBQOAuth::QOAuth::accessToken()\fP request, e.g: 
 .PP
@@ -206,7 +213,7 @@ Useful when reading Service Provider's reply for \fBQOAuth::QOAuth::accessToken(
 .fi
 .PP
  
-.SS "QByteArray QOAuth::tokenSecretParameterName ()\fC [inline]\fP"
+.SS "QByteArray QOAuth::tokenSecretParameterName ()"
 .PP
 \fBSee also:\fP
 .RS 4

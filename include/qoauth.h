@@ -73,7 +73,7 @@ public:
                                      const QByteArray &token, const QByteArray &tokenSecret,
                                      SignatureMethod signatureMethod, const ParamMap &params, ParsingMode mode );
 
-  QByteArray inlineParameters( const ParamMap &params );
+  QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
 
 protected:
   QOAuthPrivate * const d_ptr;

@@ -45,7 +45,7 @@
 <a name="l00031"></a>00031 
 <a name="l00036"></a>00036 <span class="keyword">namespace </span>QOAuth {
 <a name="l00037"></a>00037 
-<a name="l00042"></a><a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">00042</a>   <span class="keyword">typedef</span> QMultiMap&lt;QByteArray,QByteArray&gt; <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">ParamMap</a>;
+<a name="l00042"></a><a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">00042</a>   <span class="keyword">typedef</span> QMultiMap&lt;QByteArray,QByteArray&gt; <a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">ParamMap</a>;
 <a name="l00043"></a>00043 
 <a name="l00056"></a><a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">00056</a>   <span class="keyword">enum</span> <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f" title="This enum type describes the signature method used by the request.">SignatureMethod</a> {
 <a name="l00057"></a><a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0">00057</a>     <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">HMAC_SHA1</a>, 
@@ -62,38 +62,37 @@
 <a name="l00083"></a>00083   };
 <a name="l00084"></a>00084 
 <a name="l00101"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4">00101</a>   <span class="keyword">enum</span> <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4" title="This enum type specifies the method of parsing parameters into a parameter string...">ParsingMode</a> {
-<a name="l00102"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">00102</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759" title="Inlne query format (parameters appended to the request URL).">ParseForInlineQuery</a>,        
-<a name="l00103"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def46c2747775846e2d5e7c96f7db6314d28">00103</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def46c2747775846e2d5e7c96f7db6314d28" title="HTTP request header format (parameters to be put inside a request header).">ParseForHeaderArguments</a>,    
-<a name="l00104"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d12a3ed424be9e87704f138dc28804cf">00104</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d12a3ed424be9e87704f138dc28804cf" title="Signature Base String format, meant for internal use.">ParseForSignatureBaseString</a> 
-<a name="l00105"></a>00105   };
-<a name="l00106"></a>00106 
-<a name="l00117"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137">00117</a>   <span class="keyword">enum</span> <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137" title="This enum type defines error types that are assigned to the QOAuth::QOAuth::error...">ErrorCode</a> {
-<a name="l00118"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137cd78d96aa204e78fe3a3b3d9197b00e9">00118</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137cd78d96aa204e78fe3a3b3d9197b00e9" title="No error occured (so far :-) ).">NoError</a> = 200,              
-<a name="l00119"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703853d821a7cb2f8df693c031333d80a">00119</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703853d821a7cb2f8df693c031333d80a" title="Represents HTTP status code 400 (Bad Request).">BadRequest</a> = 400,           
-<a name="l00120"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703d29f6b9d0f2675d4ceea297f1df9fe">00120</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703d29f6b9d0f2675d4ceea297f1df9fe" title="Represents HTTP status code 401 (Unauthorized).">Unauthorized</a> = 401,         
-<a name="l00121"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137feedd3cb28fe0fef4831bc02fc9c9a4f">00121</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137feedd3cb28fe0fef4831bc02fc9c9a4f" title="Represents HTTP status code 403 (Forbidden).">Forbidden</a> = 403,            
-<a name="l00122"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1376ad252dcc734f5df5177cbadb7aa347b">00122</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1376ad252dcc734f5df5177cbadb7aa347b" title="Represents a request timeout error.">Timeout</a> = 1,                
-<a name="l00123"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13768d83fbe8a9177a62055a0436acba730">00123</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13768d83fbe8a9177a62055a0436acba730" title="Consumer key has not been provided.">ConsumerKeyEmpty</a>,           
-<a name="l00124"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137e2dd54170fbec86792f903d3783b56d2">00124</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137e2dd54170fbec86792f903d3783b56d2" title="Consumer secret has not been provided.">ConsumerSecretEmpty</a>,        
-<a name="l00125"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1379f3cecf28740b58ae9f3563d71ffabee">00125</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1379f3cecf28740b58ae9f3563d71ffabee" title="The signature method is not supported by the library.">UnsupportedSignatureMethod</a>, 
-<a name="l00126"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137834b1b12690f8cd7f97b8c4c576b4247">00126</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137834b1b12690f8cd7f97b8c4c576b4247">UnsupportedHttpMethod</a>,      
-<a name="l00129"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b7f420565c23868e81b73a4efd62f256">00129</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b7f420565c23868e81b73a4efd62f256" title="A network-related error not specified above.">OtherError</a>                  
-<a name="l00130"></a>00130   };
-<a name="l00131"></a>00131 
-<a name="l00132"></a>00132 
-<a name="l00136"></a>00136   <span class="keyword">inline</span> QByteArray <a class="code" href="namespace_q_o_auth.html#a83657be57a2092cbf6a51a49b44e7c1" title="Returns the supported OAuth protocol version.">supportedOAuthVersion</a>();
-<a name="l00137"></a>00137 
-<a name="l00155"></a>00155   <span class="keyword">inline</span> QByteArray <a class="code" href="namespace_q_o_auth.html#84c62aa0297aa05562462798f3d7e910" title="Returns the name of the Access Token argument parameter.">tokenParameterName</a>();
-<a name="l00156"></a>00156 
-<a name="l00161"></a>00161   <span class="keyword">inline</span> QByteArray <a class="code" href="namespace_q_o_auth.html#e1a36aa1528f69b04e74d5d3e6364393" title="Returns the name of the Token Secret argument parameter.">tokenSecretParameterName</a>();
-<a name="l00162"></a>00162 
-<a name="l00163"></a>00163 
+<a name="l00102"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d28f70298ea8c4c1bec8c9c27b0aeaf5">00102</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d28f70298ea8c4c1bec8c9c27b0aeaf5" title="Inline query format (foo=bar&amp;amp;bar=baz&amp;amp;baz=foo ...), suitable for POST requests...">ParseForRequestContent</a>,     
+<a name="l00103"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">00103</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">ParseForInlineQuery</a>,        
+<a name="l00105"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def46c2747775846e2d5e7c96f7db6314d28">00105</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def46c2747775846e2d5e7c96f7db6314d28" title="HTTP request header format (parameters to be put inside a request header).">ParseForHeaderArguments</a>,    
+<a name="l00106"></a><a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d12a3ed424be9e87704f138dc28804cf">00106</a>     <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d12a3ed424be9e87704f138dc28804cf" title="Signature Base String format, meant for internal use.">ParseForSignatureBaseString</a> 
+<a name="l00107"></a>00107   };
+<a name="l00108"></a>00108 
+<a name="l00119"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137">00119</a>   <span class="keyword">enum</span> <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137" title="This enum type defines error types that are assigned to the QOAuth::QOAuth::error...">ErrorCode</a> {
+<a name="l00120"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137cd78d96aa204e78fe3a3b3d9197b00e9">00120</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137cd78d96aa204e78fe3a3b3d9197b00e9" title="No error occured (so far :-) ).">NoError</a> = 200,              
+<a name="l00121"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703853d821a7cb2f8df693c031333d80a">00121</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703853d821a7cb2f8df693c031333d80a" title="Represents HTTP status code 400 (Bad Request).">BadRequest</a> = 400,           
+<a name="l00122"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703d29f6b9d0f2675d4ceea297f1df9fe">00122</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13703d29f6b9d0f2675d4ceea297f1df9fe" title="Represents HTTP status code 401 (Unauthorized).">Unauthorized</a> = 401,         
+<a name="l00123"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137feedd3cb28fe0fef4831bc02fc9c9a4f">00123</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137feedd3cb28fe0fef4831bc02fc9c9a4f" title="Represents HTTP status code 403 (Forbidden).">Forbidden</a> = 403,            
+<a name="l00124"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1376ad252dcc734f5df5177cbadb7aa347b">00124</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1376ad252dcc734f5df5177cbadb7aa347b" title="Represents a request timeout error.">Timeout</a> = 1,                
+<a name="l00125"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13768d83fbe8a9177a62055a0436acba730">00125</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df13768d83fbe8a9177a62055a0436acba730" title="Consumer key has not been provided.">ConsumerKeyEmpty</a>,           
+<a name="l00126"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137e2dd54170fbec86792f903d3783b56d2">00126</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137e2dd54170fbec86792f903d3783b56d2" title="Consumer secret has not been provided.">ConsumerSecretEmpty</a>,        
+<a name="l00127"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1379f3cecf28740b58ae9f3563d71ffabee">00127</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df1379f3cecf28740b58ae9f3563d71ffabee" title="The signature method is not supported by the library.">UnsupportedSignatureMethod</a>, 
+<a name="l00128"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137834b1b12690f8cd7f97b8c4c576b4247">00128</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137834b1b12690f8cd7f97b8c4c576b4247">UnsupportedHttpMethod</a>,      
+<a name="l00131"></a><a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b7f420565c23868e81b73a4efd62f256">00131</a>     <a class="code" href="namespace_q_o_auth.html#38fb8bcd101c339c7fd77b5de22df137b7f420565c23868e81b73a4efd62f256" title="A network-related error not specified above.">OtherError</a>                  
+<a name="l00132"></a>00132   };
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134 
+<a name="l00138"></a>00138   QByteArray <a class="code" href="namespace_q_o_auth.html#a83657be57a2092cbf6a51a49b44e7c1" title="Returns the supported OAuth protocol version.">supportedOAuthVersion</a>();
+<a name="l00139"></a>00139 
+<a name="l00157"></a>00157   QByteArray <a class="code" href="namespace_q_o_auth.html#84c62aa0297aa05562462798f3d7e910" title="Returns the name of the Access Token argument parameter.">tokenParameterName</a>();
+<a name="l00158"></a>00158 
+<a name="l00163"></a>00163   QByteArray <a class="code" href="namespace_q_o_auth.html#e1a36aa1528f69b04e74d5d3e6364393" title="Returns the name of the Token Secret argument parameter.">tokenSecretParameterName</a>();
 <a name="l00164"></a>00164 
 <a name="l00165"></a>00165 } <span class="comment">// namespace QOAuth</span>
 <a name="l00166"></a>00166 
 <a name="l00167"></a>00167 <span class="preprocessor">#endif // QOAUTH_NAMESPACE_H</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 19:08:41 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 20:31:37 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

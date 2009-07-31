@@ -37,7 +37,7 @@ namespace QOAuth {
 
   /*!
     \typedef ParamMap
-    \brief A typedef for the data structure to store request parameters
+    \brief A typedef for the data structure for storing request parameters
   */
   typedef QMultiMap<QByteArray,QByteArray> ParamMap;
 
@@ -99,7 +99,9 @@ namespace QOAuth {
     \sa QOAuth::QOAuth::createParametersString()
   */
   enum ParsingMode {
-    ParseForInlineQuery,        //!< Inlne query format (parameters appended to the request URL)
+    ParseForRequestContent,     //!< Inline query format (<tt>foo=bar&bar=baz&baz=foo ...</tt>), suitable for POST requests
+    ParseForInlineQuery,        /*!< Same as ParseForRequestContent, but prepends the string with a question mark
+                                     - suitable for GET requests (appending parameters to the request URL) */
     ParseForHeaderArguments,    //!< HTTP request header format (parameters to be put inside a request header)
     ParseForSignatureBaseString //!< <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> format, meant for internal use.
   };
@@ -159,8 +161,6 @@ namespace QOAuth {
     \sa QOAuth::tokenParameterName()
   */
   QByteArray tokenSecretParameterName();
-
-
 
 } // namespace QOAuth
 

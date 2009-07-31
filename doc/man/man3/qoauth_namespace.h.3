@@ -22,7 +22,7 @@ qoauth_namespace.h \-
 .ti -1c
 .RI "typedef QMultiMap< QByteArray, QByteArray > \fBQOAuth::ParamMap\fP"
 .br
-.RI "\fIA typedef for the data structure to store request parameters. \fP"
+.RI "\fIA typedef for the data structure for storing request parameters. \fP"
 .in -1c
 .SS "Enumerations"
 
@@ -36,7 +36,7 @@ qoauth_namespace.h \-
 .br
 .RI "\fIThis enum type specifies the HTTP method used for creating a \fCSignature Base String\fP and/or sending a request. \fP"
 .ti -1c
-.RI "enum \fBQOAuth::ParsingMode\fP { \fBQOAuth::ParseForInlineQuery\fP, \fBQOAuth::ParseForHeaderArguments\fP, \fBQOAuth::ParseForSignatureBaseString\fP }"
+.RI "enum \fBQOAuth::ParsingMode\fP { \fBQOAuth::ParseForRequestContent\fP, \fBQOAuth::ParseForInlineQuery\fP, \fBQOAuth::ParseForHeaderArguments\fP, \fBQOAuth::ParseForSignatureBaseString\fP }"
 .br
 .RI "\fIThis enum type specifies the method of parsing parameters into a parameter string. \fP"
 .ti -1c

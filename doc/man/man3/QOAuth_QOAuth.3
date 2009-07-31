@@ -31,7 +31,7 @@ QOAuth::QOAuth \- This class provides means for interaction with network service
 .RI "QByteArray \fBcreateParametersString\fP (const QString &requestUrl, \fBHttpMethod\fP httpMethod, const QByteArray &token, const QByteArray &tokenSecret, \fBSignatureMethod\fP signatureMethod, const \fBParamMap\fP &params, \fBParsingMode\fP mode)"
 .br
 .ti -1c
-.RI "QByteArray \fBinlineParameters\fP (const \fBParamMap\fP &params)"
+.RI "QByteArray \fBinlineParameters\fP (const \fBParamMap\fP &params, \fBParsingMode\fP mode=ParseForRequestContent)"
 .br
 .in -1c
 .SS "Properties"
@@ -217,9 +217,9 @@ The parsed parameters string, that depending on \fImode\fP and \fIhttpMethod\fP 
 .RE
 .PP
 
-.SS "QByteArray QOAuth::QOAuth::inlineParameters (const \fBParamMap\fP & params)"
+.SS "QByteArray QOAuth::QOAuth::inlineParameters (const \fBParamMap\fP & params, \fBParsingMode\fP mode = \fCParseForRequestContent\fP)"
 .PP
-This method is provided for convenience. It generates an inline query string out of given parameter map and prepends it with '?'. The resulting string can be appended directly to a request URL as a query string.
+This method is provided for convenience. It generates an inline query string out of given parameter map. The resulting string can be either sent in an HTTP POST request as a request content, or appended directly to an HTTP GET request's URL as a query string. When using this method for preparing an HTTP GET query string you can set the \fImode\fP to ParseForInlineQuery to have the string prepended with a question mark (separating the URL path from the query string). Modes other than \fBQOAuth::ParseForRequestContent\fP and \fBQOAuth::ParseForInlineQuery\fP produce an empty byte array.
 .PP
 Use this method together with \fBcreateParametersString()\fP, when you request a header parameters string (\fBQOAuth::ParseForHeaderArguments\fP) together with HTTP GET method. In such case, apart from header arguments, you must provide a query string containing custom request parameters (i.e. not OAuth-related). Pass the custom parameters map to this method to receive a query string to be appended to the URL.
 .PP

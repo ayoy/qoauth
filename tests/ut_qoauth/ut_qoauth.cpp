@@ -402,6 +402,7 @@ void QOAuth::Ut_QOAuth::inlineParameters_data()
   QTest::addColumn<QByteArray>("val2");
   QTest::addColumn<QByteArray>("par3");
   QTest::addColumn<QByteArray>("val3");
+  QTest::addColumn<int>("mode");
   QTest::addColumn<QByteArray>("result");
 
   QTest::newRow("empty") << QByteArray()
@@ -410,6 +411,7 @@ void QOAuth::Ut_QOAuth::inlineParameters_data()
                          << QByteArray()
                          << QByteArray()
                          << QByteArray()
+                         << (int) ParseForInlineQuery
                          << QByteArray( "?=&=&=" );
 
   QTest::newRow("easy") << QByteArray( "one" )
@@ -418,7 +420,8 @@ void QOAuth::Ut_QOAuth::inlineParameters_data()
                         << QByteArray( "four" )
                         << QByteArray( "six" )
                         << QByteArray( "ten" )
-                        << QByteArray( "?one=two&six=ten&three=four" );
+                        << (int) ParseForRequestContent
+                        << QByteArray( "one=two&six=ten&three=four" );
 
   QTest::newRow("tricky") << QByteArray( "arg1" )
                           << QByteArray( "%%**_+%%" )
@@ -426,7 +429,18 @@ void QOAuth::Ut_QOAuth::inlineParameters_data()
                           << QByteArray()
                           << QByteArray( "arg2" )
                           << QByteArray( "&+=" )
+                          << (int) ParseForInlineQuery
                           << QByteArray( "?arg1=%%**_+%%&arg2=&arg2=&+=" );
+
+  QTest::newRow("wrong mode") << QByteArray( "arg1" )
+                              << QByteArray( "%%**_+%%" )
+                              << QByteArray( "arg2" )
+                              << QByteArray()
+                              << QByteArray( "arg2" )
+                              << QByteArray( "&+=" )
+                              << (int) ParseForHeaderArguments
+                              << QByteArray( "" );
+
 }
 
 void QOAuth::Ut_QOAuth::inlineParameters()
@@ -437,6 +451,7 @@ void QOAuth::Ut_QOAuth::inlineParameters()
   QFETCH( QByteArray, val2 );
   QFETCH( QByteArray, par3 );
   QFETCH( QByteArray, val3 );
+  QFETCH( int, mode );
   QFETCH( QByteArray, result );
 
   ParamMap map;
@@ -445,8 +460,7 @@ void QOAuth::Ut_QOAuth::inlineParameters()
   map.insert( par2, val2 );
   map.insert( par3, val3 );
 
-  QByteArray query = m->inlineParameters( map );
-  qDebug() << query;
+  QByteArray query = m->inlineParameters( map, (ParsingMode) mode );
 
   QCOMPARE( query, result );
 }

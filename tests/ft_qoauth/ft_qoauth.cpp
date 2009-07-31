@@ -225,7 +225,7 @@ void QOAuth::Ft_QOAuth::createParametersString()
   QByteArray parameters = m->createParametersString( url, (HttpMethod) httpMethod, token, tokenSecret,
                                                     (SignatureMethod) signMethod, map, (ParsingMode) parsingMode );
 
-  url.append( m->inlineParameters( map ) );
+  url.append( m->inlineParameters( map, ParseForInlineQuery ) );
 
   QNetworkAccessManager manager;
   QEventLoop loop;

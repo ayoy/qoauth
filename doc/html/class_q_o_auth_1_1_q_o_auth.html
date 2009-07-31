@@ -48,7 +48,7 @@ virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#c0d944e6f6e6c2122c9dfb700a49af25">createParametersString</a> (const QString &amp;requestUrl, <a class="el" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319">HttpMethod</a> httpMethod, const QByteArray &amp;token, const QByteArray &amp;tokenSecret, <a class="el" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f">SignatureMethod</a> signatureMethod, const <a class="el" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a> &amp;params, <a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4">ParsingMode</a> mode)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#1b31f302873090be3dbe574d72e6b13d">inlineParameters</a> (const <a class="el" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a> &amp;params)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#ee37a1a4c7528be644d8d035dbc90279">inlineParameters</a> (const <a class="el" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a> &amp;params, <a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4">ParsingMode</a> mode=ParseForRequestContent)</td></tr>
 
 <tr><td colspan="2"><br><h2>Properties</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">QByteArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#92a869f4ae9db8b0dc6778cb13de6b05">consumerKey</a></td></tr>
@@ -71,7 +71,7 @@ The <a class="el" href="class_q_o_auth_1_1_q_o_auth.html" title="This class prov
 </ul>
 and the other two help with creation of requests for accessing Protected Resources: <ul>
 <li><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#c0d944e6f6e6c2122c9dfb700a49af25">createParametersString()</a>, </li>
-<li><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#1b31f302873090be3dbe574d72e6b13d">inlineParameters()</a>.</li>
+<li><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#ee37a1a4c7528be644d8d035dbc90279">inlineParameters()</a>.</li>
 </ul>
 <h2><a class="anchor" name="sec_auth_scheme">
 OAuth authorization scheme</a></h2>
@@ -97,7 +97,7 @@ qoauth-&gt;setConsumerSecret( <span class="stringliteral">"fd12803fbf0760d34cd2c
 qoauth-&gt;setRequestTimeout( 10000 );
 
 <span class="comment">// send a request for an unauthorized token</span>
-<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">QOAuth::ParamMap</a> reply =
+<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">QOAuth::ParamMap</a> reply =
     qoauth-&gt;requestToken( <span class="stringliteral">"http://example.com/request_token"</span>,
                           <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993197c85f104ca7dd13458329f66207f6be4" title="Sets the HTTP method to GET.">QOAuth::GET</a>, <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">QOAuth::HMAC_SHA1</a> );
 
@@ -110,12 +110,12 @@ qoauth-&gt;setRequestTimeout( 10000 );
 </pre></div><p>
 Once the unauthorized Request Token is received, User has to authorize it using Service Provider-defined method. This is beyond the scope of this library. Once User authorizes the Request Token, it can be exchanged for an Access Token that authorizes the application to access User's Protected Resources. This can be done with another one line:<p>
 <div class="fragment"><pre class="fragment"><span class="comment">// if necessary, create a map of additional arguments required by the Service Provider</span>
-<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">QOAuth::ParamMap</a> otherArgs;
+<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">QOAuth::ParamMap</a> otherArgs;
 otherArgs.insert( <span class="stringliteral">"misc_arg1"</span>, <span class="stringliteral">"value1"</span> );
 otherArgs.insert( <span class="stringliteral">"misc_arg2"</span>, <span class="stringliteral">"value2"</span> );
 
 <span class="comment">// send a request to exchange Request Token for an Access Token</span>
-<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">QOAuth::ParamMap</a> reply =
+<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">QOAuth::ParamMap</a> reply =
     qoauth-&gt;accessToken( <span class="stringliteral">"http://example.com/access_token"</span>, <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb099319f8cfac32beb6ddefef094014cfa8d60b" title="Sets the HTTP method to POST.">QOAuth::POST</a>, token,
                          tokenSecret, <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">QOAuth::HMAC_SHA1</a>, otherArgs );
 
@@ -131,7 +131,7 @@ Requesting Protected Resources with QOAuth</a></h2>
 In order to access Protected Resources, the application has to send a request containing arguments including Customer Key and Access Token, and encrypt them with Customer Secret and Token Secret. The process of constructing such a request can be reduced to another one-line call with <a class="el" href="class_q_o_auth_1_1_q_o_auth.html" title="This class provides means for interaction with network services supporting OAuth...">QOAuth</a>:<p>
 <div class="fragment"><pre class="fragment">QByteArray url( <span class="stringliteral">"http://example.com/get_photo"</span>);
 <span class="comment">// create a request parameters map</span>
-<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure to store request parameters.">QOAuth::ParamMap</a> map;
+<a class="code" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f" title="A typedef for the data structure for storing request parameters.">QOAuth::ParamMap</a> map;
 map.insert( <span class="stringliteral">"file"</span>, <span class="stringliteral">"flower_48.jpg"</span> );
 map.insert( <span class="stringliteral">"size"</span>, <span class="stringliteral">"small"</span> );
 
@@ -139,7 +139,7 @@ map.insert( <span class="stringliteral">"size"</span>, <span class="stringlitera
 QByteArray content =
     qoauth-&gt;createParametersString( requestUrl, <a class="code" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993197c85f104ca7dd13458329f66207f6be4" title="Sets the HTTP method to GET.">QOAuth::GET</a>, <a class="code" href="namespace_q_o_auth.html#4cc48c641aa9025d289d7d7e013f766f74bc0d418aa61ebf3efc38282d6d22b0" title="Sets the signature method to HMAC-SHA1.">QOAuth::HMAC_SHA1</a>,
                                     token, tokenSecret, map,
-                                    <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759" title="Inlne query format (parameters appended to the request URL).">QOAuth::ParseForInlineQuery</a> );
+                                    <a class="code" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">QOAuth::ParseForInlineQuery</a> );
 <span class="comment">// append parameters string to the URL</span>
 url.append( content );
 QNetworkRequest request( QUrl( url ) );
@@ -274,7 +274,7 @@ The <em>mode</em> parameter specifies the format of the parameter string.<p>
 <tr>
 <td><b><em>mode</em> </b>  </td><td><b><em>httpMode</em> </b>  </td><td><b>outcome</b>  </td></tr>
 <tr>
-<td rowspan="2"><code><a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759" title="Inlne query format (parameters appended to the request URL).">QOAuth::ParseForInlineQuery</a></code></td><td><code><a class="el" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993197c85f104ca7dd13458329f66207f6be4" title="Sets the HTTP method to GET.">QOAuth::GET</a></code></td><td>prepended with a <em>'?'</em> and ready to be appended to the <em>requestUrl</em>  </td></tr>
+<td rowspan="2"><code><a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">QOAuth::ParseForInlineQuery</a></code></td><td><code><a class="el" href="namespace_q_o_auth.html#a0e0bd4d8c1802873d3b3d2deb0993197c85f104ca7dd13458329f66207f6be4" title="Sets the HTTP method to GET.">QOAuth::GET</a></code></td><td>prepended with a <em>'?'</em> and ready to be appended to the <em>requestUrl</em>  </td></tr>
 <tr>
 <td><em>others</em> </td><td>ready to be posted as a request body </td></tr>
 <tr>
@@ -283,11 +283,11 @@ The <em>mode</em> parameter specifies the format of the parameter string.<p>
 <td><code><a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d12a3ed424be9e87704f138dc28804cf" title="Signature Base String format, meant for internal use.">QOAuth::ParseForSignatureBaseString</a></code> </td><td>irrelevant </td><td><em>meant for internal use</em> </td></tr>
 </table>
 <p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#1b31f302873090be3dbe574d72e6b13d">inlineParameters()</a> </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#ee37a1a4c7528be644d8d035dbc90279">inlineParameters()</a> </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="1b31f302873090be3dbe574d72e6b13d"></a><!-- doxytag: member="QOAuth::QOAuth::inlineParameters" ref="1b31f302873090be3dbe574d72e6b13d" args="(const ParamMap &amp;params)" -->
+<a class="anchor" name="ee37a1a4c7528be644d8d035dbc90279"></a><!-- doxytag: member="QOAuth::QOAuth::inlineParameters" ref="ee37a1a4c7528be644d8d035dbc90279" args="(const ParamMap &amp;params, ParsingMode mode=ParseForRequestContent)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -295,16 +295,25 @@ The <em>mode</em> parameter specifies the format of the parameter string.<p>
           <td class="memname">QByteArray QOAuth::QOAuth::inlineParameters           </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="namespace_q_o_auth.html#4a001535b7fdb06cc9d34cad1af27d2f">ParamMap</a> &amp;&nbsp;</td>
-          <td class="paramname"> <em>params</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
+          <td class="paramname"> <em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4">ParsingMode</a>&nbsp;</td>
+          <td class="paramname"> <em>mode</em> = <code>ParseForRequestContent</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-This method is provided for convenience. It generates an inline query string out of given parameter map and prepends it with '?'. The resulting string can be appended directly to a request URL as a query string.<p>
+This method is provided for convenience. It generates an inline query string out of given parameter map. The resulting string can be either sent in an HTTP POST request as a request content, or appended directly to an HTTP GET request's URL as a query string. When using this method for preparing an HTTP GET query string you can set the <em>mode</em> to ParseForInlineQuery to have the string prepended with a question mark (separating the URL path from the query string). Modes other than <a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d28f70298ea8c4c1bec8c9c27b0aeaf5" title="Inline query format (foo=bar&amp;bar=baz&amp;baz=foo ...), suitable for POST requests...">QOAuth::ParseForRequestContent</a> and <a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def4d5e9093e69391cce3735734f909cf759">QOAuth::ParseForInlineQuery</a> produce an empty byte array.<p>
 Use this method together with <a class="el" href="class_q_o_auth_1_1_q_o_auth.html#c0d944e6f6e6c2122c9dfb700a49af25">createParametersString()</a>, when you request a header parameters string (<a class="el" href="namespace_q_o_auth.html#442456118c9a45ac446554f17620def46c2747775846e2d5e7c96f7db6314d28" title="HTTP request header format (parameters to be put inside a request header).">QOAuth::ParseForHeaderArguments</a>) together with HTTP GET method. In such case, apart from header arguments, you must provide a query string containing custom request parameters (i.e. not OAuth-related). Pass the custom parameters map to this method to receive a query string to be appended to the URL.<p>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_q_o_auth_1_1_q_o_auth.html#c0d944e6f6e6c2122c9dfb700a49af25">createParametersString()</a> </dd></dl>
 
@@ -444,7 +453,7 @@ Access functions: <ul>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="qoauth_8h-source.html">qoauth.h</a><li>src/qoauth.cpp</ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 19:08:41 2009 for QOAuth by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 31 20:31:37 2009 for QOAuth by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
