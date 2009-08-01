@@ -23,6 +23,8 @@
 
 #include <QObject>
 
+#include <QtCrypto>
+
 namespace QOAuth {
 
 class QOAuth;
@@ -67,6 +69,7 @@ private Q_SLOTS:
 
 private:
   QOAuth *m;
+  QCA::Initializer initializer;
 };
 
 } // namespace QOAuth

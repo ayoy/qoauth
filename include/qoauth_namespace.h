@@ -22,7 +22,7 @@
   \file qoauth_namespace.h
 
   This file is a part of libqoauth. You should not include it directly in your
-  application. Instead please use <tt>\#include <QtOAuth></tt>.
+  application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
 */
 
 #ifndef QOAUTH_NAMESPACE_H
@@ -100,8 +100,8 @@ namespace QOAuth {
   */
   enum ParsingMode {
     ParseForRequestContent,     //!< Inline query format (<tt>foo=bar&bar=baz&baz=foo ...</tt>), suitable for POST requests
-    ParseForInlineQuery,        /*!< Same as ParseForRequestContent, but prepends the string with a question mark
-                                     - suitable for GET requests (appending parameters to the request URL) */
+    ParseForInlineQuery,        /*!< Same as ParseForRequestContent, but prepends the string with a question mark -
+                                     suitable for GET requests (appending parameters to the request URL) */
     ParseForHeaderArguments,    //!< HTTP request header format (parameters to be put inside a request header)
     ParseForSignatureBaseString //!< <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> format, meant for internal use.
   };
@@ -121,16 +121,19 @@ namespace QOAuth {
     BadRequest = 400,           //!< Represents HTTP status code \c 400 (Bad Request)
     Unauthorized = 401,         //!< Represents HTTP status code \c 401 (Unauthorized)
     Forbidden = 403,            //!< Represents HTTP status code \c 403 (Forbidden)
-    Timeout = 1,                //!< Represents a request timeout error
+    Timeout = 1001,             //!< Represents a request timeout error
     ConsumerKeyEmpty,           //!< Consumer key has not been provided
     ConsumerSecretEmpty,        //!< Consumer secret has not been provided
     UnsupportedSignatureMethod, //!< The signature method is not supported by the library
     UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request. Note that
                                      \ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken()
                                      accept only HTTP GET and POST requests. */
-    ErrorDecode,
-    ErrorPassphrase,
-    ErrorFile,
+
+    RSAPrivateKeyEmpty = 1101,  //!< RSA private key has not been provided
+//    RSAPassphraseError,         //!< RSA passphrase is incorrect (or has not been provided)
+    RSADecodingError,           /*!< There was a problem decoding the RSA private key
+                                     (the key is invalid or the provided passphrase is incorrect)*/
+    RSAKeyFileError,            //!< The provided key file either doesn't exist or is unreadable.
     OtherError                  //!< A network-related error not specified above
   };
 

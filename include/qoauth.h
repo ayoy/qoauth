@@ -22,7 +22,7 @@
   \file qoauth.h
 
   This file is a part of libqoauth. You should not include it directly in your
-  application. Instead please use <tt>\#include <QtOAuth></tt>.
+  application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
 */
 
 #ifndef QOAUTH_H
@@ -30,6 +30,8 @@
 
 #include <QObject>
 #include <QMultiMap>
+
+#include <QtCrypto>
 
 #include "qoauth_global.h"
 #include "qoauth_namespace.h"
@@ -63,8 +65,10 @@ public:
 
   int error() const;
 
-  bool setRSAPrivateKey( const QString &key );
-  bool setRSAPrivateKeyFromFile( const QString &filename );
+  bool setRSAPrivateKey( const QString &key,
+                         const QCA::SecureArray &passphrase = QCA::SecureArray() );
+  bool setRSAPrivateKeyFromFile( const QString &filename,
+                                 const QCA::SecureArray &passphrase = QCA::SecureArray() );
 
 
   ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,

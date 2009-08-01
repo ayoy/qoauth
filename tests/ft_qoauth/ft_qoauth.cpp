@@ -215,7 +215,71 @@ void QOAuth::Ft_QOAuth::accessToken()
   }
 }
 
-void QOAuth::Ft_QOAuth::createParametersString_data()
+
+void QOAuth::Ft_QOAuth::accessTokenRSA_data()
+{
+  QTest::addColumn<uint>("timeout");
+  QTest::addColumn<QByteArray>("key");
+  QTest::addColumn<QByteArray>("secret");
+  QTest::addColumn<QByteArray>("token");
+  QTest::addColumn<QByteArray>("tokenSecret");
+  QTest::addColumn<QString>("rsaKeyFile");
+  QTest::addColumn<QString>("url");
+  QTest::addColumn<int>("httpMethod");
+  QTest::addColumn<int>("signMethod");
+  QTest::addColumn<int>("error");
+  QTest::addColumn<QByteArray>("accessToken");
+  QTest::addColumn<QByteArray>("accessTokenSecret");
+
+  // OAuth test server at http://term.ie/oauth/example
+  QTest::newRow("noError") << (uint) 10000
+                           << QByteArray( "key" )
+                           << QByteArray( "secret" )
+                           << QByteArray( "requestkey" )
+                           << QByteArray( "requestsecret" )
+                           << QString( "rsa-testkey.pem" )
+                           << QString( "http://term.ie/oauth/example/access_token.php" )
+                           << (int) GET
+                           << (int) RSA_SHA1
+                           << (int) NoError
+                           << QByteArray( "accesskey" )
+                           << QByteArray( "accesssecret" );
+
+}
+
+void QOAuth::Ft_QOAuth::accessTokenRSA()
+{
+  QFETCH( uint, timeout );
+  QFETCH( QByteArray, key );
+  QFETCH( QByteArray, secret );
+  QFETCH( QByteArray, token );
+  QFETCH( QByteArray, tokenSecret );
+  QFETCH( QString, rsaKeyFile );
+  QFETCH( QString, url );
+  QFETCH( int, httpMethod );
+  QFETCH( int, signMethod );
+  QFETCH( int, error );
+  QFETCH( QByteArray, accessToken );
+  QFETCH( QByteArray, accessTokenSecret );
+
+  m->setRequestTimeout( timeout );
+  m->setConsumerKey( key );
+  m->setConsumerSecret( secret );
+  m->setRSAPrivateKeyFromFile( rsaKeyFile );
+  ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                 (SignatureMethod) signMethod );
+
+  QVERIFY( m->error() == error );
+
+  //check the reply if request finished with no errors
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), accessToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
+  }
+}
+
+
+void QOAuth::Ft_QOAuth::accessResources_data()
 {
   QTest::addColumn<QByteArray>("key");
   QTest::addColumn<QByteArray>("secret");
@@ -251,7 +315,7 @@ void QOAuth::Ft_QOAuth::createParametersString_data()
                            << (int) NoError;
 }
 
-void QOAuth::Ft_QOAuth::createParametersString()
+void QOAuth::Ft_QOAuth::accessResources()
 {
   QFETCH( QByteArray, key );
   QFETCH( QByteArray, secret );
@@ -303,5 +367,99 @@ void QOAuth::Ft_QOAuth::createParametersString()
 
   QVERIFY( m->error() == error );
 }
+
+void QOAuth::Ft_QOAuth::accessResourcesRSA_data()
+{
+  QTest::addColumn<QByteArray>("key");
+  QTest::addColumn<QByteArray>("secret");
+  QTest::addColumn<QByteArray>("token");
+  QTest::addColumn<QByteArray>("tokenSecret");
+  QTest::addColumn<QString>("rsaKeyFile");
+  QTest::addColumn<QString>("url");
+  QTest::addColumn<int>("httpMethod");
+  QTest::addColumn<int>("signMethod");
+  QTest::addColumn<QByteArray>("param1");
+  QTest::addColumn<QByteArray>("value1");
+  QTest::addColumn<QByteArray>("param2");
+  QTest::addColumn<QByteArray>("value2");
+  QTest::addColumn<QByteArray>("param3");
+  QTest::addColumn<QByteArray>("value3");
+  QTest::addColumn<int>("parsingMode");
+  QTest::addColumn<int>("error");
+
+  // OAuth test server at http://term.ie/oauth/example
+  QTest::newRow("noError") << QByteArray( "key" )
+                           << QByteArray( "secret" )
+                           << QByteArray( "accesskey" )
+                           << QByteArray( "accesssecret" )
+                           << QString( "rsa-testkey.pem" )
+                           << QString( "http://term.ie/oauth/example/echo_api.php" )
+                           << (int) GET
+                           << (int) RSA_SHA1
+                           << QByteArray( "first" )
+                           << QByteArray( "first" )
+                           << QByteArray( "second" )
+                           << QByteArray( "second" )
+                           << QByteArray( "third" )
+                           << QByteArray( "third" )
+                           << (int) ParseForHeaderArguments
+                           << (int) NoError;
+}
+
+void QOAuth::Ft_QOAuth::accessResourcesRSA()
+{
+  QFETCH( QByteArray, key );
+  QFETCH( QByteArray, secret );
+  QFETCH( QByteArray, token );
+  QFETCH( QByteArray, tokenSecret );
+  QFETCH( QString, rsaKeyFile );
+  QFETCH( QString, url );
+  QFETCH( int, httpMethod );
+  QFETCH( int, signMethod );
+  QFETCH( QByteArray, param1 );
+  QFETCH( QByteArray, value1 );
+  QFETCH( QByteArray, param2 );
+  QFETCH( QByteArray, value2 );
+  QFETCH( QByteArray, param3 );
+  QFETCH( QByteArray, value3 );
+  QFETCH( int, parsingMode );
+  QFETCH( int, error );
+
+  m->setConsumerKey( key );
+  m->setConsumerSecret( secret );
+  m->setRSAPrivateKeyFromFile( rsaKeyFile );
+
+  ParamMap map;
+  map.insert( param1, value1 );
+  map.insert( param2, value2 );
+  map.insert( param3, value3 );
+
+  QByteArray parameters = m->createParametersString( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                                    (SignatureMethod) signMethod, map, (ParsingMode) parsingMode );
+
+  url.append( m->inlineParameters( map, ParseForInlineQuery ) );
+
+  QNetworkAccessManager manager;
+  QEventLoop loop;
+
+  connect( &manager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()) );
+  QTimer::singleShot( 10000, &loop, SLOT(quit()) );
+
+  QNetworkRequest rq;
+  rq.setUrl( QUrl( url ) );
+  rq.setRawHeader( "Authorization", parameters );
+
+  QNetworkReply *reply = manager.get( rq );
+  loop.exec();
+
+  ParamMap replyMap = m->d_ptr->replyToMap( reply->readAll() );
+
+  QCOMPARE( replyMap.value( param1 ), value1.toPercentEncoding() );
+  QCOMPARE( replyMap.value( param2 ), value2.toPercentEncoding() );
+  QCOMPARE( replyMap.value( param3 ), value3.toPercentEncoding() );
+
+  QVERIFY( m->error() == error );
+}
+
 
 QTEST_MAIN(QOAuth::Ft_QOAuth)

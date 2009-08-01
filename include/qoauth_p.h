@@ -18,13 +18,18 @@
  ***************************************************************************/
 
 
+/*!
+  \file qoauth_p.h
+
+  This file is a part of libqoauth and is considered strictly internal. You should not
+  include it in your application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
+*/
+
 #ifndef QOAUTH_P_H
 #define QOAUTH_P_H
 
 #include "qoauth.h"
 #include <QObject>
-
-#include <QtCrypto>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -78,13 +83,17 @@ public:
   ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
                                 const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 
-  void setPrivateKey( const QString &source, KeySource from );
+  // RSA-SHA1 stuff
+  void setPrivateKey( const QString &source, const QCA::SecureArray &passphrase, KeySource from );
   void readKeyFromLoader( QCA::KeyLoader *keyLoader );
 
   bool privateKeySet;
 
   QCA::Initializer init;
   QCA::PrivateKey privateKey;
+  QCA::SecureArray passphrase;
+  QCA::EventHandler eventHandler;
+  // end of RSA-SHA1 stuff
 
   QByteArray consumerKey;
   QByteArray consumerSecret;
@@ -100,6 +109,7 @@ public:
 
 public Q_SLOTS:
   void parseReply( QNetworkReply *reply );
+  void setPassphrase( int id, const QCA::Event &event );
 
 protected:
   QOAuth *q_ptr;

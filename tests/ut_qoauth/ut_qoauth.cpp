@@ -468,9 +468,10 @@ void QOAuth::Ut_QOAuth::inlineParameters()
 void QOAuth::Ut_QOAuth::setRSAPrivateKey_data()
 {
   QTest::addColumn<QString>("key");
+  QTest::addColumn<QByteArray>("passphrase");
   QTest::addColumn<int>("error");
 
-  QTest::newRow("correct")   <<
+  QTest::newRow("clean")   <<
 "-----BEGIN PRIVATE KEY-----\n"
 "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALRiMLAh9iimur8V\n"
 "A7qVvdqxevEuUkW4K+2KdMXmnQbG9Aa7k7eBjK1S+0LYmVjPKlJGNXHDGuy5Fw/d\n"
@@ -486,39 +487,81 @@ void QOAuth::Ut_QOAuth::setRSAPrivateKey_data()
 "3jPgDUno6WbJn5cqm8MqWhW1xGkImgRk+fkDBquiq4gPiT898jusgQJAd5Zrr6Q8\n"
 "AO/0isr/3aa6O6NLQxISLKcPDk2NOccAfS/xOtfOz4sJYM3+Bs4Io9+dZGSDCA54\n"
 "Lw03eHTNQghS0A==\n"
-"-----END PRIVATE KEY-----" << (int) NoError;
-  QTest::newRow("empty key") << ""  << (int) ErrorDecode;
+"-----END PRIVATE KEY-----" << QByteArray() << (int) NoError;
+
+    QTest::newRow("protected")   <<
+"-----BEGIN RSA PRIVATE KEY-----\n"
+"Proc-Type: 4,ENCRYPTED\n"
+"DEK-Info: DES-EDE3-CBC,7DF93A44614B772F\n"
+"\n"
+"BZZ86A/F4X3Io3IZ8SRIVQnE6WA8I8+c4ivy4Hnqb7G1yHGOYdGS2YadpCyp5r1S\n"
+"/M6tTDND/+ROxVK4eEqvo6kJJ5DzmGM8hOUP7U/YirSCapHDBpcuvFCbWhZDooK4\n"
+"FnNCbxPYe/+06bnLtsp4o/5gqYtdtfJj9mFjHotTLy5oyc4rH89YbXxPIrVpkl+6\n"
+"U7CD5q0AueuZo1CYb+FsG+SuUaXxcCnLsbzbschnsGFmM7J9Xc4N7jbUeJevd223\n"
+"+2BJvghoi+7fxONbZy/uMhoiyXj68vuO6LHfE8njXNigL0hJD61Zn++DoQiAkUsf\n"
+"MXD9xAcGP3xsQXaknSZVF3581qM1liubrde62f2jBIT+AhT3mgyzBOVlG8lGXOBm\n"
+"m+N53D9EjkXuKUhZzL54YJJqxIyqwGWCZI96YH7AxyXNPEvFLSw6aPSrky0MBSds\n"
+"XXO4KAKfIp5ey6CwABO4PHbpC2eoTlmpGAJpdAxv8NtEv6MKip/uSdr4PmKG6u79\n"
+"E/T/MygeJzgSHotgFlH8PliEqHrriHRrUomDSDKlsVeMG5425XWW2g8cuvYTQyZ8\n"
+"7ss59uMFvcmlDmRqJh2ATzOqeKoEFbPdrWdhdI/w/ZEWH6BD9yDTAjP4IX6IyTl5\n"
+"Jaca9ZkBt/sT6zbroltlNXWOZOYq62eZNpebpg65RwQ6JNg54L38PWqQYtmpWSB1\n"
+"qNghu7IkgHkXUei8V1sh30KHl414xyA/8zriZZyfsF4V3uIi6p+3x6m6ECAZ5Z5O\n"
+"DpP+7R1b+5G3CiLXJCmMOPOxj0OtPdmlnpgN1/hKnXa3alC0llWZX+UPidAmVPHO\n"
+"v84tL03fDdR6cCtf1gQrb6VAgspwQV/6VeqBXeXC4VacBtqirKBQnoq0pfxOnjAr\n"
+"rUdMXFEjDslmux9qKf3W37bUHkLfgwMyGiUBbJbQxiCg009NZ/AND/MRcCQsU6WI\n"
+"WTCVaQ3aRT2BifRwGw1GDI0hm/T6ar4lHcGzDAbhEaR9fCSOMxfYZP+P4MqqymEF\n"
+"svhI3+93zNhVtWKa1mnhfkTHm2/H6hONSxPlJtPPjxAYghrUZWJ5liDIptANnyvX\n"
+"Cv/2RTIs22lihEeHVX8EKv+E90P14XbWv6pPagbFtZBfUD6wujKnOGT92UdDWEw6\n"
+"3FHRfN7V6Yizq6pvl6B1wZbmor7npe1Q5jIVhyUGW7n4W0RMUjdFpQt5d4EWnBw6\n"
+"GIWn1wAB3OZ6q+pZQd85KmakqeuyBrtqY6GwPb+lfuGS7A6G5J/EJ/c6sQISVI5w\n"
+"XsDvqc4nGvS7rj9IFD6s+uFlb+G23PMVILxWEO+on5oV5PCy8CQIcvHYddQjYvYD\n"
+"dFen9Ey1YworxZfaY8UjYECrFj3Z4dJaeNo5sUZUELoTZMNoLNkWjWudbt29J90l\n"
+"sHFQWp7M99mms1ebVjVjeCo8HM1vAriScZCwqGH6n9e5Uplc4gSCA+m9Y17Z/1lY\n"
+"c3mv8qafdh0gCUyjdQX3YIYHG60smgpwl+HeyPO3Bg3p8KYpNfrBh4PC1C/jsP6s\n"
+"K4iLPS0/0CBmXhYQF1v2zqMdjpdRyIoceb8wn4ExD19Ei2Z1uFn/fw==\n"
+"-----END RSA PRIVATE KEY-----" << QByteArray( "testpassphrase" ) << (int) NoError;
+
+  QTest::newRow("empty key") << ""  << QByteArray() << (int) RSADecodingError;
 
 }
 
 void QOAuth::Ut_QOAuth::setRSAPrivateKey()
 {
   QFETCH( QString, key );
+  QFETCH( QByteArray, passphrase );
   QFETCH( int, error );
 
-  m->setRSAPrivateKey( key );
+  QCA::SecureArray sa( passphrase );
+
+  m->setRSAPrivateKey( key, sa );
   QCOMPARE( m->error(), error );
 }
 
 void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile_data()
 {
   QTest::addColumn<QString>("file");
+  QTest::addColumn<QByteArray>("passphrase");
   QTest::addColumn<int>("error");
 
-  QTest::newRow("correct")           << "rsa-testkey.pem" << (int) NoError;
-  QTest::newRow("empty file")        << "empty.file"      << (int) ErrorDecode;
-  QTest::newRow("non-existent file") << "nosuch.file"     << (int) ErrorFile;
+  QTest::newRow("correct")      << "rsa-clean.pem" << QByteArray()        << (int) NoError;
+  QTest::newRow("also correct") << "test.pem"      << QByteArray()        << (int) NoError;
+  QTest::newRow("protected")    << "rsa-pass.pem"  << QByteArray("testpassphrase") << (int) NoError;
+  QTest::newRow("wrong pass")   << "rsa-pass.pem"  << QByteArray() << (int) RSADecodingError;
+  QTest::newRow("empty file")   << "empty.file"    << QByteArray()        << (int) RSADecodingError;
+  QTest::newRow("no such file") << "nosuch.file"   << QByteArray()        << (int) RSAKeyFileError;
 
 }
 
 void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile()
 {
   QFETCH( QString, file );
+  QFETCH( QByteArray, passphrase );
   QFETCH( int, error );
 
-  m->setRSAPrivateKeyFromFile( file );
+  QCA::SecureArray sa( passphrase );
+
+  m->setRSAPrivateKeyFromFile( file, sa );
   QCOMPARE( m->error(), error );
 }
-
 
 QTEST_MAIN(QOAuth::Ut_QOAuth)

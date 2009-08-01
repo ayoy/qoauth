@@ -45,8 +45,14 @@ private Q_SLOTS:
   void accessToken_data();
   void accessToken();
 
-  void createParametersString_data();
-  void createParametersString();
+  void accessTokenRSA_data();
+  void accessTokenRSA();
+
+  void accessResources_data();
+  void accessResources();
+
+  void accessResourcesRSA_data();
+  void accessResourcesRSA();
 
 private:
   QOAuth *m;

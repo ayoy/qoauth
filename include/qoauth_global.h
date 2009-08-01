@@ -21,8 +21,8 @@
 /*!
   \file qoauth_global.h
 
-  This file is a part of libqoauth and is strictly internal. You should not
-  include it in your application. Instead please use <tt>\#include <QtOAuth></tt>.
+  This file is a part of libqoauth and is considered strictly internal. You should not
+  include it in your application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
 */
 
 #ifndef QOAUTH_GLOBAL_H

@@ -161,8 +161,9 @@
 
   \section sec_capabilities Capabilities
 
-  Out of 3 signature methods supported by OAuth protocol, QOAuth library supports only
-  HMAC-SHA1 at the moment. This is subject to change in future releases.
+  Out of 3 signature methods supported by OAuth protocol, QOAuth library supports
+  HMAC-SHA1 and RSA-SHA1 at the moment. The support for PLAINTEXT signatures is
+  subject to be included in future releases.
 */
 
 
@@ -182,9 +183,7 @@ QByteArray QOAuth::tokenSecretParameterName()
 }
 
 
-/*!
-  \brief The supported OAuth scheme version.
-*/
+//! \brief The supported OAuth scheme version.
 const QByteArray QOAuth::QOAuthPrivate::OAuthVersion = "1.0";
 
 //! \brief The <em>token</em> request parameter string
@@ -216,7 +215,11 @@ QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     error( NoError )
 {  
   connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
-  connect( manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(parseReply(QNetworkReply*)) );
+  connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(parseReply(QNetworkReply*)) );
+
+  connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(setPassphrase(int,QCA::Event)) );
+  eventHandler.start();
+
 }
 
 QByteArray QOAuth::QOAuthPrivate::httpMethodToString( HttpMethod method )
@@ -265,7 +268,7 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::replyToMap( const QByteArray &data )
   int separatorIndex;
 
   // iterate through name=value pairs
-  foreach ( replyParam, replyParams ) {
+  Q_FOREACH ( replyParam, replyParams ) {
     // find occurrence of '='
     separatorIndex = replyParam.indexOf( '=' );
     // key is on the left
@@ -330,13 +333,13 @@ QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, Pa
   QByteArray parameter;
   QByteArray parametersString;
 
-  foreach( parameter, parameters.uniqueKeys() ) {
+  Q_FOREACH( parameter, parameters.uniqueKeys() ) {
     QList<QByteArray> values = parameters.values( parameter );
     if ( values.size() > 1 ) {
       qSort( values.begin(), values.end() );
     }
     QByteArray value;
-    foreach ( value, values ) {
+    Q_FOREACH ( value, values ) {
       parametersString.append( parameter );
       parametersString.append( middleString );
       parametersString.append( value );
@@ -380,7 +383,7 @@ QOAuth::QOAuth::~QOAuth()
   \property QOAuth::QOAuth::consumerKey
   \brief This property holds the consumer key
 
-  The consumer key is used by the application to identify itself to the Service Provider
+  The consumer key is used by the application to identify itself to the Service Provider.
 
   Access functions:
   \li <b>QByteArray consumerKey() const</b>
@@ -405,7 +408,7 @@ void QOAuth::QOAuth::setConsumerKey( const QByteArray &consumerKey )
   \property QOAuth::QOAuth::consumerSecret
   \brief This property holds the consumer secret
 
-  The consumerSecret is used by the application for signing outgoing requests
+  The consumerSecret is used by the application for signing outgoing requests.
 
   Access functions:
   \li <b>QByteArray consumerSecret() const</b>
@@ -476,32 +479,69 @@ int QOAuth::QOAuth::error() const
   return d->error;
 }
 
-bool QOAuth::QOAuth::setRSAPrivateKey( const QString &key )
+
+/*!
+  This method is useful when using OAuth with RSA-SHA1 signing algorithm. It reads the RSA
+  private key from the string given as \a key, and stores it internally. If the key is
+  secured by a passphrase, it should be passed as the second argument.
+
+  The provided string is decoded into a private RSA key, optionally using the \a passphrase.
+  If \a key contains a valid RSA private key, this method returns true. If any problems were
+  encountered during decoding (either the key or the passphrase are invalid), false is
+  returned and the error code is set to QOAuth::a64l(RSADecodingError.
+
+  \sa setRSAPrivateKeyFromFile()
+*/
+
+bool QOAuth::QOAuth::setRSAPrivateKey( const QString &key, const QCA::SecureArray &passphrase )
 {
   Q_D(QOAuth);
 
-  d->setPrivateKey( key, QOAuthPrivate::KeyFromString );
+  d->setPrivateKey( key, passphrase, QOAuthPrivate::KeyFromString );
 
   return ( d->error == NoError );
 }
 
-bool QOAuth::QOAuth::setRSAPrivateKeyFromFile( const QString &filename )
+/*!
+  This method is useful when using OAuth with RSA-SHA1 signing algorithm. It reads the RSA
+  private key from the given \a file, and stores it internally. If the key is secured by
+  a passphrase, it should be passed as the second argument.
+
+  The provided file is read and decoded into a private RSA key, optionally using the \a passphrase.
+  If it contains a valid RSA private key, this method returns true. If any problems were
+  encountered during decoding, false is returned and the appropriate error code is set:
+  \li <tt>QOAuth::RSAKeyFileError</tt> - when the key file doesn't exist or is unreadable
+  \li <tt>QOAuth::RSADecodingError</tt> - if problems occurred during encoding (either the key
+                                          and/or password are invalid).
+
+  \sa setRSAPrivateKey()
+*/
+
+bool QOAuth::QOAuth::setRSAPrivateKeyFromFile( const QString &filename, const QCA::SecureArray &passphrase )
 {
   Q_D(QOAuth);
 
   if ( ! QFileInfo( filename ).exists() ) {
-    d->error = ErrorFile;
-    qWarning() << __FUNCTION__ << " - the given file does not exist...";
+    d->error = RSAKeyFileError;
+    qWarning() << __FUNCTION__ << "- the given file does not exist...";
   } else {
-    d->setPrivateKey( filename, QOAuthPrivate::KeyFromFile );
+    d->setPrivateKey( filename, passphrase, QOAuthPrivate::KeyFromFile );
   }
 
   return ( d->error == NoError );
 }
 
-void QOAuth::QOAuthPrivate::setPrivateKey( const QString &source, KeySource from )
+void QOAuth::QOAuthPrivate::setPrivateKey( const QString &source,
+                                           const QCA::SecureArray &passphrase, KeySource from )
 {
+
+  if( !QCA::isSupported( "pkey" ) ||
+      !QCA::PKey::supportedIOTypes().contains( QCA::PKey::RSA ) ) {
+    qFatal( "RSA is not supported!" );
+  }
+
   privateKeySet = false;
+  this->passphrase = passphrase;
 
   QCA::KeyLoader keyLoader;
   QEventLoop localLoop;
@@ -529,10 +569,30 @@ void QOAuth::QOAuthPrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
     error = NoError;
     privateKey = keyLoader->privateKey();
     privateKeySet = true;
-  } else if ( result == QCA::ErrorFile ) {
-    error = ErrorFile;
   } else if ( result == QCA::ErrorDecode ) {
-    error = ErrorDecode;
+    error = RSADecodingError;
+// this one seems to never be set ....
+//  } else if ( result == QCA::ErrorPassphrase ) {
+//    error = RSAPassphraseError;
+  } else if ( result == QCA::ErrorFile ) {
+    error = RSAKeyFileError;
+  }
+}
+
+void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
+{
+  if ( event.isNull() ) {
+    return;
+  }
+
+  // we're looking only for the passphrase for the RSA key
+  if ( event.type() == QCA::Event::Password &&
+       event.passwordStyle() == QCA::Event::StylePassphrase ) {
+    // set the passphrase to the one provided with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()
+    qDebug() << passphrase.toByteArray();
+    eventHandler.submitPassword( id, passphrase );
+  } else {
+    eventHandler.reject( id );
   }
 }
 
@@ -634,7 +694,7 @@ QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMet
   This method generates a parameters string required to access Protected Resources using
   OAuth authorization. According to <a href=http://oauth.net/core/1.0/#anchor13>OAuth 1.0
   Core specification</a>, every outgoing request for accessing Protected Resources must
-  contain information like consumer key and Access Token, and has to be signed using one
+  contain information like the Consumer Key and Access Token, and has to be signed using one
   of the supported signature methods.
 
   At the moment only HMAC-SHA1 signature method is supported by the library. The HMAC-SHA1
@@ -653,11 +713,11 @@ QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMet
   \returns The parsed parameters string, that depending on \a mode and \a httpMethod is:
 
   <table>
-    <tr><td>\b \a mode </td>                                   <td>\b \a httpMode </td>     <td>\b outcome </td></tr>
-    <tr><td rowspan=2><tt>QOAuth::ParseForInlineQuery</tt></td><td><tt>QOAuth::GET</tt></td><td>prepended with a <em>'?'</em> and ready to be appended to the \a requestUrl</td></tr>
-    <tr>                                                       <td><em>others</em></td>     <td>ready to be posted as a request body</td></tr>
-    <tr><td><tt>QOAuth::ParseForHeaderArguments</tt></td>      <td>irrelevant</td>          <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
-    <tr><td><tt>QOAuth::ParseForSignatureBaseString</tt></td>  <td>irrelevant</td>          <td><em>meant for internal use</em></td></tr>
+    <tr><td>\b \a mode </td>                                   <td>\b outcome </td></tr>
+    <tr><td><tt>QOAuth::ParseForRequestContent</tt></td>       <td>ready to be posted as a request body</td></tr>
+    <tr><td><tt>QOAuth::ParseForInlineQuery</tt></td>          <td>prepended with a <em>'?'</em> and ready to be appended to the \a requestUrl</td></tr>
+    <tr><td><tt>QOAuth::ParseForHeaderArguments</tt></td>      <td>ready to be set as an argument for the \c Authorization HTTP header</td></tr>
+    <tr><td><tt>QOAuth::ParseForSignatureBaseString</tt></td>  <td><em>meant for internal use</em></td></tr>
   </table>
 
   \sa inlineParameters()
@@ -671,7 +731,7 @@ QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, Ht
 
   d->error = NoError;
 
-  // copy parameters to a writable object
+  // copy parameters to a writeable object
   ParamMap parameters = params;
   // calculate the signature
   QByteArray signature = d->createSignature( requestUrl, httpMethod, signatureMethod,
@@ -716,10 +776,8 @@ QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params, ParsingMode
 
   switch (mode) {
   case ParseForInlineQuery:
-    query = d->paramsToString( params, ParseForInlineQuery );
-    break;
   case ParseForRequestContent:
-    query = d->paramsToString( params, ParseForRequestContent );
+    query = d->paramsToString( params, mode );
     break;
   case ParseForHeaderArguments:
   case ParseForSignatureBaseString:
@@ -803,12 +861,14 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
                                                    const QByteArray &tokenSecret, ParamMap *params )
 {
   if ( consumerKey.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it with QOAuth::QOAuth::setConsumerKey()";
+    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it"
+                                  "with QOAuth::QOAuth::setConsumerKey()";
     error = ConsumerKeyEmpty;
     return QByteArray();
   }
   if ( consumerSecret.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it with QOAuth::QOAuth::setConsumerSecret()";
+    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
+                                  "with QOAuth::QOAuth::setConsumerSecret()";
     error = ConsumerSecretEmpty;
     return QByteArray();
   }
@@ -818,6 +878,14 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
        signatureMethod != RSA_SHA1 ) {
     qWarning() << __FUNCTION__ << "- Sorry, we currently support only HMAC-SHA1 and RSA-SHA1 methods...";
     error = UnsupportedSignatureMethod;
+    return QByteArray();
+  }
+
+  if ( signatureMethod == RSA_SHA1 &&
+       privateKey.isNull() ) {
+    qWarning() << __FUNCTION__ << "- RSA private key is empty, make sure that you provide it"
+                                  "with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()";
+    error = RSAPrivateKeyEmpty;
     return QByteArray();
   }
 
