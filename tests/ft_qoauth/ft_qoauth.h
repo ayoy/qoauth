@@ -32,12 +32,15 @@ class Ft_QOAuth : public QObject
   Q_OBJECT
 
 
-private slots:
+private Q_SLOTS:
   void init();
   void cleanup();
 
   void requestToken_data();
   void requestToken();
+
+  void requestTokenRSA_data();
+  void requestTokenRSA();
 
   void accessToken_data();
   void accessToken();

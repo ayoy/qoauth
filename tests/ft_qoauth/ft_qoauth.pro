@@ -6,6 +6,7 @@ include(../../oauth.prf)
 
 QT += testlib network
 QT -= gui
+CONFIG += crypto
 
 macx {
     CONFIG -= app_bundle

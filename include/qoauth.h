@@ -34,6 +34,7 @@
 #include "qoauth_global.h"
 #include "qoauth_namespace.h"
 
+
 namespace QOAuth {
 
 class QOAuthPrivate;
@@ -62,6 +63,10 @@ public:
 
   int error() const;
 
+  bool setRSAPrivateKey( const QString &key );
+  bool setRSAPrivateKeyFromFile( const QString &filename );
+
+
   ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
                          SignatureMethod signatureMethod = HMAC_SHA1, const ParamMap &params = ParamMap() );
 
@@ -74,6 +79,8 @@ public:
                                      SignatureMethod signatureMethod, const ParamMap &params, ParsingMode mode );
 
   QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
+
+
 
 protected:
   QOAuthPrivate * const d_ptr;

@@ -465,4 +465,60 @@ void QOAuth::Ut_QOAuth::inlineParameters()
   QCOMPARE( query, result );
 }
 
+void QOAuth::Ut_QOAuth::setRSAPrivateKey_data()
+{
+  QTest::addColumn<QString>("key");
+  QTest::addColumn<int>("error");
+
+  QTest::newRow("correct")   <<
+"-----BEGIN PRIVATE KEY-----\n"
+"MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALRiMLAh9iimur8V\n"
+"A7qVvdqxevEuUkW4K+2KdMXmnQbG9Aa7k7eBjK1S+0LYmVjPKlJGNXHDGuy5Fw/d\n"
+"7rjVJ0BLB+ubPK8iA/Tw3hLQgXMRRGRXXCn8ikfuQfjUS1uZSatdLB81mydBETlJ\n"
+"hI6GH4twrbDJCR2Bwy/XWXgqgGRzAgMBAAECgYBYWVtleUzavkbrPjy0T5FMou8H\n"
+"X9u2AC2ry8vD/l7cqedtwMPp9k7TubgNFo+NGvKsl2ynyprOZR1xjQ7WgrgVB+mm\n"
+"uScOM/5HVceFuGRDhYTCObE+y1kxRloNYXnx3ei1zbeYLPCHdhxRYW7T0qcynNmw\n"
+"rn05/KO2RLjgQNalsQJBANeA3Q4Nugqy4QBUCEC09SqylT2K9FrrItqL2QKc9v0Z\n"
+"zO2uwllCbg0dwpVuYPYXYvikNHHg+aCWF+VXsb9rpPsCQQDWR9TT4ORdzoj+Nccn\n"
+"qkMsDmzt0EfNaAOwHOmVJ2RVBspPcxt5iN4HI7HNeG6U5YsFBb+/GZbgfBT3kpNG\n"
+"WPTpAkBI+gFhjfJvRw38n3g/+UeAkwMI2TJQS4n8+hid0uus3/zOjDySH3XHCUno\n"
+"cn1xOJAyZODBo47E+67R4jV1/gzbAkEAklJaspRPXP877NssM5nAZMU0/O/NGCZ+\n"
+"3jPgDUno6WbJn5cqm8MqWhW1xGkImgRk+fkDBquiq4gPiT898jusgQJAd5Zrr6Q8\n"
+"AO/0isr/3aa6O6NLQxISLKcPDk2NOccAfS/xOtfOz4sJYM3+Bs4Io9+dZGSDCA54\n"
+"Lw03eHTNQghS0A==\n"
+"-----END PRIVATE KEY-----" << (int) NoError;
+  QTest::newRow("empty key") << ""  << (int) ErrorDecode;
+
+}
+
+void QOAuth::Ut_QOAuth::setRSAPrivateKey()
+{
+  QFETCH( QString, key );
+  QFETCH( int, error );
+
+  m->setRSAPrivateKey( key );
+  QCOMPARE( m->error(), error );
+}
+
+void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile_data()
+{
+  QTest::addColumn<QString>("file");
+  QTest::addColumn<int>("error");
+
+  QTest::newRow("correct")           << "rsa-testkey.pem" << (int) NoError;
+  QTest::newRow("empty file")        << "empty.file"      << (int) ErrorDecode;
+  QTest::newRow("non-existent file") << "nosuch.file"     << (int) ErrorFile;
+
+}
+
+void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile()
+{
+  QFETCH( QString, file );
+  QFETCH( int, error );
+
+  m->setRSAPrivateKeyFromFile( file );
+  QCOMPARE( m->error(), error );
+}
+
+
 QTEST_MAIN(QOAuth::Ut_QOAuth)

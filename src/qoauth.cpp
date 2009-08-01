@@ -31,6 +31,7 @@
 #include <QtDebug>
 #include <QEventLoop>
 #include <QTimer>
+#include <QFileInfo>
 
 /*!
   \mainpage
@@ -206,13 +207,14 @@ const QByteArray QOAuth::QOAuthPrivate::ParamVersion         = "oauth_version";
 
 QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     QObject( parent ),
+    privateKeySet( false ),
     consumerKey( QByteArray() ),
     consumerSecret( QByteArray() ),
     manager( new QNetworkAccessManager( this ) ),
     loop( new QEventLoop( this ) ),
     requestTimeout(0),
     error( NoError )
-{
+{  
   connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
   connect( manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(parseReply(QNetworkReply*)) );
 }
@@ -472,6 +474,66 @@ int QOAuth::QOAuth::error() const
   Q_D(const QOAuth);
 
   return d->error;
+}
+
+bool QOAuth::QOAuth::setRSAPrivateKey( const QString &key )
+{
+  Q_D(QOAuth);
+
+  d->setPrivateKey( key, QOAuthPrivate::KeyFromString );
+
+  return ( d->error == NoError );
+}
+
+bool QOAuth::QOAuth::setRSAPrivateKeyFromFile( const QString &filename )
+{
+  Q_D(QOAuth);
+
+  if ( ! QFileInfo( filename ).exists() ) {
+    d->error = ErrorFile;
+    qWarning() << __FUNCTION__ << " - the given file does not exist...";
+  } else {
+    d->setPrivateKey( filename, QOAuthPrivate::KeyFromFile );
+  }
+
+  return ( d->error == NoError );
+}
+
+void QOAuth::QOAuthPrivate::setPrivateKey( const QString &source, KeySource from )
+{
+  privateKeySet = false;
+
+  QCA::KeyLoader keyLoader;
+  QEventLoop localLoop;
+  connect( &keyLoader, SIGNAL(finished()), &localLoop, SLOT(quit()) );
+
+  switch (from) {
+  case KeyFromString:
+    keyLoader.loadPrivateKeyFromPEM( source );
+    break;
+  case KeyFromFile:
+    keyLoader.loadPrivateKeyFromPEMFile( source );
+    break;
+  }
+
+  QTimer::singleShot( 3000, &localLoop, SLOT(quit()) );
+  localLoop.exec();
+
+  readKeyFromLoader( &keyLoader );
+}
+
+void QOAuth::QOAuthPrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
+{
+  QCA::ConvertResult result = keyLoader->convertResult();
+  if ( result == QCA::ConvertGood ) {
+    error = NoError;
+    privateKey = keyLoader->privateKey();
+    privateKeySet = true;
+  } else if ( result == QCA::ErrorFile ) {
+    error = ErrorFile;
+  } else if ( result == QCA::ErrorDecode ) {
+    error = ErrorDecode;
+  }
 }
 
 /*!
@@ -752,14 +814,13 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   }
 
   // temporarily only HMAC-SHA1 is supported
-  if ( signatureMethod != HMAC_SHA1 ) {
-    qWarning() << __FUNCTION__ << "- Sorry, we currently support only HMAC-SHA1 method...";
+  if ( signatureMethod != HMAC_SHA1 &&
+       signatureMethod != RSA_SHA1 ) {
+    qWarning() << __FUNCTION__ << "- Sorry, we currently support only HMAC-SHA1 and RSA-SHA1 methods...";
     error = UnsupportedSignatureMethod;
     return QByteArray();
   }
 
-
-  QCA::Initializer init;
 
   if( !QCA::isSupported( "hmac(sha1)" ) ) {
     qFatal( "HMAC(SHA1) is not supported!" );
@@ -799,15 +860,25 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   signatureBaseString.append( percentRequestUrl + "&" );
   signatureBaseString.append( percentParametersString );
 
-  // create key for HMAC-SHA1 hashing
-  QByteArray key( consumerSecret + "&" + tokenSecret );
+  QByteArray digest;
 
-  // create HMAC-SHA1 digest in Base64
-  QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
-  QCA::SecureArray array( signatureBaseString );
-  hmac.update( array );
-  QCA::SecureArray resultArray = hmac.final();
-  QByteArray digest = resultArray.toByteArray().toBase64();
+  if ( signatureMethod == HMAC_SHA1 ) {
+    // create key for HMAC-SHA1 hashing
+    QByteArray key( consumerSecret + "&" + tokenSecret );
+
+    // create HMAC-SHA1 digest in Base64
+    QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
+    QCA::SecureArray array( signatureBaseString );
+    hmac.update( array );
+    QCA::SecureArray resultArray = hmac.final();
+    digest = resultArray.toByteArray().toBase64();
+
+  } else if ( signatureMethod == RSA_SHA1 ) {
+    // sign the Signature Base String with the RSA key
+    digest = privateKey.signMessage( QCA::MemoryRegion( signatureBaseString ),
+                                                QCA::EMSA3_SHA1 ).toBase64();
+  }
+
   // percent-encode the digest
   QByteArray signature = digest.toPercentEncoding();
   return signature;

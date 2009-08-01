@@ -31,7 +31,7 @@ class Ut_QOAuth : public QObject
 {
   Q_OBJECT
 
-private slots:
+private Q_SLOTS:
   void init();
   void cleanup();
   void constructor();
@@ -58,6 +58,12 @@ private slots:
 
   void inlineParameters_data();
   void inlineParameters();
+
+  void setRSAPrivateKey_data();
+  void setRSAPrivateKey();
+
+  void setRSAPrivateKeyFromFile_data();
+  void setRSAPrivateKeyFromFile();
 
 private:
   QOAuth *m;

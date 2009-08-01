@@ -102,6 +102,61 @@ void QOAuth::Ft_QOAuth::requestToken()
   }
 }
 
+void QOAuth::Ft_QOAuth::requestTokenRSA_data()
+{
+  QTest::addColumn<uint>("timeout");
+  QTest::addColumn<QByteArray>("key");
+  QTest::addColumn<QByteArray>("secret");
+  QTest::addColumn<QString>("rsaKeyFile");
+  QTest::addColumn<QString>("url");
+  QTest::addColumn<int>("httpMethod");
+  QTest::addColumn<int>("signMethod");
+  QTest::addColumn<int>("error");
+  QTest::addColumn<QByteArray>("requestToken");
+  QTest::addColumn<QByteArray>("requestTokenSecret");
+
+  // OAuth test server at http://term.ie/oauth/example
+  QTest::newRow("noError") << (uint) 10000
+                           << QByteArray( "key" )
+                           << QByteArray( "secret" )
+                           << QString( "rsa-testkey.pem" )
+                           << QString( "http://term.ie/oauth/example/request_token.php" )
+                           << (int) GET
+                           << (int) RSA_SHA1
+                           << (int) NoError
+                           << QByteArray( "requestkey" )
+                           << QByteArray( "requestsecret" );
+}
+
+void QOAuth::Ft_QOAuth::requestTokenRSA()
+{
+  QFETCH( uint, timeout );
+  QFETCH( QByteArray, key );
+  QFETCH( QByteArray, secret );
+  QFETCH( QString, rsaKeyFile );
+  QFETCH( QString, url );
+  QFETCH( int, httpMethod );
+  QFETCH( int, signMethod );
+  QFETCH( int, error );
+  QFETCH( QByteArray, requestToken );
+  QFETCH( QByteArray, requestTokenSecret );
+
+  m->setRequestTimeout( timeout );
+  m->setConsumerKey( key );
+  m->setConsumerSecret( secret );
+  m->setRSAPrivateKeyFromFile( rsaKeyFile );
+  ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
+
+  QVERIFY( m->error() == error );
+
+  //check the reply if request finished with no errors
+  if ( m->error() == NoError ) {
+    QCOMPARE( map.value( tokenParameterName() ), requestToken );
+    QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
+  }
+}
+
+
 void QOAuth::Ft_QOAuth::accessToken_data()
 {
   QTest::addColumn<uint>("timeout");

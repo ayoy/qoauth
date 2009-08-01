@@ -24,6 +24,8 @@
 #include "qoauth.h"
 #include <QObject>
 
+#include <QtCrypto>
+
 class QNetworkAccessManager;
 class QNetworkReply;
 class QEventLoop;
@@ -46,6 +48,11 @@ public:
     AccessToken
   };
 
+  enum KeySource {
+    KeyFromString,
+    KeyFromFile
+  };
+
   static const QByteArray OAuthVersion;
   static const QByteArray ParamToken;
   static const QByteArray ParamTokenSecret;
@@ -64,7 +71,6 @@ public:
   ParamMap replyToMap( const QByteArray &data );
   QByteArray paramsToString( const ParamMap &parameters, ParsingMode mode );
 
-
   QByteArray createSignature( const QString &requestUrl, HttpMethod httpMethod,
                               SignatureMethod signatureMethod, const QByteArray &token,
                               const QByteArray &tokenSecret, ParamMap *params );
@@ -72,6 +78,13 @@ public:
   ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
                                 const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 
+  void setPrivateKey( const QString &source, KeySource from );
+  void readKeyFromLoader( QCA::KeyLoader *keyLoader );
+
+  bool privateKeySet;
+
+  QCA::Initializer init;
+  QCA::PrivateKey privateKey;
 
   QByteArray consumerKey;
   QByteArray consumerSecret;
@@ -85,7 +98,7 @@ public:
   int error;
 
 
-public slots:
+public Q_SLOTS:
   void parseReply( QNetworkReply *reply );
 
 protected:

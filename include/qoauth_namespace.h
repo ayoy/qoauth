@@ -128,6 +128,9 @@ namespace QOAuth {
     UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request. Note that
                                      \ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken()
                                      accept only HTTP GET and POST requests. */
+    ErrorDecode,
+    ErrorPassphrase,
+    ErrorFile,
     OtherError                  //!< A network-related error not specified above
   };
 
