@@ -124,7 +124,6 @@ namespace QOAuth {
     Timeout = 1001,             //!< Represents a request timeout error
     ConsumerKeyEmpty,           //!< Consumer key has not been provided
     ConsumerSecretEmpty,        //!< Consumer secret has not been provided
-    UnsupportedSignatureMethod, //!< The signature method is not supported by the library
     UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request. Note that
                                      \ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken()
                                      accept only HTTP GET and POST requests. */

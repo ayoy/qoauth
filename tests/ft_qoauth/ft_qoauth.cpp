@@ -53,15 +53,25 @@ void QOAuth::Ft_QOAuth::requestToken_data()
   QTest::addColumn<QByteArray>("requestTokenSecret");
 
   // OAuth test server at http://term.ie/oauth/example
-  QTest::newRow("noError") << (uint) 10000
-                           << QByteArray( "key" )
-                           << QByteArray( "secret" )
-                           << QString( "http://term.ie/oauth/example/request_token.php" )
-                           << (int) GET
-                           << (int) HMAC_SHA1
-                           << (int) NoError
-                           << QByteArray( "requestkey" )
-                           << QByteArray( "requestsecret" );
+  QTest::newRow("HMAC-SHA1") << (uint) 10000
+                             << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QString( "http://term.ie/oauth/example/request_token.php" )
+                             << (int) GET
+                             << (int) HMAC_SHA1
+                             << (int) NoError
+                             << QByteArray( "requestkey" )
+                             << QByteArray( "requestsecret" );
+
+  QTest::newRow("PLAINTEXT") << (uint) 10000
+                             << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QString( "http://term.ie/oauth/example/request_token.php" )
+                             << (int) GET
+                             << (int) PLAINTEXT
+                             << (int) NoError
+                             << QByteArray( "requestkey" )
+                             << QByteArray( "requestsecret" );
 
 // timeout seems to be untestable for a moment
 //  QTest::newRow("timeout") << (uint) 100
@@ -172,18 +182,29 @@ void QOAuth::Ft_QOAuth::accessToken_data()
   QTest::addColumn<QByteArray>("accessTokenSecret");
 
   // OAuth test server at http://term.ie/oauth/example
-  QTest::newRow("noError") << (uint) 10000
-                           << QByteArray( "key" )
-                           << QByteArray( "secret" )
-                           << QByteArray( "requestkey" )
-                           << QByteArray( "requestsecret" )
-                           << QString( "http://term.ie/oauth/example/access_token.php" )
-                           << (int) GET
-                           << (int) HMAC_SHA1
-                           << (int) NoError
-                           << QByteArray( "accesskey" )
-                           << QByteArray( "accesssecret" );
+  QTest::newRow("HMAC-SHA1") << (uint) 10000
+                             << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QByteArray( "requestkey" )
+                             << QByteArray( "requestsecret" )
+                             << QString( "http://term.ie/oauth/example/access_token.php" )
+                             << (int) GET
+                             << (int) HMAC_SHA1
+                             << (int) NoError
+                             << QByteArray( "accesskey" )
+                             << QByteArray( "accesssecret" );
 
+  QTest::newRow("PLAINTEXT") << (uint) 10000
+                             << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QByteArray( "requestkey" )
+                             << QByteArray( "requestsecret" )
+                             << QString( "http://term.ie/oauth/example/access_token.php" )
+                             << (int) GET
+                             << (int) PLAINTEXT
+                             << (int) NoError
+                             << QByteArray( "accesskey" )
+                             << QByteArray( "accesssecret" );
 }
 
 void QOAuth::Ft_QOAuth::accessToken()
@@ -298,21 +319,37 @@ void QOAuth::Ft_QOAuth::accessResources_data()
   QTest::addColumn<int>("error");
 
   // OAuth test server at http://term.ie/oauth/example
-  QTest::newRow("noError") << QByteArray( "key" )
-                           << QByteArray( "secret" )
-                           << QByteArray( "accesskey" )
-                           << QByteArray( "accesssecret" )
-                           << QString( "http://term.ie/oauth/example/echo_api.php" )
-                           << (int) GET
-                           << (int) HMAC_SHA1
-                           << QByteArray( "first" )
-                           << QByteArray( "first" )
-                           << QByteArray( "second" )
-                           << QByteArray( "second" )
-                           << QByteArray( "third" )
-                           << QByteArray( "third" )
-                           << (int) ParseForHeaderArguments
-                           << (int) NoError;
+  QTest::newRow("HMAC-SHA1") << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QByteArray( "accesskey" )
+                             << QByteArray( "accesssecret" )
+                             << QString( "http://term.ie/oauth/example/echo_api.php" )
+                             << (int) GET
+                             << (int) HMAC_SHA1
+                             << QByteArray( "first" )
+                             << QByteArray( "first" )
+                             << QByteArray( "second" )
+                             << QByteArray( "second" )
+                             << QByteArray( "third" )
+                             << QByteArray( "third" )
+                             << (int) ParseForHeaderArguments
+                             << (int) NoError;
+
+  QTest::newRow("PLAINTEXT") << QByteArray( "key" )
+                             << QByteArray( "secret" )
+                             << QByteArray( "accesskey" )
+                             << QByteArray( "accesssecret" )
+                             << QString( "http://term.ie/oauth/example/echo_api.php" )
+                             << (int) GET
+                             << (int) PLAINTEXT
+                             << QByteArray( "first" )
+                             << QByteArray( "first" )
+                             << QByteArray( "second" )
+                             << QByteArray( "second" )
+                             << QByteArray( "third" )
+                             << QByteArray( "third" )
+                             << (int) ParseForHeaderArguments
+                             << (int) NoError;
 }
 
 void QOAuth::Ft_QOAuth::accessResources()

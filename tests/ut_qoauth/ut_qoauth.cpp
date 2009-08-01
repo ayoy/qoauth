@@ -145,16 +145,6 @@ void QOAuth::Ut_QOAuth::requestToken_data()
                               << QByteArray()
                               << QByteArray();
 
-  QTest::newRow("signMethod") << (uint) 0
-                              << QByteArray( "135432" )
-                              << QByteArray( "654316" )
-                              << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) GET
-                              << 8
-                              << (int) UnsupportedSignatureMethod
-                              << QByteArray()
-                              << QByteArray();
-
 // timeout seems to be untestable for a moment
 //  QTest::newRow("timeout") << (uint) 100
 //                           << QByteArray( "key" )
@@ -244,19 +234,6 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                               << (int) UnsupportedHttpMethod
                               << QByteArray()
                               << QByteArray();
-
-  QTest::newRow("signMethod") << (uint) 0
-                              << QByteArray( "135432" )
-                              << QByteArray( "654316" )
-                              << QByteArray( "token" )
-                              << QByteArray( "tokensecret" )
-                              << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) GET
-                              << 8
-                              << (int) UnsupportedSignatureMethod
-                              << QByteArray()
-                              << QByteArray();
-
 }
 
 void QOAuth::Ut_QOAuth::accessToken()
@@ -341,25 +318,6 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                                 << QByteArray()
                                 << (int) ParseForInlineQuery
                                 << (int) ConsumerSecretEmpty;
-
-  QTest::newRow("signMethod") << (uint) 0
-                              << QByteArray( "135432" )
-                              << QByteArray( "654316" )
-                              << QByteArray( "token" )
-                              << QByteArray( "tokensecret" )
-                              << QString( "http://wtf&(^%)$&#.com" )
-                              << (int) GET
-                              << 8
-                              << QByteArray()
-                              << QByteArray()
-                              << QByteArray()
-                              << QByteArray()
-                              << QByteArray()
-                              << QByteArray()
-                              << (int) ParseForInlineQuery
-                              << (int) UnsupportedSignatureMethod;
-
-
 }
 
 void QOAuth::Ut_QOAuth::createParametersString()

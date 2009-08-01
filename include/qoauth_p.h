@@ -80,6 +80,9 @@ public:
                               SignatureMethod signatureMethod, const QByteArray &token,
                               const QByteArray &tokenSecret, ParamMap *params );
 
+  // for PLAINTEXT only
+  QByteArray createPlaintextSignature( const QByteArray &tokenSecret );
+
   ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
                                 const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 

@@ -161,9 +161,9 @@
 
   \section sec_capabilities Capabilities
 
-  Out of 3 signature methods supported by OAuth protocol, QOAuth library supports
-  HMAC-SHA1 and RSA-SHA1 at the moment. The support for PLAINTEXT signatures is
-  subject to be included in future releases.
+  QOAuth library works with all 3 signature methods supported by the OAuth protocol, namely
+  HMAC-SHA1, RSA-SHA1 and PLAINTEXT. Hovewer, RSA-SHA1 and (especially) PLAINTEXT
+  methods may still need additional testing for various input conditions.
 */
 
 
@@ -589,7 +589,6 @@ void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
   if ( event.type() == QCA::Event::Password &&
        event.passwordStyle() == QCA::Event::StylePassphrase ) {
     // set the passphrase to the one provided with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()
-    qDebug() << passphrase.toByteArray();
     eventHandler.submitPassword( id, passphrase );
   } else {
     eventHandler.reject( id );
@@ -600,7 +599,8 @@ void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
   This method constructs and sends a request for obtaining an unauthorized Request Token
   from the Service Provider. This is the first step of the OAuth authentication flow,
   according to <a href=http://oauth.net/core/1.0/#anchor9>OAuth 1.0 Core specification</a>.
-  At the moment only HMAC-SHA1 signature method is supported. The HMAC-SHA1
+  The PLAINTEXT signature method uses Customer Secret and (if provided) Token Secret to
+  sign a request. For the HMAC-SHA1 and RSA-SHA1 signature methods the
   <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> is created
   using the given \a requestUrl and \a httpMethod. The optional request parameters
   specified by the Service Provider can be passed in the \a params ParamMap.
@@ -645,8 +645,9 @@ QOAuth::ParamMap QOAuth::QOAuth::requestToken( const QString &requestUrl, HttpMe
   previously with a call to \ref requestToken()) for an Access Token, that authorizes the
   application to access Protected Resources. This is the third step of the OAuth
   authentication flow, according to <a href=http://oauth.net/core/1.0/#anchor9>OAuth 1.0
-  Core specification</a>. At the moment only HMAC-SHA1 signature method is supported.
-  The HMAC-SHA1 <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a>
+  Core specification</a>. The PLAINTEXT signature method uses Customer Secret and (if
+  provided) Token Secret to sign a request. For the HMAC-SHA1 and RSA-SHA1
+  signature methods the <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a>
   is created using the given \a requestUrl, \a httpMethod, \a token and \a tokenSecret.
   The optional request parameters specified by the Service Provider can be passed in the
   \a params ParamMap.
@@ -697,7 +698,8 @@ QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMet
   contain information like the Consumer Key and Access Token, and has to be signed using one
   of the supported signature methods.
 
-  At the moment only HMAC-SHA1 signature method is supported by the library. The HMAC-SHA1
+  The PLAINTEXT signature method uses Customer Secret and (if provided) Token Secret to
+  sign a request. For the HMAC-SHA1 and RSA-SHA1 signature methods the
   <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> is created using
   the given \a requestUrl, \a httpMethod, \a token and \a tokenSecret. The optional
   request parameters specified by the Service Provider can be passed in the \a params
@@ -800,9 +802,10 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, 
   error = NoError;
 
   ParamMap parameters = params;
+
   // create signature
   QByteArray signature = createSignature( requestUrl, httpMethod, signatureMethod,
-                                             token, tokenSecret, &parameters );
+                                          token, tokenSecret, &parameters );
 
   // if signature wasn't created, return an empty map
   if ( error != NoError ) {
@@ -860,7 +863,9 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
                                                    SignatureMethod signatureMethod, const QByteArray &token,
                                                    const QByteArray &tokenSecret, ParamMap *params )
 {
-  if ( consumerKey.isEmpty() ) {
+  if ( ( signatureMethod == HMAC_SHA1 ||
+         signatureMethod == RSA_SHA1 ) &&
+       consumerKey.isEmpty() ) {
     qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it"
                                   "with QOAuth::QOAuth::setConsumerKey()";
     error = ConsumerKeyEmpty;
@@ -873,25 +878,12 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
     return QByteArray();
   }
 
-  // temporarily only HMAC-SHA1 is supported
-  if ( signatureMethod != HMAC_SHA1 &&
-       signatureMethod != RSA_SHA1 ) {
-    qWarning() << __FUNCTION__ << "- Sorry, we currently support only HMAC-SHA1 and RSA-SHA1 methods...";
-    error = UnsupportedSignatureMethod;
-    return QByteArray();
-  }
-
   if ( signatureMethod == RSA_SHA1 &&
        privateKey.isNull() ) {
     qWarning() << __FUNCTION__ << "- RSA private key is empty, make sure that you provide it"
                                   "with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()";
     error = RSAPrivateKeyEmpty;
     return QByteArray();
-  }
-
-
-  if( !QCA::isSupported( "hmac(sha1)" ) ) {
-    qFatal( "HMAC(SHA1) is not supported!" );
   }
 
   // create nonce
@@ -922,32 +914,55 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   QByteArray parametersString = paramsToString( *params, ParseForSignatureBaseString );
   QByteArray percentParametersString = parametersString.toPercentEncoding();
 
-  // 4. create signature base string
-  QByteArray signatureBaseString;
-  signatureBaseString.append( httpMethodString + "&" );
-  signatureBaseString.append( percentRequestUrl + "&" );
-  signatureBaseString.append( percentParametersString );
-
   QByteArray digest;
 
-  if ( signatureMethod == HMAC_SHA1 ) {
-    // create key for HMAC-SHA1 hashing
-    QByteArray key( consumerSecret + "&" + tokenSecret );
+  // PLAINTEXT doesn't use the Signature Base String
+  if ( signatureMethod == PLAINTEXT ) {
+    digest = createPlaintextSignature( tokenSecret );
+  } else {
+    // 4. create signature base string
+    QByteArray signatureBaseString;
+    signatureBaseString.append( httpMethodString + "&" );
+    signatureBaseString.append( percentRequestUrl + "&" );
+    signatureBaseString.append( percentParametersString );
 
-    // create HMAC-SHA1 digest in Base64
-    QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
-    QCA::SecureArray array( signatureBaseString );
-    hmac.update( array );
-    QCA::SecureArray resultArray = hmac.final();
-    digest = resultArray.toByteArray().toBase64();
 
-  } else if ( signatureMethod == RSA_SHA1 ) {
-    // sign the Signature Base String with the RSA key
-    digest = privateKey.signMessage( QCA::MemoryRegion( signatureBaseString ),
-                                                QCA::EMSA3_SHA1 ).toBase64();
+    if ( signatureMethod == HMAC_SHA1 ) {
+      if( !QCA::isSupported( "hmac(sha1)" ) ) {
+        qFatal( "HMAC(SHA1) is not supported!" );
+      }
+      // create key for HMAC-SHA1 hashing
+      QByteArray key( consumerSecret + "&" + tokenSecret );
+
+      // create HMAC-SHA1 digest in Base64
+      QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
+      QCA::SecureArray array( signatureBaseString );
+      hmac.update( array );
+      QCA::SecureArray resultArray = hmac.final();
+      digest = resultArray.toByteArray().toBase64();
+
+    } else if ( signatureMethod == RSA_SHA1 ) {
+      // sign the Signature Base String with the RSA key
+      digest = privateKey.signMessage( QCA::MemoryRegion( signatureBaseString ),
+                                       QCA::EMSA3_SHA1 ).toBase64();
+    }
   }
 
   // percent-encode the digest
   QByteArray signature = digest.toPercentEncoding();
   return signature;
+}
+
+QByteArray QOAuth::QOAuthPrivate::createPlaintextSignature( const QByteArray &tokenSecret )
+{
+  if ( consumerSecret.isEmpty() ) {
+    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
+                                  "with QOAuth::QOAuth::setConsumerSecret()";
+    error = ConsumerSecretEmpty;
+    return QByteArray();
+  }
+
+  // get percent encoded consumer secret and token secret, join and percent encode once more
+  QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
+  return digest.toPercentEncoding();
 }
