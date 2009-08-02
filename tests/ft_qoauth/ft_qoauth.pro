@@ -10,8 +10,8 @@ CONFIG += crypto
 
 macx {
     CONFIG -= app_bundle
-    QMAKE_POST_LINK += install_name_tool -change qoauth.framework/Versions/0/qoauth \
-                       ../../lib/qoauth.framework/Versions/0/qoauth $${TARGET}
+    QMAKE_POST_LINK += install_name_tool -change qoauth.framework/Versions/1/qoauth \
+                       ../../lib/qoauth.framework/Versions/1/qoauth $${TARGET}
 }
 else:unix {
   # the second argument (after colon) is for
