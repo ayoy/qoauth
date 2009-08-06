@@ -213,7 +213,7 @@ QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
     loop( new QEventLoop( this ) ),
     requestTimeout(0),
     error( NoError )
-{  
+{
   connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
   connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(parseReply(QNetworkReply*)) );
 
@@ -464,7 +464,7 @@ void QOAuth::QOAuth::setRequestTimeout( uint msec )
   \brief This property holds the error code
 
   The error code is initially set to \ref NoError, and its value is updated with every
-  request, i.e. \ref requestToken(), \ref accessToken() or \ref createParametersString().
+  method that can cause errors.
 
   Access functions:
   \li <b>int error() const</b>
@@ -488,7 +488,7 @@ int QOAuth::QOAuth::error() const
   The provided string is decoded into a private RSA key, optionally using the \a passphrase.
   If \a key contains a valid RSA private key, this method returns true. If any problems were
   encountered during decoding (either the key or the passphrase are invalid), false is
-  returned and the error code is set to QOAuth::a64l(RSADecodingError.
+  returned and the error code is set to QOAuth::RSADecodingError.
 
   \sa setRSAPrivateKeyFromFile()
 */

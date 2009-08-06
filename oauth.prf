@@ -4,7 +4,7 @@ QOAUTH_LIBDIR = $$[QT_INSTALL_LIBS]
 QOAUTH_INCDIR ~= s!/qt4!!
 QOAUTH_LIBDIR ~= s!/qt4!!
 
-CONFIG *= qt
+CONFIG *= qt crypto
 
 # if we are including oauth.prf from the qoauth tree (and not utilizing it as
 # an installed qmake CONFIG feature), then point to the tree.  this allows our
