@@ -9,7 +9,7 @@ check.target = check
 # and depends also on an external server. When using in an automatic
 # build environment, it's recommended not to run the functional test.
 
-isEmpty(FUNC_TEST): check.commands = cd tests/ut_qoauth && ./ut_qoauth
-else: check.commands = ( cd tests/ut_qoauth && ./ut_qoauth ) && ( cd tests/ft_qoauth && ./ft_qoauth )
+isEmpty(FUNC_TEST): check.commands = cd tests/ut_interface && ./ut_interface
+else: check.commands = ( cd tests/ut_interface && ./ut_interface ) && ( cd tests/ft_interface && ./ft_interface )
 check.depends = sub-tests
 QMAKE_EXTRA_TARGETS += check

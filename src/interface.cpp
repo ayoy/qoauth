@@ -18,8 +18,8 @@
  ***************************************************************************/
 
 
-#include "qoauth.h"
-#include "qoauth_p.h"
+#include "interface.h"
+#include "interface_p.h"
 
 #include <QtCrypto>
 
@@ -39,7 +39,7 @@
   \section sec_what What is the purpose of QOAuth?
 
   The main motivation to create this library was to provide an interface to OAuth
-  protocoll for (Qt-based) C++ applications in an easy way. This is very early version
+  protocol for (Qt-based) C++ applications in an easy way. This is very early version
   of the library, and it lacks some functionality, but in the same time it is capable
   of sending OAuth authorization requests as well as preparing requests for accessing
   User's Protected Resources.
@@ -90,6 +90,8 @@
   \verbatim
     #include <QtOAuth> \endverbatim
 
+  \b Note: This follows the Qt scheme, i.e. <tt>QT += xml ==> #include <QtXml></tt>, etc.
+
   \section sec_bugs Bugs and issues
 
   Please file all the bug reports to the QOAuth bug tracking system at
@@ -101,11 +103,11 @@
 */
 
 /*!
-  \class QOAuth::QOAuth qoauth.h <QtOAuth>
+  \class QOAuth::Interface interface.h <QtOAuth>
   \brief This class provides means for interaction with network services supporting
          OAuth authorization scheme.
 
-  The QOAuth class is meant to enable OAuth support in applications in as simple way
+  The QOAuth::Interface class is meant to enable OAuth support in applications in as simple way
   as possible. It provides 4 basic methods, two of which serve for authorization purposes:
     \li \ref requestToken(),
     \li \ref accessToken(),
@@ -155,8 +157,8 @@
   In order to access Protected Resources, the application has to send a request containing
   arguments including Customer Key and Access Token, and encrypt them with Customer Secret
   and Token Secret. The process of constructing such a request can be reduced to another
-  one-line call with QOAuth. The example code for inlining all request parameters (both
-  User-specific and OAuth-related):
+  one-line call with QOAuth::Interface. The example code for inlining all request parameters
+  (both User-specific and OAuth-related):
 
   \include getResources.cpp
 
@@ -175,42 +177,42 @@
 
 QByteArray QOAuth::supportedOAuthVersion()
 {
-  return QOAuthPrivate::OAuthVersion;
+  return InterfacePrivate::OAuthVersion;
 }
 
 QByteArray QOAuth::tokenParameterName()
 {
-  return QOAuthPrivate::ParamToken;
+  return InterfacePrivate::ParamToken;
 }
 
 QByteArray QOAuth::tokenSecretParameterName()
 {
-  return QOAuthPrivate::ParamTokenSecret;
+  return InterfacePrivate::ParamTokenSecret;
 }
 
 
 //! \brief The supported OAuth scheme version.
-const QByteArray QOAuth::QOAuthPrivate::OAuthVersion = "1.0";
+const QByteArray QOAuth::InterfacePrivate::OAuthVersion = "1.0";
 
 //! \brief The <em>token</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamToken           = "oauth_token";
+const QByteArray QOAuth::InterfacePrivate::ParamToken           = "oauth_token";
 //! \brief The <em>token secret</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamTokenSecret     = "oauth_token_secret";
+const QByteArray QOAuth::InterfacePrivate::ParamTokenSecret     = "oauth_token_secret";
 
 //! \brief The <em>consumer key</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamConsumerKey     = "oauth_consumer_key";
+const QByteArray QOAuth::InterfacePrivate::ParamConsumerKey     = "oauth_consumer_key";
 //! \brief The <em>nonce</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamNonce           = "oauth_nonce";
+const QByteArray QOAuth::InterfacePrivate::ParamNonce           = "oauth_nonce";
 //! \brief The <em>signature</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamSignature       = "oauth_signature";
+const QByteArray QOAuth::InterfacePrivate::ParamSignature       = "oauth_signature";
 //! \brief The <em>signature method</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamSignatureMethod = "oauth_signature_method";
+const QByteArray QOAuth::InterfacePrivate::ParamSignatureMethod = "oauth_signature_method";
 //! \brief The <em>timestamp</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamTimestamp       = "oauth_timestamp";
+const QByteArray QOAuth::InterfacePrivate::ParamTimestamp       = "oauth_timestamp";
 //! \brief The <em>version</em> request parameter string
-const QByteArray QOAuth::QOAuthPrivate::ParamVersion         = "oauth_version";
+const QByteArray QOAuth::InterfacePrivate::ParamVersion         = "oauth_version";
 
-QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
+QOAuth::InterfacePrivate::InterfacePrivate( QObject *parent ) :
     QObject( parent ),
     privateKeySet( false ),
     consumerKey( QByteArray() ),
@@ -228,7 +230,7 @@ QOAuth::QOAuthPrivate::QOAuthPrivate( QObject *parent ) :
 
 }
 
-QByteArray QOAuth::QOAuthPrivate::httpMethodToString( HttpMethod method )
+QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
 {
   switch ( method ) {
   case GET:
@@ -247,7 +249,7 @@ QByteArray QOAuth::QOAuthPrivate::httpMethodToString( HttpMethod method )
   }
 }
 
-QByteArray QOAuth::QOAuthPrivate::signatureMethodToString( SignatureMethod method )
+QByteArray QOAuth::InterfacePrivate::signatureMethodToString( SignatureMethod method )
 {
   switch ( method ) {
   case HMAC_SHA1:
@@ -262,7 +264,7 @@ QByteArray QOAuth::QOAuthPrivate::signatureMethodToString( SignatureMethod metho
   }
 }
 
-QOAuth::ParamMap QOAuth::QOAuthPrivate::replyToMap( const QByteArray &data )
+QOAuth::ParamMap QOAuth::InterfacePrivate::replyToMap( const QByteArray &data )
 {
   // split reply to name=value strings
   QList<QByteArray> replyParams = data.split( '&' );
@@ -286,17 +288,17 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::replyToMap( const QByteArray &data )
   return parameters;
 }
 
-void QOAuth::QOAuthPrivate::parseReply( QNetworkReply *reply )
+void QOAuth::InterfacePrivate::parseReply( QNetworkReply *reply )
 {
   int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
 
   switch ( returnCode ) {
   case NoError:
     replyParams = replyToMap( reply->readAll() );
-    if ( !replyParams.contains( QOAuthPrivate::ParamToken ) ) {
+    if ( !replyParams.contains( InterfacePrivate::ParamToken ) ) {
       qWarning() << __FUNCTION__ << "- oauth_token not present in reply!";
     }
-    if ( !replyParams.contains( QOAuthPrivate::ParamTokenSecret ) ) {
+    if ( !replyParams.contains( InterfacePrivate::ParamTokenSecret ) ) {
       qWarning() << __FUNCTION__ << "- oauth_token_secret not present in reply!";
     }
 
@@ -312,7 +314,7 @@ void QOAuth::QOAuthPrivate::parseReply( QNetworkReply *reply )
   reply->close();
 }
 
-QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, ParsingMode mode )
+QByteArray QOAuth::InterfacePrivate::paramsToString( const ParamMap &parameters, ParsingMode mode )
 {
   QByteArray middleString;
   QByteArray endString;
@@ -364,29 +366,29 @@ QByteArray QOAuth::QOAuthPrivate::paramsToString( const ParamMap &parameters, Pa
 
 
 /*!
-  \brief Creates a new QOAuth class instance with the given \a parent
+  \brief Creates a new QOAuth::Interface class instance with the given \a parent
 */
 
-QOAuth::QOAuth::QOAuth( QObject *parent ) :
+QOAuth::Interface::Interface( QObject *parent ) :
     QObject( parent ),
-    d_ptr( new QOAuthPrivate( this ) )
+    d_ptr( new InterfacePrivate( this ) )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   d->q_ptr = this;
 }
 
 /*!
-  \brief Destroys the QOAuth object
+  \brief Destroys the QOAuth::Interface object
 */
 
-QOAuth::QOAuth::~QOAuth()
+QOAuth::Interface::~Interface()
 {
   delete d_ptr;
 }
 
 /*!
-  \property QOAuth::QOAuth::consumerKey
+  \property QOAuth::Interface::consumerKey
   \brief This property holds the consumer key
 
   The consumer key is used by the application to identify itself to the Service Provider.
@@ -396,22 +398,22 @@ QOAuth::QOAuth::~QOAuth()
   \li <b>void setConsumerKey( const QByteArray &consumerKey )</b>
 */
 
-QByteArray QOAuth::QOAuth::consumerKey() const
+QByteArray QOAuth::Interface::consumerKey() const
 {
-  Q_D(const QOAuth);
+  Q_D(const Interface);
 
   return d->consumerKey;
 }
 
-void QOAuth::QOAuth::setConsumerKey( const QByteArray &consumerKey )
+void QOAuth::Interface::setConsumerKey( const QByteArray &consumerKey )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   d->consumerKey = consumerKey;
 }
 
 /*!
-  \property QOAuth::QOAuth::consumerSecret
+  \property QOAuth::Interface::consumerSecret
   \brief This property holds the consumer secret
 
   The consumerSecret is used by the application for signing outgoing requests.
@@ -421,25 +423,25 @@ void QOAuth::QOAuth::setConsumerKey( const QByteArray &consumerKey )
   \li <b>void setConsumerSecret( const QByteArray &consumerSecret )</b>
 */
 
-QByteArray QOAuth::QOAuth::consumerSecret() const
+QByteArray QOAuth::Interface::consumerSecret() const
 {
-  Q_D(const QOAuth);
+  Q_D(const Interface);
 
   return d->consumerSecret;
 }
 
-void QOAuth::QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
+void QOAuth::Interface::setConsumerSecret( const QByteArray &consumerSecret )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   d->consumerSecret = consumerSecret;
 }
 
 /*!
-  \property QOAuth::QOAuth::requestTimeout
+  \property QOAuth::Interface::requestTimeout
   \brief This property holds the timeout value in milliseconds for issued network requests.
 
-  The QOAuth class can send network requests when asked to do so by calling either
+  The QOAuth::Interface class can send network requests when asked to do so by calling either
   requestToken() or accessToken() method. By defining the \a requestTimeout, requests
   can have the time constraint applied, after which they fail, setting \ref error to
   \ref Timeout. The \a requestTimeout value is initially set to \c 0, which in this
@@ -450,23 +452,23 @@ void QOAuth::QOAuth::setConsumerSecret( const QByteArray &consumerSecret )
   \li <b>void setRequestTimeout( uint requestTimeout )</b>
 */
 
-uint QOAuth::QOAuth::requestTimeout() const
+uint QOAuth::Interface::requestTimeout() const
 {
-  Q_D(const QOAuth);
+  Q_D(const Interface);
 
   return d->requestTimeout;
 }
 
-void QOAuth::QOAuth::setRequestTimeout( uint msec )
+void QOAuth::Interface::setRequestTimeout( uint msec )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   d->requestTimeout = msec;
 }
 
 
 /*!
-  \property QOAuth::QOAuth::error
+  \property QOAuth::Interface::error
   \brief This property holds the error code
 
   The error code is initially set to \ref NoError, and its value is updated with every
@@ -478,9 +480,9 @@ void QOAuth::QOAuth::setRequestTimeout( uint msec )
   \sa ErrorCode
 */
 
-int QOAuth::QOAuth::error() const
+int QOAuth::Interface::error() const
 {
-  Q_D(const QOAuth);
+  Q_D(const Interface);
 
   return d->error;
 }
@@ -499,11 +501,11 @@ int QOAuth::QOAuth::error() const
   \sa setRSAPrivateKeyFromFile()
 */
 
-bool QOAuth::QOAuth::setRSAPrivateKey( const QString &key, const QCA::SecureArray &passphrase )
+bool QOAuth::Interface::setRSAPrivateKey( const QString &key, const QCA::SecureArray &passphrase )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
-  d->setPrivateKey( key, passphrase, QOAuthPrivate::KeyFromString );
+  d->setPrivateKey( key, passphrase, InterfacePrivate::KeyFromString );
 
   return ( d->error == NoError );
 }
@@ -523,21 +525,21 @@ bool QOAuth::QOAuth::setRSAPrivateKey( const QString &key, const QCA::SecureArra
   \sa setRSAPrivateKey()
 */
 
-bool QOAuth::QOAuth::setRSAPrivateKeyFromFile( const QString &filename, const QCA::SecureArray &passphrase )
+bool QOAuth::Interface::setRSAPrivateKeyFromFile( const QString &filename, const QCA::SecureArray &passphrase )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   if ( ! QFileInfo( filename ).exists() ) {
     d->error = RSAKeyFileError;
     qWarning() << __FUNCTION__ << "- the given file does not exist...";
   } else {
-    d->setPrivateKey( filename, passphrase, QOAuthPrivate::KeyFromFile );
+    d->setPrivateKey( filename, passphrase, InterfacePrivate::KeyFromFile );
   }
 
   return ( d->error == NoError );
 }
 
-void QOAuth::QOAuthPrivate::setPrivateKey( const QString &source,
+void QOAuth::InterfacePrivate::setPrivateKey( const QString &source,
                                            const QCA::SecureArray &passphrase, KeySource from )
 {
 
@@ -568,7 +570,7 @@ void QOAuth::QOAuthPrivate::setPrivateKey( const QString &source,
   readKeyFromLoader( &keyLoader );
 }
 
-void QOAuth::QOAuthPrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
+void QOAuth::InterfacePrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
 {
   QCA::ConvertResult result = keyLoader->convertResult();
   if ( result == QCA::ConvertGood ) {
@@ -585,7 +587,7 @@ void QOAuth::QOAuthPrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
   }
 }
 
-void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
+void QOAuth::InterfacePrivate::setPassphrase( int id, const QCA::Event &event )
 {
   if ( event.isNull() ) {
     return;
@@ -594,7 +596,7 @@ void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
   // we're looking only for the passphrase for the RSA key
   if ( event.type() == QCA::Event::Password &&
        event.passwordStyle() == QCA::Event::StylePassphrase ) {
-    // set the passphrase to the one provided with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()
+    // set the passphrase to the one provided with QOAuth::Interface::setRSAPrivateKey{,FromFile}()
     eventHandler.submitPassword( id, passphrase );
   } else {
     eventHandler.reject( id );
@@ -637,10 +639,10 @@ void QOAuth::QOAuthPrivate::setPassphrase( int id, const QCA::Event &event )
   \sa accessToken(), error
 */
 
-QOAuth::ParamMap QOAuth::QOAuth::requestToken( const QString &requestUrl, HttpMethod httpMethod,
+QOAuth::ParamMap QOAuth::Interface::requestToken( const QString &requestUrl, HttpMethod httpMethod,
                                        SignatureMethod signatureMethod, const ParamMap &params )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   return d->sendRequest( requestUrl, httpMethod, signatureMethod,
                          QByteArray(), QByteArray(), params );
@@ -686,11 +688,11 @@ QOAuth::ParamMap QOAuth::QOAuth::requestToken( const QString &requestUrl, HttpMe
   \sa requestToken(), createParametersString(), error
 */
 
-QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+QOAuth::ParamMap QOAuth::Interface::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                                       const QByteArray &tokenSecret, SignatureMethod signatureMethod,
                                       const ParamMap &params )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   return d->sendRequest( requestUrl, httpMethod, signatureMethod,
                          token, tokenSecret, params );
@@ -731,11 +733,11 @@ QOAuth::ParamMap QOAuth::QOAuth::accessToken( const QString &requestUrl, HttpMet
   \sa inlineParameters()
 */
 
-QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+QByteArray QOAuth::Interface::createParametersString( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                                            const QByteArray &tokenSecret, SignatureMethod signatureMethod,
                                            const ParamMap &params, ParsingMode mode )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   d->error = NoError;
 
@@ -751,7 +753,7 @@ QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, Ht
   }
 
   // append it to parameters
-  parameters.insert( QOAuthPrivate::ParamSignature, signature );
+  parameters.insert( InterfacePrivate::ParamSignature, signature );
   // convert the map to bytearray, according to requested mode
   QByteArray parametersString = d->paramsToString( parameters, mode );
 
@@ -776,9 +778,9 @@ QByteArray QOAuth::QOAuth::createParametersString( const QString &requestUrl, Ht
   \sa createParametersString()
 */
 
-QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params, ParsingMode mode )
+QByteArray QOAuth::Interface::inlineParameters( const ParamMap &params, ParsingMode mode )
 {
-  Q_D(QOAuth);
+  Q_D(Interface);
 
   QByteArray query;
 
@@ -795,7 +797,7 @@ QByteArray QOAuth::QOAuth::inlineParameters( const ParamMap &params, ParsingMode
   return query;
 }
 
-QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,
+QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,
                                                      SignatureMethod signatureMethod, const QByteArray &token,
                                                      const QByteArray &tokenSecret, const ParamMap &params )
 {
@@ -819,7 +821,7 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, 
   }
 
   // add signature to parameters
-  parameters.insert( QOAuthPrivate::ParamSignature, signature );
+  parameters.insert( InterfacePrivate::ParamSignature, signature );
 
   QByteArray authorizationHeader;
   QNetworkRequest request;
@@ -840,7 +842,7 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, 
   if ( requestTimeout > 0 ) {
     QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
     // if the request finishes on time, the error value is overriden
-    // if not, it remains equal to QOAuth::QOAuth::Timeout
+    // if not, it remains equal to QOAuth::Interface::Timeout
     error = Timeout;
   }
 
@@ -856,7 +858,7 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, 
   // start the event loop and wait for the response
   loop->exec();
 
-  // if request completed successfully, error is different than QOAuth::QOAuth::Timeout
+  // if request completed successfully, error is different than QOAuth::Interface::Timeout
   // if it failed, we have to abort the request
   if ( error == Timeout ) {
     reply->abort();
@@ -865,7 +867,7 @@ QOAuth::ParamMap QOAuth::QOAuthPrivate::sendRequest( const QString &requestUrl, 
   return replyParams;
 }
 
-QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, HttpMethod httpMethod,
+QByteArray QOAuth::InterfacePrivate::createSignature( const QString &requestUrl, HttpMethod httpMethod,
                                                    SignatureMethod signatureMethod, const QByteArray &token,
                                                    const QByteArray &tokenSecret, ParamMap *params )
 {
@@ -873,13 +875,13 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
          signatureMethod == RSA_SHA1 ) &&
        consumerKey.isEmpty() ) {
     qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it"
-                                  "with QOAuth::QOAuth::setConsumerKey()";
+                                  "with QOAuth::Interface::setConsumerKey()";
     error = ConsumerKeyEmpty;
     return QByteArray();
   }
   if ( consumerSecret.isEmpty() ) {
     qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
-                                  "with QOAuth::QOAuth::setConsumerSecret()";
+                                  "with QOAuth::Interface::setConsumerSecret()";
     error = ConsumerSecretEmpty;
     return QByteArray();
   }
@@ -887,7 +889,7 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   if ( signatureMethod == RSA_SHA1 &&
        privateKey.isNull() ) {
     qWarning() << __FUNCTION__ << "- RSA private key is empty, make sure that you provide it"
-                                  "with QOAuth::QOAuth::setRSAPrivateKey{,FromFile}()";
+                                  "with QOAuth::Interface::setRSAPrivateKey{,FromFile}()";
     error = RSAPrivateKeyEmpty;
     return QByteArray();
   }
@@ -906,15 +908,15 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   // 2. prepare percent-encoded request URL
   QByteArray percentRequestUrl = requestUrl.toAscii().toPercentEncoding();
   // 3. prepare percent-encoded parameters string
-  params->insert( QOAuthPrivate::ParamConsumerKey, consumerKey );
-  params->insert( QOAuthPrivate::ParamNonce, nonce );
-  params->insert( QOAuthPrivate::ParamSignatureMethod,
+  params->insert( InterfacePrivate::ParamConsumerKey, consumerKey );
+  params->insert( InterfacePrivate::ParamNonce, nonce );
+  params->insert( InterfacePrivate::ParamSignatureMethod,
                   signatureMethodToString( signatureMethod ) );
-  params->insert( QOAuthPrivate::ParamTimestamp, timestamp );
-  params->insert( QOAuthPrivate::ParamVersion, QOAuthPrivate::OAuthVersion );
+  params->insert( InterfacePrivate::ParamTimestamp, timestamp );
+  params->insert( InterfacePrivate::ParamVersion, InterfacePrivate::OAuthVersion );
   // append token only if it is defined (requestToken() doesn't use a token at all)
   if ( !token.isEmpty() ) {
-    params->insert( QOAuthPrivate::ParamToken, token );
+    params->insert( InterfacePrivate::ParamToken, token );
   }
 
   QByteArray parametersString = paramsToString( *params, ParseForSignatureBaseString );
@@ -959,11 +961,11 @@ QByteArray QOAuth::QOAuthPrivate::createSignature( const QString &requestUrl, Ht
   return signature;
 }
 
-QByteArray QOAuth::QOAuthPrivate::createPlaintextSignature( const QByteArray &tokenSecret )
+QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray &tokenSecret )
 {
   if ( consumerSecret.isEmpty() ) {
     qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
-                                  "with QOAuth::QOAuth::setConsumerSecret()";
+                                  "with QOAuth::Interface::setConsumerSecret()";
     error = ConsumerSecretEmpty;
     return QByteArray();
   }

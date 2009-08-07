@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += ut_qoauth ft_qoauth
+SUBDIRS += ut_interface ft_interface

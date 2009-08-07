@@ -18,19 +18,19 @@ OBJECTS_DIR = tmp
 MOC_DIR = tmp
 INC_DIR = ../include
 
-INCLUDEPATH += $${INC_DIR}
+INCLUDEPATH += .
 
 PUBLIC_HEADERS += \
-    $${INC_DIR}/qoauth_global.h \
-    $${INC_DIR}/qoauth_namespace.h \
-    $${INC_DIR}/qoauth.h
+    qoauth_global.h \
+    qoauth_namespace.h \
+    interface.h
 PRIVATE_HEADERS += \
-    $${INC_DIR}/qoauth_p.h
+    interface_p.h
 
 HEADERS = \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
-SOURCES += qoauth.cpp
+SOURCES += interface.cpp
 
 DEFINES += QOAUTH
 

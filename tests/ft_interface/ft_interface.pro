@@ -1,4 +1,4 @@
-TARGET = ft_qoauth
+TARGET = ft_interface
 TEMPLATE = app
 
 DEFINES += UNIT_TEST
@@ -19,6 +19,6 @@ else:unix {
   LIBS += -Wl,-rpath,../../lib:lib
 }
 
-INCLUDEPATH += .
-HEADERS += ft_qoauth.h
-SOURCES += ft_qoauth.cpp
+INCLUDEPATH += . ../../src
+HEADERS += ft_interface.h
+SOURCES += ft_interface.cpp

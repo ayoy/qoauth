@@ -8,5 +8,6 @@ tmp
 commit-message.txt
 moc_*
 *.o
-tests/ut_qoauth/ut_qoauth
-tests/ft_qoauth/ft_qoauth
+tests/ut_interface/ut_interface
+tests/ft_interface/ft_interface
+doc/html

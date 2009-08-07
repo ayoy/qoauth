@@ -19,14 +19,14 @@
 
 
 /*!
-  \file qoauth.h
+  \file interface.h
 
   This file is a part of libqoauth. You should not include it directly in your
   application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
 */
 
-#ifndef QOAUTH_H
-#define QOAUTH_H
+#ifndef INTERFACE_H
+#define INTERFACE_H
 
 #include <QObject>
 #include <QMultiMap>
@@ -39,9 +39,9 @@
 
 namespace QOAuth {
 
-class QOAuthPrivate;
+class InterfacePrivate;
 
-class QOAUTH_EXPORT QOAuth : public QObject
+class QOAUTH_EXPORT Interface : public QObject
 {
   Q_OBJECT
 
@@ -51,8 +51,8 @@ class QOAUTH_EXPORT QOAuth : public QObject
   Q_PROPERTY( int error READ error )
 
 public:
-  QOAuth( QObject *parent = 0 );
-  virtual ~QOAuth();
+  Interface( QObject *parent = 0 );
+  virtual ~Interface();
 
   QByteArray consumerKey() const;
   void setConsumerKey( const QByteArray &consumerKey );
@@ -87,17 +87,18 @@ public:
 
 
 protected:
-  QOAuthPrivate * const d_ptr;
+  InterfacePrivate * const d_ptr;
 
-private:  
-  Q_DECLARE_PRIVATE(QOAuth)
+private:
+  Q_DISABLE_COPY(Interface)
+  Q_DECLARE_PRIVATE(Interface)
 
 #ifdef UNIT_TEST
-  friend class Ut_QOAuth;
-  friend class Ft_QOAuth;
+  friend class Ut_Interface;
+  friend class Ft_Interface;
 #endif
 };
 
 } // namespace QOAuth
 
-#endif // QOAUTH_H
+#endif // INTERFACE_H

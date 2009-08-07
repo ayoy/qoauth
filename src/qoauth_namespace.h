@@ -48,8 +48,9 @@ namespace QOAuth {
     There are 3 different signature methods defined by the
     <a href=http://oauth.net/core/1.0/#signing_process>OAuth protocol</a>. This enum
     is used to specify the method used by a specific request. Hence, one of its values
-    must be passed as a parameter in any of the \ref QOAuth::QOAuth::requestToken(),
-    \ref QOAuth::QOAuth::accessToken() or \ref QOAuth::QOAuth::createParametersString() method.
+    must be passed as a parameter in any of the \ref QOAuth::Interface::requestToken(),
+    \ref QOAuth::Interface::accessToken() or \ref QOAuth::Interface::createParametersString()
+    method.
 
     \note The current implementation of the library supports only HMAC-SHA1 signature algorithm.
   */
@@ -67,11 +68,11 @@ namespace QOAuth {
 
     The HTTP method has to be specified in QOAuth class for two reasons:
     \li to know what type of request should be prepared and sent
-        (\ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken()),
+        (\ref QOAuth::Interface::requestToken() and \ref QOAuth::Interface::accessToken()),
     \li to prepare a correct signature, as the Signature Base String contains a parameter
-        specifying the HTTP method used for request (\ref QOAuth::QOAuth::createParametersString()).
+        specifying the HTTP method used for request (\ref QOAuth::Interface::createParametersString()).
 
-    \note For \ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken() methods
+    \note For \ref QOAuth::Interface::requestToken() and \ref QOAuth::Interface::accessToken() methods
           only \ref GET and \ref POST methods are allowed.
   */
   enum HttpMethod {
@@ -88,15 +89,15 @@ namespace QOAuth {
            a parameter string.
 
     When creating a parameters string for a custom request using
-    \ref QOAuth::QOAuth::createParametersString() the parsing mode must be defined in order
+    \ref QOAuth::Interface::createParametersString() the parsing mode must be defined in order
     to prepare the string correctly.
 
     According to what is stated in <a href=http://oauth.net/core/1.0/#consumer_req_param>
     OAuth 1.0 Core specification</a>, parameters can be passed in a request to
-    the Service Provider in 3 different ways. When using \ref QOAuth::QOAuth::createParametersString(),
+    the Service Provider in 3 different ways. When using \ref QOAuth::Interface::createParametersString(),
     choose the one that suits you by setting \a ParsingMode appropriatelly.
 
-    \sa QOAuth::QOAuth::createParametersString()
+    \sa QOAuth::Interface::createParametersString()
   */
   enum ParsingMode {
     ParseForRequestContent,     //!< Inline query format (<tt>foo=bar&bar=baz&baz=foo ...</tt>), suitable for POST requests
@@ -109,12 +110,12 @@ namespace QOAuth {
   /*!
     \enum ErrorCode
     \brief This enum type defines error types that are assigned to the
-           \ref QOAuth::QOAuth::error property
+           \ref QOAuth::Interface::error property
 
     This error codes collection contains both network-related errors and those that
     can occur when incorrect arguments are provided to any of the class's methods.
 
-    \sa QOAuth::QOAuth::error
+    \sa QOAuth::Interface::error
   */
   enum ErrorCode {
     NoError = 200,              //!< No error occured (so far :-) )
@@ -125,7 +126,7 @@ namespace QOAuth {
     ConsumerKeyEmpty,           //!< Consumer key has not been provided
     ConsumerSecretEmpty,        //!< Consumer secret has not been provided
     UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request. Note that
-                                     \ref QOAuth::QOAuth::requestToken() and \ref QOAuth::QOAuth::accessToken()
+                                     \ref QOAuth::Interface::requestToken() and \ref QOAuth::Interface::accessToken()
                                      accept only HTTP GET and POST requests. */
 
     RSAPrivateKeyEmpty = 1101,  //!< RSA private key has not been provided
@@ -145,9 +146,9 @@ namespace QOAuth {
   /*!
     \brief Returns the name of the Access Token argument parameter.
 
-    Useful when reading Service Provider's reply for \ref QOAuth::QOAuth::accessToken() request, e.g:
+    Useful when reading Service Provider's reply for \ref QOAuth::Interface::accessToken() request, e.g:
     \code
-      QOAuth::QOAuth qoauth;
+      QOAuth::Interface qoauth;
       QByteArray requestToken = "token";
       QByteArray requestTokenSecret = "secret";
       QOAuth::ParamMap reply = qoauth.accessToken( "http://example.com/access_token", QOAuth::POST,

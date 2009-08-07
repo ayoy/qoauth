@@ -18,26 +18,26 @@
  ***************************************************************************/
 
 
-#include "ut_qoauth.h"
+#include "ut_interface.h"
 
 #include <QtDebug>
 #include <QTest>
 
-#include "qoauth.h"
-#include "qoauth_p.h"
+#include <QtOAuth>
+#include <interface_p.h>
 
 
-void QOAuth::Ut_QOAuth::init()
+void QOAuth::Ut_Interface::init()
 {
-  m = new QOAuth;
+  m = new Interface;
 }
 
-void QOAuth::Ut_QOAuth::cleanup()
+void QOAuth::Ut_Interface::cleanup()
 {
   delete m;
 }
 
-void QOAuth::Ut_QOAuth::constructor()
+void QOAuth::Ut_Interface::constructor()
 {
   QVERIFY( m );
   QVERIFY( m->consumerKey().isEmpty() );
@@ -47,7 +47,7 @@ void QOAuth::Ut_QOAuth::constructor()
   QVERIFY( m->d_ptr );
 }
 
-void QOAuth::Ut_QOAuth::consumerKey()
+void QOAuth::Ut_Interface::consumerKey()
 {
   QByteArray consumerKey( "6d65216f4272d0d3932cdcf8951997c2" );
 
@@ -55,7 +55,7 @@ void QOAuth::Ut_QOAuth::consumerKey()
   QCOMPARE( m->consumerKey(), consumerKey );
 }
 
-void QOAuth::Ut_QOAuth::setConsumerKey()
+void QOAuth::Ut_Interface::setConsumerKey()
 {
   QByteArray consumerKey( "6d65216f4272d0d3932cdcf8951997c2" );
 
@@ -63,7 +63,7 @@ void QOAuth::Ut_QOAuth::setConsumerKey()
   QCOMPARE( m->d_ptr->consumerKey, consumerKey );
 }
 
-void QOAuth::Ut_QOAuth::consumerSecret()
+void QOAuth::Ut_Interface::consumerSecret()
 {
   QByteArray consumerSecret( "5af4e09d887c4969211ba40e9dd8f873" );
 
@@ -71,7 +71,7 @@ void QOAuth::Ut_QOAuth::consumerSecret()
   QCOMPARE( m->consumerSecret(), consumerSecret );
 }
 
-void QOAuth::Ut_QOAuth::setConsumerSecret()
+void QOAuth::Ut_Interface::setConsumerSecret()
 {
   QByteArray consumerSecret( "5af4e09d887c4969211ba40e9dd8f873" );
 
@@ -79,7 +79,7 @@ void QOAuth::Ut_QOAuth::setConsumerSecret()
   QCOMPARE( m->d_ptr->consumerSecret, consumerSecret );
 }
 
-void QOAuth::Ut_QOAuth::requestTimeout()
+void QOAuth::Ut_Interface::requestTimeout()
 {
   uint timeout = 13986754;
 
@@ -87,7 +87,7 @@ void QOAuth::Ut_QOAuth::requestTimeout()
   QVERIFY( m->requestTimeout() == timeout );
 }
 
-void QOAuth::Ut_QOAuth::setRequestTimeout()
+void QOAuth::Ut_Interface::setRequestTimeout()
 {
   uint timeout = 13986754;
 
@@ -95,13 +95,13 @@ void QOAuth::Ut_QOAuth::setRequestTimeout()
   QVERIFY( m->d_ptr->requestTimeout == timeout );
 }
 
-void QOAuth::Ut_QOAuth::error()
+void QOAuth::Ut_Interface::error()
 {
   m->d_ptr->error = Forbidden;
   QVERIFY( m->error() == Forbidden );
 }
 
-void QOAuth::Ut_QOAuth::requestToken_data()
+void QOAuth::Ut_Interface::requestToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -158,7 +158,7 @@ void QOAuth::Ut_QOAuth::requestToken_data()
 
 }
 
-void QOAuth::Ut_QOAuth::requestToken()
+void QOAuth::Ut_Interface::requestToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -184,7 +184,7 @@ void QOAuth::Ut_QOAuth::requestToken()
   }
 }
 
-void QOAuth::Ut_QOAuth::accessToken_data()
+void QOAuth::Ut_Interface::accessToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -236,7 +236,7 @@ void QOAuth::Ut_QOAuth::accessToken_data()
                               << QByteArray();
 }
 
-void QOAuth::Ut_QOAuth::accessToken()
+void QOAuth::Ut_Interface::accessToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -265,7 +265,7 @@ void QOAuth::Ut_QOAuth::accessToken()
   }
 }
 
-void QOAuth::Ut_QOAuth::createParametersString_data()
+void QOAuth::Ut_Interface::createParametersString_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -320,7 +320,7 @@ void QOAuth::Ut_QOAuth::createParametersString_data()
                                 << (int) ConsumerSecretEmpty;
 }
 
-void QOAuth::Ut_QOAuth::createParametersString()
+void QOAuth::Ut_Interface::createParametersString()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -352,7 +352,7 @@ void QOAuth::Ut_QOAuth::createParametersString()
   QVERIFY( m->error() == error );
 }
 
-void QOAuth::Ut_QOAuth::inlineParameters_data()
+void QOAuth::Ut_Interface::inlineParameters_data()
 {
   QTest::addColumn<QByteArray>("par1");
   QTest::addColumn<QByteArray>("val1");
@@ -401,7 +401,7 @@ void QOAuth::Ut_QOAuth::inlineParameters_data()
 
 }
 
-void QOAuth::Ut_QOAuth::inlineParameters()
+void QOAuth::Ut_Interface::inlineParameters()
 {
   QFETCH( QByteArray, par1 );
   QFETCH( QByteArray, val1 );
@@ -423,7 +423,7 @@ void QOAuth::Ut_QOAuth::inlineParameters()
   QCOMPARE( query, result );
 }
 
-void QOAuth::Ut_QOAuth::setRSAPrivateKey_data()
+void QOAuth::Ut_Interface::setRSAPrivateKey_data()
 {
   QTest::addColumn<QString>("key");
   QTest::addColumn<QByteArray>("passphrase");
@@ -483,7 +483,7 @@ void QOAuth::Ut_QOAuth::setRSAPrivateKey_data()
 
 }
 
-void QOAuth::Ut_QOAuth::setRSAPrivateKey()
+void QOAuth::Ut_Interface::setRSAPrivateKey()
 {
   QFETCH( QString, key );
   QFETCH( QByteArray, passphrase );
@@ -495,7 +495,7 @@ void QOAuth::Ut_QOAuth::setRSAPrivateKey()
   QCOMPARE( m->error(), error );
 }
 
-void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile_data()
+void QOAuth::Ut_Interface::setRSAPrivateKeyFromFile_data()
 {
   QTest::addColumn<QString>("file");
   QTest::addColumn<QByteArray>("passphrase");
@@ -510,7 +510,7 @@ void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile_data()
 
 }
 
-void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile()
+void QOAuth::Ut_Interface::setRSAPrivateKeyFromFile()
 {
   QFETCH( QString, file );
   QFETCH( QByteArray, passphrase );
@@ -522,4 +522,4 @@ void QOAuth::Ut_QOAuth::setRSAPrivateKeyFromFile()
   QCOMPARE( m->error(), error );
 }
 
-QTEST_MAIN(QOAuth::Ut_QOAuth)
+QTEST_MAIN(QOAuth::Ut_Interface)

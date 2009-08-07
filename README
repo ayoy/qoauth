@@ -9,10 +9,10 @@ developer no more than 4 methods, namely:
 * inlineParemeters() - to construct a query string basing on given parameters
                        (provided only for convenience).
 
-First two methods serve application authorization purposes, whilst the third one
-is used for accessing Protected Resources. The complete documentation is
+First two methods serve application authorization purposes, whilst the other two
+are used for accessing Protected Resources. The complete documentation is
 available locally as well as online:
-  http://files.ayoy.net/qoauth/doc
+  http://files.ayoy.net/qoauth/1.0/doc
 
 QOAuth internally makes use of QCA (Qt Cryptographic Architecture). Here is the 
 complete list of its dependencies:

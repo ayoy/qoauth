@@ -19,7 +19,7 @@
 
 
 /*!
-  \file qoauth_p.h
+  \file interface_p.h
 
   This file is a part of libqoauth and is considered strictly internal. You should not
   include it in your application. Instead please use <tt>\#include &lt;QtOAuth&gt;</tt>.
@@ -28,7 +28,7 @@
 #ifndef QOAUTH_P_H
 #define QOAUTH_P_H
 
-#include "qoauth.h"
+#include "interface.h"
 #include <QObject>
 
 class QNetworkAccessManager;
@@ -37,13 +37,13 @@ class QEventLoop;
 
 namespace QOAuth {
 
-class QOAuth;
+class Interface;
 
 
-class QOAuthPrivate : public QObject
+class InterfacePrivate : public QObject
 {
   Q_OBJECT
-  Q_DECLARE_PUBLIC(QOAuth)
+  Q_DECLARE_PUBLIC(Interface)
 
 public:
   enum Operation {
@@ -70,7 +70,7 @@ public:
   static const QByteArray ParamVersion;
 
 
-  QOAuthPrivate( QObject *parent = 0 );
+  InterfacePrivate( QObject *parent = 0 );
   QByteArray httpMethodToString( HttpMethod method );
   QByteArray signatureMethodToString( SignatureMethod method );
   ParamMap replyToMap( const QByteArray &data );
@@ -115,9 +115,9 @@ public Q_SLOTS:
   void setPassphrase( int id, const QCA::Event &event );
 
 protected:
-  QOAuth *q_ptr;
+  Interface *q_ptr;
 };
 
 } // namespace QOAuth
 
-#endif // QOAUTH_P_H
+#endif // INTERFACE_P_H

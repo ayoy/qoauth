@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 
-#include "ft_qoauth.h"
+#include "ft_interface.h"
 
 #include <QtDebug>
 #include <QtNetwork>
@@ -26,21 +26,21 @@
 #include <QTimer>
 #include <QTest>
 
-#include "qoauth.h"
-#include "qoauth_p.h"
+#include <QtOAuth>
+#include <interface_p.h>
 
 
-void QOAuth::Ft_QOAuth::init()
+void QOAuth::Ft_Interface::init()
 {
-  m = new QOAuth;
+  m = new Interface;
 }
 
-void QOAuth::Ft_QOAuth::cleanup()
+void QOAuth::Ft_Interface::cleanup()
 {
   delete m;
 }
 
-void QOAuth::Ft_QOAuth::requestToken_data()
+void QOAuth::Ft_Interface::requestToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -86,7 +86,7 @@ void QOAuth::Ft_QOAuth::requestToken_data()
 
 }
 
-void QOAuth::Ft_QOAuth::requestToken()
+void QOAuth::Ft_Interface::requestToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -112,7 +112,7 @@ void QOAuth::Ft_QOAuth::requestToken()
   }
 }
 
-void QOAuth::Ft_QOAuth::requestTokenRSA_data()
+void QOAuth::Ft_Interface::requestTokenRSA_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -138,7 +138,7 @@ void QOAuth::Ft_QOAuth::requestTokenRSA_data()
                            << QByteArray( "requestsecret" );
 }
 
-void QOAuth::Ft_QOAuth::requestTokenRSA()
+void QOAuth::Ft_Interface::requestTokenRSA()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -167,7 +167,7 @@ void QOAuth::Ft_QOAuth::requestTokenRSA()
 }
 
 
-void QOAuth::Ft_QOAuth::accessToken_data()
+void QOAuth::Ft_Interface::accessToken_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -207,7 +207,7 @@ void QOAuth::Ft_QOAuth::accessToken_data()
                              << QByteArray( "accesssecret" );
 }
 
-void QOAuth::Ft_QOAuth::accessToken()
+void QOAuth::Ft_Interface::accessToken()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -237,7 +237,7 @@ void QOAuth::Ft_QOAuth::accessToken()
 }
 
 
-void QOAuth::Ft_QOAuth::accessTokenRSA_data()
+void QOAuth::Ft_Interface::accessTokenRSA_data()
 {
   QTest::addColumn<uint>("timeout");
   QTest::addColumn<QByteArray>("key");
@@ -268,7 +268,7 @@ void QOAuth::Ft_QOAuth::accessTokenRSA_data()
 
 }
 
-void QOAuth::Ft_QOAuth::accessTokenRSA()
+void QOAuth::Ft_Interface::accessTokenRSA()
 {
   QFETCH( uint, timeout );
   QFETCH( QByteArray, key );
@@ -300,7 +300,7 @@ void QOAuth::Ft_QOAuth::accessTokenRSA()
 }
 
 
-void QOAuth::Ft_QOAuth::accessResources_data()
+void QOAuth::Ft_Interface::accessResources_data()
 {
   QTest::addColumn<QByteArray>("key");
   QTest::addColumn<QByteArray>("secret");
@@ -352,7 +352,7 @@ void QOAuth::Ft_QOAuth::accessResources_data()
                              << (int) NoError;
 }
 
-void QOAuth::Ft_QOAuth::accessResources()
+void QOAuth::Ft_Interface::accessResources()
 {
   QFETCH( QByteArray, key );
   QFETCH( QByteArray, secret );
@@ -405,7 +405,7 @@ void QOAuth::Ft_QOAuth::accessResources()
   QVERIFY( m->error() == error );
 }
 
-void QOAuth::Ft_QOAuth::accessResourcesRSA_data()
+void QOAuth::Ft_Interface::accessResourcesRSA_data()
 {
   QTest::addColumn<QByteArray>("key");
   QTest::addColumn<QByteArray>("secret");
@@ -443,7 +443,7 @@ void QOAuth::Ft_QOAuth::accessResourcesRSA_data()
                            << (int) NoError;
 }
 
-void QOAuth::Ft_QOAuth::accessResourcesRSA()
+void QOAuth::Ft_Interface::accessResourcesRSA()
 {
   QFETCH( QByteArray, key );
   QFETCH( QByteArray, secret );
@@ -499,4 +499,4 @@ void QOAuth::Ft_QOAuth::accessResourcesRSA()
 }
 
 
-QTEST_MAIN(QOAuth::Ft_QOAuth)
+QTEST_MAIN(QOAuth::Ft_Interface)

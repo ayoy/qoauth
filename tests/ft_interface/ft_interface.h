@@ -18,60 +18,46 @@
  ***************************************************************************/
 
 
-#ifndef UT_QOAUTH_H
-#define UT_QOAUTH_H
+#ifndef FT_INTERFACE_H
+#define FT_INTERFACE_H
 
 #include <QObject>
 
-#include <QtCrypto>
-
 namespace QOAuth {
 
-class QOAuth;
+class Interface;
 
-class Ut_QOAuth : public QObject
+class Ft_Interface : public QObject
 {
   Q_OBJECT
+
 
 private Q_SLOTS:
   void init();
   void cleanup();
-  void constructor();
-
-  void consumerKey();
-  void setConsumerKey();
-
-  void consumerSecret();
-  void setConsumerSecret();
-
-  void requestTimeout();
-  void setRequestTimeout();
-
-  void error();
 
   void requestToken_data();
   void requestToken();
 
+  void requestTokenRSA_data();
+  void requestTokenRSA();
+
   void accessToken_data();
   void accessToken();
 
-  void createParametersString_data();
-  void createParametersString();
+  void accessTokenRSA_data();
+  void accessTokenRSA();
 
-  void inlineParameters_data();
-  void inlineParameters();
+  void accessResources_data();
+  void accessResources();
 
-  void setRSAPrivateKey_data();
-  void setRSAPrivateKey();
-
-  void setRSAPrivateKeyFromFile_data();
-  void setRSAPrivateKeyFromFile();
+  void accessResourcesRSA_data();
+  void accessResourcesRSA();
 
 private:
-  QOAuth *m;
-  QCA::Initializer initializer;
+  Interface *m;
 };
 
 } // namespace QOAuth
 
-#endif // UT_QOAUTH_H
+#endif // FT_INTERFACE_H

@@ -1,4 +1,4 @@
-TARGET = ut_qoauth
+TARGET = ut_interface
 TEMPLATE = app
 
 DEFINES += UNIT_TEST
@@ -19,6 +19,6 @@ else:unix {
   LIBS += -Wl,-rpath,../../lib:lib
 }
 
-INCLUDEPATH += .
-HEADERS += ut_qoauth.h
-SOURCES += ut_qoauth.cpp
+INCLUDEPATH += . ../../src
+HEADERS += ut_interface.h
+SOURCES += ut_interface.cpp
