@@ -155,9 +155,15 @@
   In order to access Protected Resources, the application has to send a request containing
   arguments including Customer Key and Access Token, and encrypt them with Customer Secret
   and Token Secret. The process of constructing such a request can be reduced to another
-  one-line call with QOAuth:
+  one-line call with QOAuth. The example code for inlining all request parameters (both
+  User-specific and OAuth-related):
 
-  \include accessResources.cpp
+  \include getResources.cpp
+
+  If Service Provider requires the OAuth authorization to be done in the <tt>Authorization</tt>
+  header field, then only User-specific parameters should be inlined with the URL:
+
+  \include getResources2.cpp
 
   \section sec_capabilities Capabilities
 

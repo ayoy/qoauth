@@ -35,9 +35,8 @@ SOURCES += qoauth.cpp
 DEFINES += QOAUTH
 
 headers.files = \
-    $${INC_DIR}/QtOAuth \
-    $${INC_DIR}/qoauth.h \
-    $${INC_DIR}/qoauth_global.h
+    $${PUBLIC_HEADERS} \
+    $${INC_DIR}/QtOAuth
 features.path = $$[QMAKE_MKSPECS]/features
 features.files = ../oauth.prf
 docs.files = ../doc/html
