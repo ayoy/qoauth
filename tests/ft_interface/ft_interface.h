@@ -22,6 +22,19 @@
 #define FT_INTERFACE_H
 
 #include <QObject>
+#include <QEventLoop>
+
+class MyEventLoop : public QEventLoop
+{
+  Q_OBJECT
+public:
+  bool timeout() const;
+  int exec( ProcessEventsFlags flags = AllEvents );
+public slots:
+  void quitWithTimeout();
+private:
+  bool m_timeout;
+};
 
 namespace QOAuth {
 
