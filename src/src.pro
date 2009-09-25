@@ -2,17 +2,16 @@ TARGET = qoauth
 DESTDIR = ../lib
 win32:DLLDESTDIR = $${DESTDIR}
 
-VERSION = 1.0.0
+VERSION = 1.0.1
 
 TEMPLATE = lib
 QT += network
 QT -= gui
 CONFIG += \
-    build_all \
     crypto \
     create_prl
 
-#!macx: CONFIG += static_and_shared
+!macx: CONFIG += static_and_shared
 
 OBJECTS_DIR = tmp
 MOC_DIR = tmp
@@ -64,7 +63,7 @@ else:unix {
 
     target.path = $${INSTALL_PREFIX}/lib
     headers.path = $${INSTALL_PREFIX}/include/QtOAuth
-    docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}
+    docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}/html
     pkgconfig.path = $${target.path}/pkgconfig
     INSTALLS += \
         target \
