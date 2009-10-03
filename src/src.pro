@@ -73,7 +73,9 @@ else:unix {
         features
 }
 
-build_pass:CONFIG(debug, debug|release) {
-    unix: TARGET = $$join(TARGET,,,_debug)
-    else: TARGET = $$join(TARGET,,,d)
+CONFIG(debug_and_release) {
+    build_pass:CONFIG(debug, debug|release) {
+        unix: TARGET = $$join(TARGET,,,_debug)
+        else: TARGET = $$join(TARGET,,,d)
+    }
 }
