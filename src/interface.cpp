@@ -177,17 +177,17 @@
 
 QByteArray QOAuth::supportedOAuthVersion()
 {
-  return InterfacePrivate::OAuthVersion;
+    return InterfacePrivate::OAuthVersion;
 }
 
 QByteArray QOAuth::tokenParameterName()
 {
-  return InterfacePrivate::ParamToken;
+    return InterfacePrivate::ParamToken;
 }
 
 QByteArray QOAuth::tokenSecretParameterName()
 {
-  return InterfacePrivate::ParamTokenSecret;
+    return InterfacePrivate::ParamTokenSecret;
 }
 
 
@@ -213,155 +213,155 @@ const QByteArray QOAuth::InterfacePrivate::ParamTimestamp       = "oauth_timesta
 const QByteArray QOAuth::InterfacePrivate::ParamVersion         = "oauth_version";
 
 QOAuth::InterfacePrivate::InterfacePrivate( QObject *parent ) :
-    QObject( parent ),
-    privateKeySet( false ),
-    consumerKey( QByteArray() ),
-    consumerSecret( QByteArray() ),
-    manager( new QNetworkAccessManager( this ) ),
-    loop( new QEventLoop( this ) ),
-    requestTimeout(0),
-    error( NoError )
+        QObject( parent ),
+        privateKeySet( false ),
+        consumerKey( QByteArray() ),
+        consumerSecret( QByteArray() ),
+        manager( new QNetworkAccessManager( this ) ),
+        loop( new QEventLoop( this ) ),
+        requestTimeout(0),
+        error( NoError )
 {
-  connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
-  connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(parseReply(QNetworkReply*)) );
+    connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
+    connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(parseReply(QNetworkReply*)) );
 
-  connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(setPassphrase(int,QCA::Event)) );
-  eventHandler.start();
+    connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(setPassphrase(int,QCA::Event)) );
+    eventHandler.start();
 
 }
 
 QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
 {
-  switch ( method ) {
-  case GET:
-    return "GET";
-  case POST:
-    return "POST";
-  case HEAD:
-    return "HEAD";
-  case PUT:
-    return "PUT";
-  case DELETE:
-    return "DELETE";
-  default:
-    qWarning() << __FUNCTION__ << "- Unrecognized method";
-    return QByteArray();
-  }
+    switch ( method ) {
+    case GET:
+        return "GET";
+    case POST:
+        return "POST";
+    case HEAD:
+        return "HEAD";
+    case PUT:
+        return "PUT";
+    case DELETE:
+        return "DELETE";
+    default:
+        qWarning() << __FUNCTION__ << "- Unrecognized method";
+        return QByteArray();
+    }
 }
 
 QByteArray QOAuth::InterfacePrivate::signatureMethodToString( SignatureMethod method )
 {
-  switch ( method ) {
-  case HMAC_SHA1:
-    return "HMAC-SHA1";
-  case RSA_SHA1:
-    return "RSA-SHA1";
-  case PLAINTEXT:
-    return "PLAINTEXT";
-  default:
-    qWarning() << __FUNCTION__ << "- Unrecognized method";
-    return QByteArray();
-  }
+    switch ( method ) {
+    case HMAC_SHA1:
+        return "HMAC-SHA1";
+    case RSA_SHA1:
+        return "RSA-SHA1";
+    case PLAINTEXT:
+        return "PLAINTEXT";
+    default:
+        qWarning() << __FUNCTION__ << "- Unrecognized method";
+        return QByteArray();
+    }
 }
 
 QOAuth::ParamMap QOAuth::InterfacePrivate::replyToMap( const QByteArray &data )
 {
-  // split reply to name=value strings
-  QList<QByteArray> replyParams = data.split( '&' );
-  // we'll store them in a map
-  ParamMap parameters;
+    // split reply to name=value strings
+    QList<QByteArray> replyParams = data.split( '&' );
+    // we'll store them in a map
+    ParamMap parameters;
 
-  QByteArray replyParam;
-  QByteArray key;
-  int separatorIndex;
+    QByteArray replyParam;
+    QByteArray key;
+    int separatorIndex;
 
-  // iterate through name=value pairs
-  Q_FOREACH ( replyParam, replyParams ) {
-    // find occurrence of '='
-    separatorIndex = replyParam.indexOf( '=' );
-    // key is on the left
-    key = replyParam.left( separatorIndex );
-    // value is on the right
-    parameters.insert( key , replyParam.right( replyParam.length() - separatorIndex - 1 ) );
-  }
+    // iterate through name=value pairs
+    Q_FOREACH ( replyParam, replyParams ) {
+        // find occurrence of '='
+        separatorIndex = replyParam.indexOf( '=' );
+        // key is on the left
+        key = replyParam.left( separatorIndex );
+        // value is on the right
+        parameters.insert( key , replyParam.right( replyParam.length() - separatorIndex - 1 ) );
+    }
 
-  return parameters;
+    return parameters;
 }
 
 void QOAuth::InterfacePrivate::parseReply( QNetworkReply *reply )
 {
-  int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
+    int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
 
-  switch ( returnCode ) {
-  case NoError:
-    replyParams = replyToMap( reply->readAll() );
-    if ( !replyParams.contains( InterfacePrivate::ParamToken ) ) {
-      qWarning() << __FUNCTION__ << "- oauth_token not present in reply!";
+    switch ( returnCode ) {
+    case NoError:
+        replyParams = replyToMap( reply->readAll() );
+        if ( !replyParams.contains( InterfacePrivate::ParamToken ) ) {
+            qWarning() << __FUNCTION__ << "- oauth_token not present in reply!";
+        }
+        if ( !replyParams.contains( InterfacePrivate::ParamTokenSecret ) ) {
+            qWarning() << __FUNCTION__ << "- oauth_token_secret not present in reply!";
+        }
+
+    case BadRequest:
+    case Unauthorized:
+    case Forbidden:
+        error = returnCode;
+        break;
+    default:
+        error = OtherError;
     }
-    if ( !replyParams.contains( InterfacePrivate::ParamTokenSecret ) ) {
-      qWarning() << __FUNCTION__ << "- oauth_token_secret not present in reply!";
-    }
 
-  case BadRequest:
-  case Unauthorized:
-  case Forbidden:
-    error = returnCode;
-    break;
-  default:
-    error = OtherError;
-  }
-
-  reply->close();
+    reply->close();
 }
 
 QByteArray QOAuth::InterfacePrivate::paramsToString( const ParamMap &parameters, ParsingMode mode )
 {
-  QByteArray middleString;
-  QByteArray endString;
-  QByteArray prependString;
+    QByteArray middleString;
+    QByteArray endString;
+    QByteArray prependString;
 
-  switch ( mode ) {
-  case ParseForInlineQuery:
-    prependString = "?";
-  case ParseForRequestContent:
-  case ParseForSignatureBaseString:
-    middleString = "=";
-    endString = "&";
-    break;
-  case ParseForHeaderArguments:
-    prependString = "OAuth ";
-    middleString = "=\"";
-    endString = "\",";
-    break;
-  default:
-    qWarning() << __FUNCTION__ << "- Unrecognized mode";
-    return QByteArray();
-  }
-
-  QByteArray parameter;
-  QByteArray parametersString;
-
-  Q_FOREACH( parameter, parameters.uniqueKeys() ) {
-    QList<QByteArray> values = parameters.values( parameter );
-    if ( values.size() > 1 ) {
-      qSort( values.begin(), values.end() );
+    switch ( mode ) {
+    case ParseForInlineQuery:
+        prependString = "?";
+    case ParseForRequestContent:
+    case ParseForSignatureBaseString:
+        middleString = "=";
+        endString = "&";
+        break;
+    case ParseForHeaderArguments:
+        prependString = "OAuth ";
+        middleString = "=\"";
+        endString = "\",";
+        break;
+    default:
+        qWarning() << __FUNCTION__ << "- Unrecognized mode";
+        return QByteArray();
     }
-    QByteArray value;
-    Q_FOREACH ( value, values ) {
-      parametersString.append( parameter );
-      parametersString.append( middleString );
-      parametersString.append( value );
-      parametersString.append( endString );
+
+    QByteArray parameter;
+    QByteArray parametersString;
+
+    Q_FOREACH( parameter, parameters.uniqueKeys() ) {
+        QList<QByteArray> values = parameters.values( parameter );
+        if ( values.size() > 1 ) {
+            qSort( values.begin(), values.end() );
+        }
+        QByteArray value;
+        Q_FOREACH ( value, values ) {
+            parametersString.append( parameter );
+            parametersString.append( middleString );
+            parametersString.append( value );
+            parametersString.append( endString );
+        }
     }
-  }
 
-  // remove the trailing end character (comma or ampersand)
-  parametersString.chop(1);
+    // remove the trailing end character (comma or ampersand)
+    parametersString.chop(1);
 
-  // prepend with the suitable string (or none)
-  parametersString.prepend( prependString );
+    // prepend with the suitable string (or none)
+    parametersString.prepend( prependString );
 
-  return parametersString;
+    return parametersString;
 }
 
 
@@ -370,12 +370,12 @@ QByteArray QOAuth::InterfacePrivate::paramsToString( const ParamMap &parameters,
 */
 
 QOAuth::Interface::Interface( QObject *parent ) :
-    QObject( parent ),
-    d_ptr( new InterfacePrivate( this ) )
+        QObject( parent ),
+        d_ptr( new InterfacePrivate( this ) )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->q_ptr = this;
+    d->q_ptr = this;
 }
 
 /*!
@@ -384,7 +384,7 @@ QOAuth::Interface::Interface( QObject *parent ) :
 
 QOAuth::Interface::~Interface()
 {
-  delete d_ptr;
+    delete d_ptr;
 }
 
 /*!
@@ -400,16 +400,16 @@ QOAuth::Interface::~Interface()
 
 QByteArray QOAuth::Interface::consumerKey() const
 {
-  Q_D(const Interface);
+    Q_D(const Interface);
 
-  return d->consumerKey;
+    return d->consumerKey;
 }
 
 void QOAuth::Interface::setConsumerKey( const QByteArray &consumerKey )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->consumerKey = consumerKey;
+    d->consumerKey = consumerKey;
 }
 
 /*!
@@ -425,16 +425,16 @@ void QOAuth::Interface::setConsumerKey( const QByteArray &consumerKey )
 
 QByteArray QOAuth::Interface::consumerSecret() const
 {
-  Q_D(const Interface);
+    Q_D(const Interface);
 
-  return d->consumerSecret;
+    return d->consumerSecret;
 }
 
 void QOAuth::Interface::setConsumerSecret( const QByteArray &consumerSecret )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->consumerSecret = consumerSecret;
+    d->consumerSecret = consumerSecret;
 }
 
 /*!
@@ -454,16 +454,16 @@ void QOAuth::Interface::setConsumerSecret( const QByteArray &consumerSecret )
 
 uint QOAuth::Interface::requestTimeout() const
 {
-  Q_D(const Interface);
+    Q_D(const Interface);
 
-  return d->requestTimeout;
+    return d->requestTimeout;
 }
 
 void QOAuth::Interface::setRequestTimeout( uint msec )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->requestTimeout = msec;
+    d->requestTimeout = msec;
 }
 
 
@@ -482,9 +482,9 @@ void QOAuth::Interface::setRequestTimeout( uint msec )
 
 int QOAuth::Interface::error() const
 {
-  Q_D(const Interface);
+    Q_D(const Interface);
 
-  return d->error;
+    return d->error;
 }
 
 
@@ -503,11 +503,11 @@ int QOAuth::Interface::error() const
 
 bool QOAuth::Interface::setRSAPrivateKey( const QString &key, const QCA::SecureArray &passphrase )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->setPrivateKey( key, passphrase, InterfacePrivate::KeyFromString );
+    d->setPrivateKey( key, passphrase, InterfacePrivate::KeyFromString );
 
-  return ( d->error == NoError );
+    return ( d->error == NoError );
 }
 
 /*!
@@ -527,80 +527,80 @@ bool QOAuth::Interface::setRSAPrivateKey( const QString &key, const QCA::SecureA
 
 bool QOAuth::Interface::setRSAPrivateKeyFromFile( const QString &filename, const QCA::SecureArray &passphrase )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  if ( ! QFileInfo( filename ).exists() ) {
-    d->error = RSAKeyFileError;
-    qWarning() << __FUNCTION__ << "- the given file does not exist...";
-  } else {
-    d->setPrivateKey( filename, passphrase, InterfacePrivate::KeyFromFile );
-  }
+    if ( ! QFileInfo( filename ).exists() ) {
+        d->error = RSAKeyFileError;
+        qWarning() << __FUNCTION__ << "- the given file does not exist...";
+    } else {
+        d->setPrivateKey( filename, passphrase, InterfacePrivate::KeyFromFile );
+    }
 
-  return ( d->error == NoError );
+    return ( d->error == NoError );
 }
 
 void QOAuth::InterfacePrivate::setPrivateKey( const QString &source,
-                                           const QCA::SecureArray &passphrase, KeySource from )
+                                              const QCA::SecureArray &passphrase, KeySource from )
 {
 
-  if( !QCA::isSupported( "pkey" ) ||
-      !QCA::PKey::supportedIOTypes().contains( QCA::PKey::RSA ) ) {
-    qFatal( "RSA is not supported!" );
-  }
+    if( !QCA::isSupported( "pkey" ) ||
+        !QCA::PKey::supportedIOTypes().contains( QCA::PKey::RSA ) ) {
+        qFatal( "RSA is not supported!" );
+    }
 
-  privateKeySet = false;
-  this->passphrase = passphrase;
+    privateKeySet = false;
+    this->passphrase = passphrase;
 
-  QCA::KeyLoader keyLoader;
-  QEventLoop localLoop;
-  connect( &keyLoader, SIGNAL(finished()), &localLoop, SLOT(quit()) );
+    QCA::KeyLoader keyLoader;
+    QEventLoop localLoop;
+    connect( &keyLoader, SIGNAL(finished()), &localLoop, SLOT(quit()) );
 
-  switch (from) {
-  case KeyFromString:
-    keyLoader.loadPrivateKeyFromPEM( source );
-    break;
-  case KeyFromFile:
-    keyLoader.loadPrivateKeyFromPEMFile( source );
-    break;
-  }
+    switch (from) {
+    case KeyFromString:
+        keyLoader.loadPrivateKeyFromPEM( source );
+        break;
+    case KeyFromFile:
+        keyLoader.loadPrivateKeyFromPEMFile( source );
+        break;
+    }
 
-  QTimer::singleShot( 3000, &localLoop, SLOT(quit()) );
-  localLoop.exec();
+    QTimer::singleShot( 3000, &localLoop, SLOT(quit()) );
+    localLoop.exec();
 
-  readKeyFromLoader( &keyLoader );
+    readKeyFromLoader( &keyLoader );
 }
 
 void QOAuth::InterfacePrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
 {
-  QCA::ConvertResult result = keyLoader->convertResult();
-  if ( result == QCA::ConvertGood ) {
-    error = NoError;
-    privateKey = keyLoader->privateKey();
-    privateKeySet = true;
-  } else if ( result == QCA::ErrorDecode ) {
-    error = RSADecodingError;
-// this one seems to never be set ....
-//  } else if ( result == QCA::ErrorPassphrase ) {
-//    error = RSAPassphraseError;
-  } else if ( result == QCA::ErrorFile ) {
-    error = RSAKeyFileError;
-  }
+    QCA::ConvertResult result = keyLoader->convertResult();
+    if ( result == QCA::ConvertGood ) {
+        error = NoError;
+        privateKey = keyLoader->privateKey();
+        privateKeySet = true;
+    } else if ( result == QCA::ErrorDecode ) {
+        error = RSADecodingError;
+        // this one seems to never be set ....
+        //  } else if ( result == QCA::ErrorPassphrase ) {
+        //    error = RSAPassphraseError;
+    } else if ( result == QCA::ErrorFile ) {
+        error = RSAKeyFileError;
+    }
 }
 
 void QOAuth::InterfacePrivate::setPassphrase( int id, const QCA::Event &event )
 {
-  if ( event.isNull() ) {
-    return;
-  }
+    if ( event.isNull() ) {
+        return;
+    }
 
-  // we're looking only for the passphrase for the RSA key
-  if ( event.type() == QCA::Event::Password &&
-       event.passwordStyle() == QCA::Event::StylePassphrase ) {
-    // set the passphrase to the one provided with QOAuth::Interface::setRSAPrivateKey{,FromFile}()
-    eventHandler.submitPassword( id, passphrase );
-  } else {
-    eventHandler.reject( id );
-  }
+    // we're looking only for the passphrase for the RSA key
+    if ( event.type() == QCA::Event::Password &&
+         event.passwordStyle() == QCA::Event::StylePassphrase ) {
+        // set the passphrase to the one provided with QOAuth::Interface::setRSAPrivateKey{,FromFile}()
+        eventHandler.submitPassword( id, passphrase );
+    } else {
+        eventHandler.reject( id );
+    }
 }
 
 /*!
@@ -640,12 +640,12 @@ void QOAuth::InterfacePrivate::setPassphrase( int id, const QCA::Event &event )
 */
 
 QOAuth::ParamMap QOAuth::Interface::requestToken( const QString &requestUrl, HttpMethod httpMethod,
-                                       SignatureMethod signatureMethod, const ParamMap &params )
+                                                  SignatureMethod signatureMethod, const ParamMap &params )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  return d->sendRequest( requestUrl, httpMethod, signatureMethod,
-                         QByteArray(), QByteArray(), params );
+    return d->sendRequest( requestUrl, httpMethod, signatureMethod,
+                           QByteArray(), QByteArray(), params );
 }
 
 /*!
@@ -689,13 +689,13 @@ QOAuth::ParamMap QOAuth::Interface::requestToken( const QString &requestUrl, Htt
 */
 
 QOAuth::ParamMap QOAuth::Interface::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
-                                      const QByteArray &tokenSecret, SignatureMethod signatureMethod,
-                                      const ParamMap &params )
+                                                 const QByteArray &tokenSecret, SignatureMethod signatureMethod,
+                                                 const ParamMap &params )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  return d->sendRequest( requestUrl, httpMethod, signatureMethod,
-                         token, tokenSecret, params );
+    return d->sendRequest( requestUrl, httpMethod, signatureMethod,
+                           token, tokenSecret, params );
 
 }
 
@@ -734,30 +734,30 @@ QOAuth::ParamMap QOAuth::Interface::accessToken( const QString &requestUrl, Http
 */
 
 QByteArray QOAuth::Interface::createParametersString( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
-                                           const QByteArray &tokenSecret, SignatureMethod signatureMethod,
-                                           const ParamMap &params, ParsingMode mode )
+                                                      const QByteArray &tokenSecret, SignatureMethod signatureMethod,
+                                                      const ParamMap &params, ParsingMode mode )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  d->error = NoError;
+    d->error = NoError;
 
-  // copy parameters to a writeable object
-  ParamMap parameters = params;
-  // calculate the signature
-  QByteArray signature = d->createSignature( requestUrl, httpMethod, signatureMethod,
-                                             token, tokenSecret, &parameters );
+    // copy parameters to a writeable object
+    ParamMap parameters = params;
+    // calculate the signature
+    QByteArray signature = d->createSignature( requestUrl, httpMethod, signatureMethod,
+                                               token, tokenSecret, &parameters );
 
-  // return an empty bytearray when signature wasn't created
-  if ( d->error != NoError ) {
-    return QByteArray();
-  }
+    // return an empty bytearray when signature wasn't created
+    if ( d->error != NoError ) {
+        return QByteArray();
+    }
 
-  // append it to parameters
-  parameters.insert( InterfacePrivate::ParamSignature, signature );
-  // convert the map to bytearray, according to requested mode
-  QByteArray parametersString = d->paramsToString( parameters, mode );
+    // append it to parameters
+    parameters.insert( InterfacePrivate::ParamSignature, signature );
+    // convert the map to bytearray, according to requested mode
+    QByteArray parametersString = d->paramsToString( parameters, mode );
 
-  return parametersString;
+    return parametersString;
 }
 
 /*!
@@ -780,197 +780,197 @@ QByteArray QOAuth::Interface::createParametersString( const QString &requestUrl,
 
 QByteArray QOAuth::Interface::inlineParameters( const ParamMap &params, ParsingMode mode )
 {
-  Q_D(Interface);
+    Q_D(Interface);
 
-  QByteArray query;
+    QByteArray query;
 
-  switch (mode) {
-  case ParseForInlineQuery:
-  case ParseForRequestContent:
-    query = d->paramsToString( params, mode );
-    break;
-  case ParseForHeaderArguments:
-  case ParseForSignatureBaseString:
-    break;
-  }
+    switch (mode) {
+    case ParseForInlineQuery:
+    case ParseForRequestContent:
+        query = d->paramsToString( params, mode );
+        break;
+    case ParseForHeaderArguments:
+    case ParseForSignatureBaseString:
+        break;
+    }
 
-  return query;
+    return query;
 }
 
 QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,
-                                                     SignatureMethod signatureMethod, const QByteArray &token,
-                                                     const QByteArray &tokenSecret, const ParamMap &params )
+                                                        SignatureMethod signatureMethod, const QByteArray &token,
+                                                        const QByteArray &tokenSecret, const ParamMap &params )
 {
-  if ( httpMethod != GET && httpMethod != POST ) {
-    qWarning() << __FUNCTION__ << "- requestToken() and accessToken() accept only GET and POST methods";
-    error = UnsupportedHttpMethod;
-    return ParamMap();
-  }
+    if ( httpMethod != GET && httpMethod != POST ) {
+        qWarning() << __FUNCTION__ << "- requestToken() and accessToken() accept only GET and POST methods";
+        error = UnsupportedHttpMethod;
+        return ParamMap();
+    }
 
-  error = NoError;
+    error = NoError;
 
-  ParamMap parameters = params;
+    ParamMap parameters = params;
 
-  // create signature
-  QByteArray signature = createSignature( requestUrl, httpMethod, signatureMethod,
-                                          token, tokenSecret, &parameters );
+    // create signature
+    QByteArray signature = createSignature( requestUrl, httpMethod, signatureMethod,
+                                            token, tokenSecret, &parameters );
 
-  // if signature wasn't created, return an empty map
-  if ( error != NoError ) {
-    return ParamMap();
-  }
+    // if signature wasn't created, return an empty map
+    if ( error != NoError ) {
+        return ParamMap();
+    }
 
-  // add signature to parameters
-  parameters.insert( InterfacePrivate::ParamSignature, signature );
+    // add signature to parameters
+    parameters.insert( InterfacePrivate::ParamSignature, signature );
 
-  QByteArray authorizationHeader;
-  QNetworkRequest request;
+    QByteArray authorizationHeader;
+    QNetworkRequest request;
 
-  if ( httpMethod == GET ) {
-    authorizationHeader = paramsToString( parameters, ParseForHeaderArguments );
-    // create the authorization header
-    request.setRawHeader( "Authorization", authorizationHeader );
-  } else if ( httpMethod == POST ) {
-    authorizationHeader = paramsToString( parameters, ParseForInlineQuery );
-    // create a network request
-    request.setHeader( QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded" );
-  }
+    if ( httpMethod == GET ) {
+        authorizationHeader = paramsToString( parameters, ParseForHeaderArguments );
+        // create the authorization header
+        request.setRawHeader( "Authorization", authorizationHeader );
+    } else if ( httpMethod == POST ) {
+        authorizationHeader = paramsToString( parameters, ParseForInlineQuery );
+        // create a network request
+        request.setHeader( QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded" );
+    }
 
-  request.setUrl( QUrl( requestUrl ) );
+    request.setUrl( QUrl( requestUrl ) );
 
-  // fire up a single shot timer if timeout was specified
-  if ( requestTimeout > 0 ) {
-    QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
-    // if the request finishes on time, the error value is overriden
-    // if not, it remains equal to QOAuth::Interface::Timeout
-    error = Timeout;
-  }
+    // fire up a single shot timer if timeout was specified
+    if ( requestTimeout > 0 ) {
+        QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
+        // if the request finishes on time, the error value is overriden
+        // if not, it remains equal to QOAuth::Interface::Timeout
+        error = Timeout;
+    }
 
-  // clear the reply container and send the request
-  replyParams.clear();
-  QNetworkReply *reply;
-  if ( httpMethod == GET ) {
-    reply = manager->get( request );
-  } else if ( httpMethod == POST ) {
-    reply = manager->post( request, authorizationHeader );
-  }
+    // clear the reply container and send the request
+    replyParams.clear();
+    QNetworkReply *reply;
+    if ( httpMethod == GET ) {
+        reply = manager->get( request );
+    } else if ( httpMethod == POST ) {
+        reply = manager->post( request, authorizationHeader );
+    }
 
-  // start the event loop and wait for the response
-  loop->exec();
+    // start the event loop and wait for the response
+    loop->exec();
 
-  // if request completed successfully, error is different than QOAuth::Interface::Timeout
-  // if it failed, we have to abort the request
-  if ( error == Timeout ) {
-    reply->abort();
-  }
+    // if request completed successfully, error is different than QOAuth::Interface::Timeout
+    // if it failed, we have to abort the request
+    if ( error == Timeout ) {
+        reply->abort();
+    }
 
-  return replyParams;
+    return replyParams;
 }
 
 QByteArray QOAuth::InterfacePrivate::createSignature( const QString &requestUrl, HttpMethod httpMethod,
-                                                   SignatureMethod signatureMethod, const QByteArray &token,
-                                                   const QByteArray &tokenSecret, ParamMap *params )
+                                                      SignatureMethod signatureMethod, const QByteArray &token,
+                                                      const QByteArray &tokenSecret, ParamMap *params )
 {
-  if ( ( signatureMethod == HMAC_SHA1 ||
-         signatureMethod == RSA_SHA1 ) &&
-       consumerKey.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it"
-                                  "with QOAuth::Interface::setConsumerKey()";
-    error = ConsumerKeyEmpty;
-    return QByteArray();
-  }
-  if ( consumerSecret.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
-                                  "with QOAuth::Interface::setConsumerSecret()";
-    error = ConsumerSecretEmpty;
-    return QByteArray();
-  }
-
-  if ( signatureMethod == RSA_SHA1 &&
-       privateKey.isNull() ) {
-    qWarning() << __FUNCTION__ << "- RSA private key is empty, make sure that you provide it"
-                                  "with QOAuth::Interface::setRSAPrivateKey{,FromFile}()";
-    error = RSAPrivateKeyEmpty;
-    return QByteArray();
-  }
-
-  // create nonce
-  QCA::InitializationVector iv( 16 );
-  QByteArray nonce = iv.toByteArray().toHex();
-
-  // create timestamp
-  uint time = QDateTime::currentDateTime().toTime_t();
-  QByteArray timestamp = QByteArray::number( time );
-
-  // create signature base string
-  // 1. create the method string
-  QByteArray httpMethodString = httpMethodToString( httpMethod );
-  // 2. prepare percent-encoded request URL
-  QByteArray percentRequestUrl = requestUrl.toAscii().toPercentEncoding();
-  // 3. prepare percent-encoded parameters string
-  params->insert( InterfacePrivate::ParamConsumerKey, consumerKey );
-  params->insert( InterfacePrivate::ParamNonce, nonce );
-  params->insert( InterfacePrivate::ParamSignatureMethod,
-                  signatureMethodToString( signatureMethod ) );
-  params->insert( InterfacePrivate::ParamTimestamp, timestamp );
-  params->insert( InterfacePrivate::ParamVersion, InterfacePrivate::OAuthVersion );
-  // append token only if it is defined (requestToken() doesn't use a token at all)
-  if ( !token.isEmpty() ) {
-    params->insert( InterfacePrivate::ParamToken, token );
-  }
-
-  QByteArray parametersString = paramsToString( *params, ParseForSignatureBaseString );
-  QByteArray percentParametersString = parametersString.toPercentEncoding();
-
-  QByteArray digest;
-
-  // PLAINTEXT doesn't use the Signature Base String
-  if ( signatureMethod == PLAINTEXT ) {
-    digest = createPlaintextSignature( tokenSecret );
-  } else {
-    // 4. create signature base string
-    QByteArray signatureBaseString;
-    signatureBaseString.append( httpMethodString + "&" );
-    signatureBaseString.append( percentRequestUrl + "&" );
-    signatureBaseString.append( percentParametersString );
-
-
-    if ( signatureMethod == HMAC_SHA1 ) {
-      if( !QCA::isSupported( "hmac(sha1)" ) ) {
-        qFatal( "HMAC(SHA1) is not supported!" );
-      }
-      // create key for HMAC-SHA1 hashing
-      QByteArray key( consumerSecret + "&" + tokenSecret );
-
-      // create HMAC-SHA1 digest in Base64
-      QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
-      QCA::SecureArray array( signatureBaseString );
-      hmac.update( array );
-      QCA::SecureArray resultArray = hmac.final();
-      digest = resultArray.toByteArray().toBase64();
-
-    } else if ( signatureMethod == RSA_SHA1 ) {
-      // sign the Signature Base String with the RSA key
-      digest = privateKey.signMessage( QCA::MemoryRegion( signatureBaseString ),
-                                       QCA::EMSA3_SHA1 ).toBase64();
+    if ( ( signatureMethod == HMAC_SHA1 ||
+           signatureMethod == RSA_SHA1 ) &&
+         consumerKey.isEmpty() ) {
+        qWarning() << __FUNCTION__ << "- consumer key is empty, make sure that you set it"
+                                      "with QOAuth::Interface::setConsumerKey()";
+        error = ConsumerKeyEmpty;
+        return QByteArray();
     }
-  }
+    if ( consumerSecret.isEmpty() ) {
+        qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
+                                      "with QOAuth::Interface::setConsumerSecret()";
+        error = ConsumerSecretEmpty;
+        return QByteArray();
+    }
 
-  // percent-encode the digest
-  QByteArray signature = digest.toPercentEncoding();
-  return signature;
+    if ( signatureMethod == RSA_SHA1 &&
+         privateKey.isNull() ) {
+        qWarning() << __FUNCTION__ << "- RSA private key is empty, make sure that you provide it"
+                                      "with QOAuth::Interface::setRSAPrivateKey{,FromFile}()";
+        error = RSAPrivateKeyEmpty;
+        return QByteArray();
+    }
+
+    // create nonce
+    QCA::InitializationVector iv( 16 );
+    QByteArray nonce = iv.toByteArray().toHex();
+
+    // create timestamp
+    uint time = QDateTime::currentDateTime().toTime_t();
+    QByteArray timestamp = QByteArray::number( time );
+
+    // create signature base string
+    // 1. create the method string
+    QByteArray httpMethodString = httpMethodToString( httpMethod );
+    // 2. prepare percent-encoded request URL
+    QByteArray percentRequestUrl = requestUrl.toAscii().toPercentEncoding();
+    // 3. prepare percent-encoded parameters string
+    params->insert( InterfacePrivate::ParamConsumerKey, consumerKey );
+    params->insert( InterfacePrivate::ParamNonce, nonce );
+    params->insert( InterfacePrivate::ParamSignatureMethod,
+                    signatureMethodToString( signatureMethod ) );
+    params->insert( InterfacePrivate::ParamTimestamp, timestamp );
+    params->insert( InterfacePrivate::ParamVersion, InterfacePrivate::OAuthVersion );
+    // append token only if it is defined (requestToken() doesn't use a token at all)
+    if ( !token.isEmpty() ) {
+        params->insert( InterfacePrivate::ParamToken, token );
+    }
+
+    QByteArray parametersString = paramsToString( *params, ParseForSignatureBaseString );
+    QByteArray percentParametersString = parametersString.toPercentEncoding();
+
+    QByteArray digest;
+
+    // PLAINTEXT doesn't use the Signature Base String
+    if ( signatureMethod == PLAINTEXT ) {
+        digest = createPlaintextSignature( tokenSecret );
+    } else {
+        // 4. create signature base string
+        QByteArray signatureBaseString;
+        signatureBaseString.append( httpMethodString + "&" );
+        signatureBaseString.append( percentRequestUrl + "&" );
+        signatureBaseString.append( percentParametersString );
+
+
+        if ( signatureMethod == HMAC_SHA1 ) {
+            if( !QCA::isSupported( "hmac(sha1)" ) ) {
+                qFatal( "HMAC(SHA1) is not supported!" );
+            }
+            // create key for HMAC-SHA1 hashing
+            QByteArray key( consumerSecret + "&" + tokenSecret );
+
+            // create HMAC-SHA1 digest in Base64
+            QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
+            QCA::SecureArray array( signatureBaseString );
+            hmac.update( array );
+            QCA::SecureArray resultArray = hmac.final();
+            digest = resultArray.toByteArray().toBase64();
+
+        } else if ( signatureMethod == RSA_SHA1 ) {
+            // sign the Signature Base String with the RSA key
+            digest = privateKey.signMessage( QCA::MemoryRegion( signatureBaseString ),
+                                             QCA::EMSA3_SHA1 ).toBase64();
+        }
+    }
+
+    // percent-encode the digest
+    QByteArray signature = digest.toPercentEncoding();
+    return signature;
 }
 
 QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray &tokenSecret )
 {
-  if ( consumerSecret.isEmpty() ) {
-    qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
-                                  "with QOAuth::Interface::setConsumerSecret()";
-    error = ConsumerSecretEmpty;
-    return QByteArray();
-  }
+    if ( consumerSecret.isEmpty() ) {
+        qWarning() << __FUNCTION__ << "- consumer secret is empty, make sure that you set it"
+                                      "with QOAuth::Interface::setConsumerSecret()";
+        error = ConsumerSecretEmpty;
+        return QByteArray();
+    }
 
-  // get percent encoded consumer secret and token secret, join and percent encode once more
-  QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
-  return digest.toPercentEncoding();
+    // get percent encoded consumer secret and token secret, join and percent encode once more
+    QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
+    return digest.toPercentEncoding();
 }

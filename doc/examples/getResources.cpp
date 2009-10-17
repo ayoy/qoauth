@@ -1,4 +1,4 @@
-QByteArray url( "http://example.com/get_photo");
+QByteArray url( "http://example.com/get_photo" );
 // create a request parameters map
 QOAuth::ParamMap map;
 map.insert( "file", "flower_48.jpg" );

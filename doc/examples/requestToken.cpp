@@ -1,7 +1,7 @@
 QByteArray token;
 QByteArray tokenSecret;
 
-QOAuth::Interface qoauth = new QOAuth::Interface;
+QOAuth::Interface *qoauth = new QOAuth::Interface;
 // set the consumer key and secret
 qoauth->setConsumerKey( "75b3d557c9268c49cfdf041a" );
 qoauth->setConsumerSecret( "fd12803fbf0760d34cd2ceb9955199ce" );

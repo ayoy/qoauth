@@ -43,59 +43,59 @@ class InterfacePrivate;
 
 class QOAUTH_EXPORT Interface : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  Q_PROPERTY( QByteArray consumerKey READ consumerKey WRITE setConsumerKey )
-  Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
-  Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
-  Q_PROPERTY( int error READ error )
+    Q_PROPERTY( QByteArray consumerKey READ consumerKey WRITE setConsumerKey )
+            Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
+            Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
+            Q_PROPERTY( int error READ error )
 
-public:
-  Interface( QObject *parent = 0 );
-  virtual ~Interface();
+        public:
+            Interface( QObject *parent = 0 );
+    virtual ~Interface();
 
-  QByteArray consumerKey() const;
-  void setConsumerKey( const QByteArray &consumerKey );
+    QByteArray consumerKey() const;
+    void setConsumerKey( const QByteArray &consumerKey );
 
-  QByteArray consumerSecret() const;
-  void setConsumerSecret( const QByteArray &consumerSecret );
+    QByteArray consumerSecret() const;
+    void setConsumerSecret( const QByteArray &consumerSecret );
 
-  uint requestTimeout() const;
-  void setRequestTimeout( uint msec );
+    uint requestTimeout() const;
+    void setRequestTimeout( uint msec );
 
-  int error() const;
+    int error() const;
 
-  bool setRSAPrivateKey( const QString &key,
-                         const QCA::SecureArray &passphrase = QCA::SecureArray() );
-  bool setRSAPrivateKeyFromFile( const QString &filename,
-                                 const QCA::SecureArray &passphrase = QCA::SecureArray() );
+    bool setRSAPrivateKey( const QString &key,
+                           const QCA::SecureArray &passphrase = QCA::SecureArray() );
+    bool setRSAPrivateKeyFromFile( const QString &filename,
+                                   const QCA::SecureArray &passphrase = QCA::SecureArray() );
 
 
-  ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
-                         SignatureMethod signatureMethod = HMAC_SHA1, const ParamMap &params = ParamMap() );
+    ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
+                           SignatureMethod signatureMethod = HMAC_SHA1, const ParamMap &params = ParamMap() );
 
-  ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
-                        const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
-                        const ParamMap &params = ParamMap() );
+    ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+                          const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
+                          const ParamMap &params = ParamMap() );
 
-  QByteArray createParametersString( const QString &requestUrl, HttpMethod httpMethod,
-                                     const QByteArray &token, const QByteArray &tokenSecret,
-                                     SignatureMethod signatureMethod, const ParamMap &params, ParsingMode mode );
+    QByteArray createParametersString( const QString &requestUrl, HttpMethod httpMethod,
+                                       const QByteArray &token, const QByteArray &tokenSecret,
+                                       SignatureMethod signatureMethod, const ParamMap &params, ParsingMode mode );
 
-  QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
+    QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
 
 
 
 protected:
-  InterfacePrivate * const d_ptr;
+    InterfacePrivate * const d_ptr;
 
 private:
-  Q_DISABLE_COPY(Interface)
-  Q_DECLARE_PRIVATE(Interface)
+    Q_DISABLE_COPY(Interface)
+    Q_DECLARE_PRIVATE(Interface)
 
 #ifdef UNIT_TEST
-  friend class Ut_Interface;
-  friend class Ft_Interface;
+    friend class Ut_Interface;
+    friend class Ft_Interface;
 #endif
 };
 

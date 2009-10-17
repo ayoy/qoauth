@@ -31,45 +31,45 @@ class Interface;
 
 class Ut_Interface : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
 private Q_SLOTS:
-  void init();
-  void cleanup();
-  void constructor();
+    void init();
+    void cleanup();
+    void constructor();
 
-  void consumerKey();
-  void setConsumerKey();
+    void consumerKey();
+    void setConsumerKey();
 
-  void consumerSecret();
-  void setConsumerSecret();
+    void consumerSecret();
+    void setConsumerSecret();
 
-  void requestTimeout();
-  void setRequestTimeout();
+    void requestTimeout();
+    void setRequestTimeout();
 
-  void error();
+    void error();
 
-  void requestToken_data();
-  void requestToken();
+    void requestToken_data();
+    void requestToken();
 
-  void accessToken_data();
-  void accessToken();
+    void accessToken_data();
+    void accessToken();
 
-  void createParametersString_data();
-  void createParametersString();
+    void createParametersString_data();
+    void createParametersString();
 
-  void inlineParameters_data();
-  void inlineParameters();
+    void inlineParameters_data();
+    void inlineParameters();
 
-  void setRSAPrivateKey_data();
-  void setRSAPrivateKey();
+    void setRSAPrivateKey_data();
+    void setRSAPrivateKey();
 
-  void setRSAPrivateKeyFromFile_data();
-  void setRSAPrivateKeyFromFile();
+    void setRSAPrivateKeyFromFile_data();
+    void setRSAPrivateKeyFromFile();
 
 private:
-  Interface *m;
-  QCA::Initializer initializer;
+    Interface *m;
+    QCA::Initializer initializer;
 };
 
 } // namespace QOAuth

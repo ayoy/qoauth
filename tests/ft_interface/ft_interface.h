@@ -26,14 +26,14 @@
 
 class MyEventLoop : public QEventLoop
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  bool timeout() const;
-  int exec( ProcessEventsFlags flags = AllEvents );
+    bool timeout() const;
+    int exec( ProcessEventsFlags flags = AllEvents );
 public slots:
-  void quitWithTimeout();
+    void quitWithTimeout();
 private:
-  bool m_timeout;
+    bool m_timeout;
 };
 
 namespace QOAuth {
@@ -42,33 +42,32 @@ class Interface;
 
 class Ft_Interface : public QObject
 {
-  Q_OBJECT
-
+    Q_OBJECT
 
 private Q_SLOTS:
-  void init();
-  void cleanup();
+    void init();
+    void cleanup();
 
-  void requestToken_data();
-  void requestToken();
+    void requestToken_data();
+    void requestToken();
 
-  void requestTokenRSA_data();
-  void requestTokenRSA();
+    void requestTokenRSA_data();
+    void requestTokenRSA();
 
-  void accessToken_data();
-  void accessToken();
+    void accessToken_data();
+    void accessToken();
 
-  void accessTokenRSA_data();
-  void accessTokenRSA();
+    void accessTokenRSA_data();
+    void accessTokenRSA();
 
-  void accessResources_data();
-  void accessResources();
+    void accessResources_data();
+    void accessResources();
 
-  void accessResourcesRSA_data();
-  void accessResourcesRSA();
+    void accessResourcesRSA_data();
+    void accessResourcesRSA();
 
 private:
-  Interface *m;
+    Interface *m;
 };
 
 } // namespace QOAuth

@@ -42,80 +42,80 @@ class Interface;
 
 class InterfacePrivate : public QObject
 {
-  Q_OBJECT
-  Q_DECLARE_PUBLIC(Interface)
+    Q_OBJECT
+    Q_DECLARE_PUBLIC(Interface)
 
-public:
-  enum Operation {
-    RequestToken,
-    Authorize,
-    Authenticate,
-    AccessToken
-  };
+        public:
+            enum Operation {
+        RequestToken,
+        Authorize,
+        Authenticate,
+        AccessToken
+    };
 
-  enum KeySource {
-    KeyFromString,
-    KeyFromFile
-  };
+    enum KeySource {
+        KeyFromString,
+        KeyFromFile
+    };
 
-  static const QByteArray OAuthVersion;
-  static const QByteArray ParamToken;
-  static const QByteArray ParamTokenSecret;
+    static const QByteArray OAuthVersion;
+    static const QByteArray ParamToken;
+    static const QByteArray ParamTokenSecret;
 
-  static const QByteArray ParamConsumerKey;
-  static const QByteArray ParamNonce;
-  static const QByteArray ParamSignature;
-  static const QByteArray ParamSignatureMethod;
-  static const QByteArray ParamTimestamp;
-  static const QByteArray ParamVersion;
+    static const QByteArray ParamConsumerKey;
+    static const QByteArray ParamNonce;
+    static const QByteArray ParamSignature;
+    static const QByteArray ParamSignatureMethod;
+    static const QByteArray ParamTimestamp;
+    static const QByteArray ParamVersion;
 
 
-  InterfacePrivate( QObject *parent = 0 );
-  QByteArray httpMethodToString( HttpMethod method );
-  QByteArray signatureMethodToString( SignatureMethod method );
-  ParamMap replyToMap( const QByteArray &data );
-  QByteArray paramsToString( const ParamMap &parameters, ParsingMode mode );
+    InterfacePrivate( QObject *parent = 0 );
+    QByteArray httpMethodToString( HttpMethod method );
+    QByteArray signatureMethodToString( SignatureMethod method );
+    ParamMap replyToMap( const QByteArray &data );
+    QByteArray paramsToString( const ParamMap &parameters, ParsingMode mode );
 
-  QByteArray createSignature( const QString &requestUrl, HttpMethod httpMethod,
-                              SignatureMethod signatureMethod, const QByteArray &token,
-                              const QByteArray &tokenSecret, ParamMap *params );
+    QByteArray createSignature( const QString &requestUrl, HttpMethod httpMethod,
+                                SignatureMethod signatureMethod, const QByteArray &token,
+                                const QByteArray &tokenSecret, ParamMap *params );
 
-  // for PLAINTEXT only
-  QByteArray createPlaintextSignature( const QByteArray &tokenSecret );
+    // for PLAINTEXT only
+    QByteArray createPlaintextSignature( const QByteArray &tokenSecret );
 
-  ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
-                                const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
+    ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
+                          const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
 
-  // RSA-SHA1 stuff
-  void setPrivateKey( const QString &source, const QCA::SecureArray &passphrase, KeySource from );
-  void readKeyFromLoader( QCA::KeyLoader *keyLoader );
+    // RSA-SHA1 stuff
+    void setPrivateKey( const QString &source, const QCA::SecureArray &passphrase, KeySource from );
+    void readKeyFromLoader( QCA::KeyLoader *keyLoader );
 
-  bool privateKeySet;
+    bool privateKeySet;
 
-  QCA::Initializer init;
-  QCA::PrivateKey privateKey;
-  QCA::SecureArray passphrase;
-  QCA::EventHandler eventHandler;
-  // end of RSA-SHA1 stuff
+    QCA::Initializer init;
+    QCA::PrivateKey privateKey;
+    QCA::SecureArray passphrase;
+    QCA::EventHandler eventHandler;
+    // end of RSA-SHA1 stuff
 
-  QByteArray consumerKey;
-  QByteArray consumerSecret;
+    QByteArray consumerKey;
+    QByteArray consumerSecret;
 
-  ParamMap replyParams;
+    ParamMap replyParams;
 
-  QNetworkAccessManager *manager;
-  QEventLoop *loop;
+    QNetworkAccessManager *manager;
+    QEventLoop *loop;
 
-  uint requestTimeout;
-  int error;
+    uint requestTimeout;
+    int error;
 
 
 public Q_SLOTS:
-  void parseReply( QNetworkReply *reply );
-  void setPassphrase( int id, const QCA::Event &event );
+    void parseReply( QNetworkReply *reply );
+    void setPassphrase( int id, const QCA::Event &event );
 
 protected:
-  Interface *q_ptr;
+    Interface *q_ptr;
 };
 
 } // namespace QOAuth
