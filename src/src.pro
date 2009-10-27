@@ -60,8 +60,13 @@ else:unix {
     # this creates a pkgconfig file
     system( ./pcfile.sh $${INSTALL_PREFIX} $${VERSION} )
     pkgconfig.files = qoauth.pc
+    
+    contains(QMAKE_HOST.arch, x86_64) {
+      target.path = $${INSTALL_PREFIX}/lib64
+    } else {
+      target.path = $${INSTALL_PREFIX}/lib
+    }
 
-    target.path = $${INSTALL_PREFIX}/lib
     headers.path = $${INSTALL_PREFIX}/include/QtOAuth
     docs.path = $${INSTALL_PREFIX}/share/doc/$${TARGET}-$${VERSION}/html
     pkgconfig.path = $${target.path}/pkgconfig
