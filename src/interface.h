@@ -36,6 +36,7 @@
 #include "qoauth_global.h"
 #include "qoauth_namespace.h"
 
+class QNetworkReply;
 
 namespace QOAuth {
 
@@ -46,12 +47,12 @@ class QOAUTH_EXPORT Interface : public QObject
     Q_OBJECT
 
     Q_PROPERTY( QByteArray consumerKey READ consumerKey WRITE setConsumerKey )
-            Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
-            Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
-            Q_PROPERTY( int error READ error )
+    Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
+    Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
+    Q_PROPERTY( int error READ error )
 
-        public:
-            Interface( QObject *parent = 0 );
+public:
+    Interface( QObject *parent = 0 );
     virtual ~Interface();
 
     QByteArray consumerKey() const;
@@ -85,13 +86,14 @@ class QOAUTH_EXPORT Interface : public QObject
     QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
 
 
-
 protected:
     InterfacePrivate * const d_ptr;
 
 private:
     Q_DISABLE_COPY(Interface)
     Q_DECLARE_PRIVATE(Interface)
+    Q_PRIVATE_SLOT(d_func(), void _q_parseReply(QNetworkReply *reply))
+    Q_PRIVATE_SLOT(d_func(), void _q_setPassphrase(int id, const QCA::Event &event))
 
 #ifdef UNIT_TEST
     friend class Ut_Interface;

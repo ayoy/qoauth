@@ -40,13 +40,12 @@ namespace QOAuth {
 class Interface;
 
 
-class InterfacePrivate : public QObject
+class InterfacePrivate
 {
-    Q_OBJECT
     Q_DECLARE_PUBLIC(Interface)
 
-        public:
-            enum Operation {
+public:
+    enum Operation {
         RequestToken,
         Authorize,
         Authenticate,
@@ -70,7 +69,9 @@ class InterfacePrivate : public QObject
     static const QByteArray ParamVersion;
 
 
-    InterfacePrivate( QObject *parent = 0 );
+    InterfacePrivate();
+    void init();
+
     QByteArray httpMethodToString( HttpMethod method );
     QByteArray signatureMethodToString( SignatureMethod method );
     ParamMap replyToMap( const QByteArray &data );
@@ -92,7 +93,7 @@ class InterfacePrivate : public QObject
 
     bool privateKeySet;
 
-    QCA::Initializer init;
+    QCA::Initializer initializer;
     QCA::PrivateKey privateKey;
     QCA::SecureArray passphrase;
     QCA::EventHandler eventHandler;
@@ -109,13 +110,12 @@ class InterfacePrivate : public QObject
     uint requestTimeout;
     int error;
 
-
-public Q_SLOTS:
-    void parseReply( QNetworkReply *reply );
-    void setPassphrase( int id, const QCA::Event &event );
-
 protected:
     Interface *q_ptr;
+
+public:
+    void _q_parseReply( QNetworkReply *reply );
+    void _q_setPassphrase( int id, const QCA::Event &event );
 };
 
 } // namespace QOAuth

@@ -212,22 +212,29 @@ const QByteArray QOAuth::InterfacePrivate::ParamTimestamp       = "oauth_timesta
 //! \brief The <em>version</em> request parameter string
 const QByteArray QOAuth::InterfacePrivate::ParamVersion         = "oauth_version";
 
-QOAuth::InterfacePrivate::InterfacePrivate( QObject *parent ) :
-        QObject( parent ),
+QOAuth::InterfacePrivate::InterfacePrivate() :
         privateKeySet( false ),
         consumerKey( QByteArray() ),
         consumerSecret( QByteArray() ),
-        manager( new QNetworkAccessManager( this ) ),
-        loop( new QEventLoop( this ) ),
+        manager(0),
+        loop(0),
         requestTimeout(0),
         error( NoError )
 {
-    connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
-    connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(parseReply(QNetworkReply*)) );
+}
 
-    connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(setPassphrase(int,QCA::Event)) );
+void QOAuth::InterfacePrivate::init()
+{
+    Q_Q(QOAuth::Interface);
+
+    manager = new QNetworkAccessManager(q);
+    loop = new QEventLoop(q);
+
+    q->connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
+    q->connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(_q_parseReply(QNetworkReply*)) );
+
+    q->connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(_q_setPassphrase(int,QCA::Event)) );
     eventHandler.start();
-
 }
 
 QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
@@ -288,7 +295,7 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::replyToMap( const QByteArray &data )
     return parameters;
 }
 
-void QOAuth::InterfacePrivate::parseReply( QNetworkReply *reply )
+void QOAuth::InterfacePrivate::_q_parseReply( QNetworkReply *reply )
 {
     int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
 
@@ -371,11 +378,12 @@ QByteArray QOAuth::InterfacePrivate::paramsToString( const ParamMap &parameters,
 
 QOAuth::Interface::Interface( QObject *parent ) :
         QObject( parent ),
-        d_ptr( new InterfacePrivate( this ) )
+        d_ptr( new InterfacePrivate )
 {
     Q_D(Interface);
 
     d->q_ptr = this;
+    d->init();
 }
 
 /*!
@@ -553,7 +561,7 @@ void QOAuth::InterfacePrivate::setPrivateKey( const QString &source,
 
     QCA::KeyLoader keyLoader;
     QEventLoop localLoop;
-    connect( &keyLoader, SIGNAL(finished()), &localLoop, SLOT(quit()) );
+    QObject::connect( &keyLoader, SIGNAL(finished()), &localLoop, SLOT(quit()) );
 
     switch (from) {
     case KeyFromString:
@@ -587,7 +595,7 @@ void QOAuth::InterfacePrivate::readKeyFromLoader( QCA::KeyLoader *keyLoader )
     }
 }
 
-void QOAuth::InterfacePrivate::setPassphrase( int id, const QCA::Event &event )
+void QOAuth::InterfacePrivate::_q_setPassphrase( int id, const QCA::Event &event )
 {
     if ( event.isNull() ) {
         return;
@@ -974,3 +982,5 @@ QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray 
     QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
     return digest.toPercentEncoding();
 }
+
+#include "moc_interface.cpp"
