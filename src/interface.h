@@ -29,7 +29,6 @@
 #define INTERFACE_H
 
 #include <QObject>
-#include <QMultiMap>
 
 #include <QtCrypto>
 

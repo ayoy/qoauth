@@ -53,8 +53,6 @@ namespace QOAuth {
       must be passed as a parameter in any of the \ref QOAuth::Interface::requestToken(),
       \ref QOAuth::Interface::accessToken() or \ref QOAuth::Interface::createParametersString()
       method.
-
-      \note The current implementation of the library supports only HMAC-SHA1 signature algorithm.
     */
     enum SignatureMethod {
         HMAC_SHA1, //!< Sets the signature method to HMAC-SHA1
@@ -127,9 +125,10 @@ namespace QOAuth {
         Timeout = 1001,             //!< Represents a request timeout error
         ConsumerKeyEmpty,           //!< Consumer key has not been provided
         ConsumerSecretEmpty,        //!< Consumer secret has not been provided
-        UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request. Note that
-                                     \ref QOAuth::Interface::requestToken() and \ref QOAuth::Interface::accessToken()
-                                     accept only HTTP GET and POST requests. */
+        UnsupportedHttpMethod,      /*!< The HTTP method is not supported by the request.
+                                         \note \ref QOAuth::Interface::requestToken() and
+                                         \ref QOAuth::Interface::accessToken()
+                                         accept only HTTP GET and POST requests. */
 
         RSAPrivateKeyEmpty = 1101,  //!< RSA private key has not been provided
         //    RSAPassphraseError,         //!< RSA passphrase is incorrect (or has not been provided)
@@ -146,7 +145,8 @@ namespace QOAuth {
     QByteArray supportedOAuthVersion();
 
     /*!
-      \brief Returns the name of the Access Token argument parameter.
+      \brief Returns the name of the Access Token argument parameter (<tt>oauth_token</tt> in
+             current implementation)
 
       Useful when reading Service Provider's reply for \ref QOAuth::Interface::accessToken() request, e.g:
       \code
@@ -157,15 +157,16 @@ namespace QOAuth {
                             token, tokenSecret, QOAuth::HMAC_SHA1 );
 
         if ( qoauth.error() == QOAuth::NoError ) {
-          token = reply.value( QOAuth::tokenParameterName() );
-          tokenSecret = reply.value( QOAuth::tokenSecretParameterName() );
+            token = reply.value( QOAuth::tokenParameterName() );
+            tokenSecret = reply.value( QOAuth::tokenSecretParameterName() );
         }
       \endcode
     */
     QByteArray tokenParameterName();
 
     /*!
-      \brief Returns the name of the Token Secret argument parameter.
+      \brief Returns the name of the Token Secret argument parameter (<tt>oauth_token_secret</tt> in
+             current implementation)
       \sa QOAuth::tokenParameterName()
     */
     QByteArray tokenSecretParameterName();
