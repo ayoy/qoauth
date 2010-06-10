@@ -983,4 +983,10 @@ QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray 
     return digest.toPercentEncoding();
 }
 
+void QOAuth::Interface::setManager(QNetworkAccessManager* newManager)
+{
+    Q_D(Interface);
+    d->manager = newManager;
+}
+
 #include "moc_interface.cpp"

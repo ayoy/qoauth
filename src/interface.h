@@ -35,6 +35,7 @@
 #include "qoauth_global.h"
 #include "qoauth_namespace.h"
 
+class QNetworkAccessManager;
 class QNetworkReply;
 
 namespace QOAuth {
@@ -53,6 +54,8 @@ class QOAUTH_EXPORT Interface : public QObject
 public:
     Interface( QObject *parent = 0 );
     virtual ~Interface();
+
+    void setManager( QNetworkAccessManager *newManager );
 
     QByteArray consumerKey() const;
     void setConsumerKey( const QByteArray &consumerKey );
