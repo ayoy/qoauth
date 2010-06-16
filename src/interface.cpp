@@ -227,14 +227,23 @@ void QOAuth::InterfacePrivate::init()
 {
     Q_Q(QOAuth::Interface);
 
-    manager = new QNetworkAccessManager(q);
     loop = new QEventLoop(q);
-
-    q->connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
-    q->connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(_q_parseReply(QNetworkReply*)) );
+    setupNetworkAccessManager();
 
     q->connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(_q_setPassphrase(int,QCA::Event)) );
     eventHandler.start();
+}
+
+void QOAuth::InterfacePrivate::setupNetworkAccessManager()
+{
+    Q_Q(QOAuth::Interface);
+
+    if (manager == 0)
+        manager = new QNetworkAccessManager;
+
+    manager->setParent(q);
+    q->connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
+    q->connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(_q_parseReply(QNetworkReply*)) );
 }
 
 QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
@@ -387,12 +396,62 @@ QOAuth::Interface::Interface( QObject *parent ) :
 }
 
 /*!
+  \brief Creates a new QOAuth::Interface class instance with the given \a parent,
+         using \a manager for network connections.
+
+  Use this constructor if you want to use your custom network access manager to
+  handle network connections needed by the interface.
+
+  /sa setNetworkAccessManager()
+*/
+
+QOAuth::Interface::Interface(QNetworkAccessManager *manager, QObject *parent) :
+        QObject( parent ),
+        d_ptr( new InterfacePrivate )
+{
+    Q_D(Interface);
+
+    d->q_ptr = this;
+    d->manager = manager;
+    d->init();
+}
+
+/*!
   \brief Destroys the QOAuth::Interface object
 */
 
 QOAuth::Interface::~Interface()
 {
     delete d_ptr;
+}
+
+/*!
+  \brief Returns the network access manager used by the interface.
+*/
+QNetworkAccessManager* QOAuth::Interface::networkAccessManager() const
+{
+    Q_D(const Interface);
+
+    return d->manager;
+}
+
+/*!
+  \brief Sets \a manager to be the network access manager used by the interface.
+
+  The interface class takes ownership of the manager. If there already is a manager,
+  it's being deleted.
+
+  /sa networkAccessManager()
+*/
+void QOAuth::Interface::setNetworkAccessManager(QNetworkAccessManager* manager)
+{
+    Q_D(Interface);
+
+    if (d->manager)
+        delete d->manager;
+
+    d->manager = manager;
+    d->setupNetworkAccessManager();
 }
 
 /*!
@@ -981,12 +1040,6 @@ QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray 
     // get percent encoded consumer secret and token secret, join and percent encode once more
     QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
     return digest.toPercentEncoding();
-}
-
-void QOAuth::Interface::setManager(QNetworkAccessManager* newManager)
-{
-    Q_D(Interface);
-    d->manager = newManager;
 }
 
 #include "moc_interface.cpp"

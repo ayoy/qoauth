@@ -30,8 +30,9 @@
 
 #include "interface.h"
 #include <QObject>
+#include <QPointer>
+#include <QNetworkAccessManager>
 
-class QNetworkAccessManager;
 class QNetworkReply;
 class QEventLoop;
 
@@ -71,6 +72,7 @@ public:
 
     InterfacePrivate();
     void init();
+    void setupNetworkAccessManager();
 
     QByteArray httpMethodToString( HttpMethod method );
     QByteArray signatureMethodToString( SignatureMethod method );
@@ -104,7 +106,7 @@ public:
 
     ParamMap replyParams;
 
-    QNetworkAccessManager *manager;
+    QPointer<QNetworkAccessManager> manager;
     QEventLoop *loop;
 
     uint requestTimeout;

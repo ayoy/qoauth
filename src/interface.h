@@ -53,9 +53,11 @@ class QOAUTH_EXPORT Interface : public QObject
 
 public:
     Interface( QObject *parent = 0 );
+    Interface( QNetworkAccessManager *manager, QObject *parent = 0 );
     virtual ~Interface();
 
-    void setManager( QNetworkAccessManager *newManager );
+    void setNetworkAccessManager(QNetworkAccessManager *manager);
+    QNetworkAccessManager* networkAccessManager() const;
 
     QByteArray consumerKey() const;
     void setConsumerKey( const QByteArray &consumerKey );
