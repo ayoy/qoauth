@@ -4,7 +4,7 @@ TEMPLATE = app
 DEFINES += UNIT_TEST
 include(../../oauth.prf)
 
-QT += testlib
+QT += testlib network
 QT -= gui
 CONFIG += crypto
 

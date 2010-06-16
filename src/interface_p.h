@@ -101,6 +101,7 @@ public:
     QCA::EventHandler eventHandler;
     // end of RSA-SHA1 stuff
 
+    bool ignoreSslErrors;
     QByteArray consumerKey;
     QByteArray consumerSecret;
 
@@ -118,6 +119,7 @@ protected:
 public:
     void _q_parseReply( QNetworkReply *reply );
     void _q_setPassphrase( int id, const QCA::Event &event );
+    void _q_handleSslErrors( QNetworkReply *reply, const QList<QSslError> &errors );
 };
 
 } // namespace QOAuth

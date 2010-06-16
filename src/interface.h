@@ -49,6 +49,7 @@ class QOAUTH_EXPORT Interface : public QObject
     Q_PROPERTY( QByteArray consumerKey READ consumerKey WRITE setConsumerKey )
     Q_PROPERTY( QByteArray consumerSecret READ consumerSecret WRITE setConsumerSecret )
     Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
+    Q_PROPERTY( bool ignoreSslErrors READ ignoreSslErrors WRITE setIgnoreSslErrors )
     Q_PROPERTY( int error READ error )
 
 public:
@@ -56,8 +57,11 @@ public:
     Interface( QNetworkAccessManager *manager, QObject *parent = 0 );
     virtual ~Interface();
 
-    void setNetworkAccessManager(QNetworkAccessManager *manager);
     QNetworkAccessManager* networkAccessManager() const;
+    void setNetworkAccessManager(QNetworkAccessManager *manager);
+
+    bool ignoreSslErrors() const;
+    void setIgnoreSslErrors(bool enabled);
 
     QByteArray consumerKey() const;
     void setConsumerKey( const QByteArray &consumerKey );
@@ -98,6 +102,8 @@ private:
     Q_DECLARE_PRIVATE(Interface)
     Q_PRIVATE_SLOT(d_func(), void _q_parseReply(QNetworkReply *reply))
     Q_PRIVATE_SLOT(d_func(), void _q_setPassphrase(int id, const QCA::Event &event))
+    Q_PRIVATE_SLOT(d_func(), void _q_handleSslErrors( QNetworkReply *reply,
+                                                      const QList<QSslError> &errors ))
 
 #ifdef UNIT_TEST
     friend class Ut_Interface;

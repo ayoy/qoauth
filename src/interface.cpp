@@ -227,6 +227,7 @@ void QOAuth::InterfacePrivate::init()
 {
     Q_Q(QOAuth::Interface);
 
+    ignoreSslErrors = false;
     loop = new QEventLoop(q);
     setupNetworkAccessManager();
 
@@ -244,6 +245,8 @@ void QOAuth::InterfacePrivate::setupNetworkAccessManager()
     manager->setParent(q);
     q->connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
     q->connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(_q_parseReply(QNetworkReply*)) );
+    q->connect( manager, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)),
+                SLOT(_q_handleSslErrors(QNetworkReply*,QList<QSslError>)) );
 }
 
 QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
@@ -328,6 +331,14 @@ void QOAuth::InterfacePrivate::_q_parseReply( QNetworkReply *reply )
     }
 
     reply->close();
+}
+
+void QOAuth::InterfacePrivate::_q_handleSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
+{
+    Q_UNUSED(errors);
+
+    if (ignoreSslErrors)
+        reply->ignoreSslErrors();
 }
 
 QByteArray QOAuth::InterfacePrivate::paramsToString( const ParamMap &parameters, ParsingMode mode )
@@ -453,6 +464,34 @@ void QOAuth::Interface::setNetworkAccessManager(QNetworkAccessManager* manager)
     d->manager = manager;
     d->setupNetworkAccessManager();
 }
+
+/*!
+  \property QOAuth::Interface::ignoreSslErrors
+  \brief This property is used to control SSL errors handling.
+
+  The default value is false, meaning that the interface will fail upon an SSL error.
+  Set it to true if you want to disregard any SSL errors encountered
+  during the authorization process.
+
+  Access functions:
+  \li <b>bool ignoreSslErrors() const</b>
+  \li <b>void setIgnoreSslErrors( bool enabled )</b>
+*/
+
+bool QOAuth::Interface::ignoreSslErrors() const
+{
+    Q_D(const QOAuth::Interface);
+
+    return d->ignoreSslErrors;
+}
+
+void QOAuth::Interface::setIgnoreSslErrors(bool enabled)
+{
+    Q_D(QOAuth::Interface);
+
+    d->ignoreSslErrors = enabled;
+}
+
 
 /*!
   \property QOAuth::Interface::consumerKey
