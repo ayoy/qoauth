@@ -1046,7 +1046,7 @@ QByteArray QOAuth::InterfacePrivate::createSignature( const QString &requestUrl,
                 qFatal( "HMAC(SHA1) is not supported!" );
             }
             // create key for HMAC-SHA1 hashing
-            QByteArray key( consumerSecret + "&" + tokenSecret );
+            QByteArray key( consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding() );
 
             // create HMAC-SHA1 digest in Base64
             QCA::MessageAuthenticationCode hmac( "hmac(sha1)", QCA::SymmetricKey( key ) );
