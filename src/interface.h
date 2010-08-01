@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2009 by Dominik Kapusta       <d@ayoy.net>              *
+ *   Copyright (C) 2009-2010 by Dominik Kapusta       <d@ayoy.net>         *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU Lesser General Public License as        *
