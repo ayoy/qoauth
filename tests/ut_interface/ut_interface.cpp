@@ -139,7 +139,7 @@ void QOAuth::Ut_Interface::requestToken_data()
             << QByteArray( "135432" )
             << QByteArray( "654316" )
             << QString( "http://wtf&(^%)$&#.com" )
-            << (int) DELETE
+            << (int) PUT
             << (int) HMAC_SHA1
             << (int) UnsupportedHttpMethod
             << QByteArray()
@@ -229,7 +229,7 @@ void QOAuth::Ut_Interface::accessToken_data()
             << QByteArray( "token" )
             << QByteArray( "tokensecret" )
             << QString( "http://wtf&(^%)$&#.com" )
-            << (int) DELETE
+            << (int) PUT
             << (int) HMAC_SHA1
             << (int) UnsupportedHttpMethod
             << QByteArray()

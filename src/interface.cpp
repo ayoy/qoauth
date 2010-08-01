@@ -260,8 +260,10 @@ QByteArray QOAuth::InterfacePrivate::httpMethodToString( HttpMethod method )
         return "HEAD";
     case PUT:
         return "PUT";
+#ifndef Q_WS_WIN
     case DELETE:
         return "DELETE";
+#endif
     default:
         qWarning() << __FUNCTION__ << "- Unrecognized method";
         return QByteArray();

@@ -81,8 +81,10 @@ namespace QOAuth {
         GET,   //!< Sets the HTTP method to GET
         POST,  //!< Sets the HTTP method to POST
         HEAD,  //!< Sets the HTTP method to HEAD
-        PUT,   //!< Sets the HTTP method to PUT
-        DELETE //!< Sets the HTTP method to DELETE
+        PUT   //!< Sets the HTTP method to PUT
+#ifndef Q_WS_WIN
+        , DELETE //!< Sets the HTTP method to DELETE
+#endif
     };
 
     /*!
