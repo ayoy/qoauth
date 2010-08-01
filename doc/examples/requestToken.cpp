@@ -15,7 +15,7 @@ QOAuth::ParamMap reply =
 
 // if no error occurred, read the received token and token secret
 if ( qoauth->error() == QOAuth::NoError ) {
-  token = reply.value( QOAuth::ParamToken );
-  tokenSecret = reply.value( QOAuth::ParamTokenSecret );
+  token = reply.value( QOAuth::tokenParameterName() );
+  tokenSecret = reply.value( QOAuth::tokenSecretParameterName() );
 }
 
