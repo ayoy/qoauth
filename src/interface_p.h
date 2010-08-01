@@ -29,7 +29,6 @@
 #define QOAUTH_P_H
 
 #include "interface.h"
-#include <QObject>
 #include <QPointer>
 #include <QNetworkAccessManager>
 
