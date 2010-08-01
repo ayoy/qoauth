@@ -31,6 +31,8 @@
 #include <QMultiMap>
 #include <QByteArray>
 
+#include "qoauth_global.h"
+
 /*!
   \namespace QOAuth
   \brief This namespace encapsulates all classes and definitions provided by libqoauth.
@@ -142,7 +144,7 @@ namespace QOAuth {
     /*!
       \brief Returns the supported OAuth protocol version
     */
-    QByteArray supportedOAuthVersion();
+    QOAUTH_EXPORT QByteArray supportedOAuthVersion();
 
     /*!
       \brief Returns the name of the Access Token argument parameter (<tt>oauth_token</tt> in
@@ -162,14 +164,14 @@ namespace QOAuth {
         }
       \endcode
     */
-    QByteArray tokenParameterName();
+    QOAUTH_EXPORT QByteArray tokenParameterName();
 
     /*!
       \brief Returns the name of the Token Secret argument parameter (<tt>oauth_token_secret</tt> in
              current implementation)
       \sa QOAuth::tokenParameterName()
     */
-    QByteArray tokenSecretParameterName();
+    QOAUTH_EXPORT QByteArray tokenSecretParameterName();
 
 } // namespace QOAuth
 
