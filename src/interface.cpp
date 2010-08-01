@@ -937,7 +937,7 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUr
         // create the authorization header
         request.setRawHeader( "Authorization", authorizationHeader );
     } else if ( httpMethod == POST ) {
-        authorizationHeader = paramsToString( parameters, ParseForInlineQuery );
+        authorizationHeader = paramsToString( parameters, ParseForRequestContent );
         // create a network request
         request.setHeader( QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded" );
     }
