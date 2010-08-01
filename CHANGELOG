@@ -1,3 +1,17 @@
+v1.0.1 (01/08/2010):
+* new API: 
+    - QOAuth::Interface::networkAccessManager()
+    - QOAuth::Interface::setNetworkAccessManager()
+    - QOAuth::Interface::ignoreSslErrors()
+    - QOAuth::Interface::setIgnoreSslErrors()
+  refer to the API docs for more info,
+* added missing export statements to some global functions, 
+* Percent encode consumer secret and token secret for the Signature Base String signing key [#8],
+* Parse for request content when sending POST [#10],
+* API docs and examples fixes [#9],
+* temporarily removed QOAuth::DELETE from QOAuth::HttpMethod enum on Windows [#4],
+* buildsystem fixes - install under /usr/lib64 on 64-bit Unix-like systems and
+  make use of QT_INSTALL_HEADERS in oauth.prf.
 v1.0 (07/08/2009):
 * Added support for RSA-SHA1 signing algorithm, also working with
   passphrase-protected private RSA keys.
