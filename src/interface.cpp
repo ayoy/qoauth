@@ -432,7 +432,7 @@ QOAuth::Interface::Interface( QObject *parent ) :
   Use this constructor if you want to use your custom network access manager to
   handle network connections needed by the interface.
 
-  /sa setNetworkAccessManager()
+  \sa setNetworkAccessManager()
 */
 
 QOAuth::Interface::Interface(QNetworkAccessManager *manager, QObject *parent) :
@@ -471,7 +471,7 @@ QNetworkAccessManager* QOAuth::Interface::networkAccessManager() const
   The interface class takes ownership of the manager. If there already is a manager,
   it's being deleted.
 
-  /sa networkAccessManager()
+  \sa networkAccessManager()
 */
 void QOAuth::Interface::setNetworkAccessManager(QNetworkAccessManager* manager)
 {
@@ -562,6 +562,20 @@ void QOAuth::Interface::setConsumerSecret( const QByteArray &consumerSecret )
     d->consumerSecret = consumerSecret;
 }
 
+/*!
+  \property QOAuth::Interface::signatureMethod()
+  \brief This property holds the signature method.
+
+  The signatureMethod specifies the method for signing requests.
+  It defaults to QOAuth::HMAC_SHA1.
+
+  Access functions:
+  \li <b>SignatureMethod signatureMethod() const</b>
+  \li <b>void setSignatureMethod( const SignatureMethod &signatureMethod )</b>
+
+  \sa QOAuth::SignatureMethod
+*/
+
 QOAuth::SignatureMethod QOAuth::Interface::signatureMethod() const
 {
     Q_D(const QOAuth::Interface);
@@ -579,17 +593,7 @@ void QOAuth::Interface::setSignatureMethod( const SignatureMethod &signatureMeth
 
 /*!
   \property QOAuth::Interface::requestTimeout
-  \brief This property holds the timeout value in milliseconds for issued network requests.
-
-  The QOAuth::Interface class can send network requests when asked to do so by calling either
-  requestToken() or accessToken() method. By defining the \a requestTimeout, requests
-  can have the time constraint applied, after which they fail, setting \ref error to
-  \ref Timeout. The \a requestTimeout value is initially set to \c 0, which in this
-  case means that no timeout is applied to outgoing requests.
-
-  Access functions:
-  \li <b>uint requestTimeout() const</b>
-  \li <b>void setRequestTimeout( uint requestTimeout )</b>
+  \deprecated This property is deprecated.
 */
 
 uint QOAuth::Interface::requestTimeout() const
@@ -767,6 +771,64 @@ void QOAuth::InterfacePrivate::_q_setPassphrase( int id, const QCA::Event &event
   \li for POST requests, as a request body with \c content-type set to
       \c application/x-www-form-urlencoded.
 
+  This method doesn't wait until the request is finished, instead it returns immediately.
+  When the request is complete, the class will emit \ref requestTokenFinished() signal.
+  The resulting reply parameters are passed in that signal and you should connect to it to
+  access them.
+
+  \returns A pointer to QNetworkReply associated with the sent request. The library takes
+  responsibility for deleting the reply when request succeeded. However it doesn't apply any
+  timeout for the request, so it's up to the user to apply and handle timeout if necessary
+  (e.g. by calling QNetworkReply::abort()).
+  \note When aborting a request on user's side, the user is responsible for deleting the reply.
+
+  \sa requestTokenFinished(), accessToken(), error
+*/
+
+QNetworkReply* QOAuth::Interface::requestToken( const QUrl &requestUrl, HttpMethod httpMethod,
+                                                const ParamMap &params )
+{
+    Q_D(Interface);
+
+    return d->sendRequest( requestUrl.toString(), httpMethod, d->signatureMethod,
+                           QByteArray(), QByteArray(), params, QOAuth::InterfacePrivate::RequestToken );
+}
+
+/*!
+  \fn void QOAuth::Interface::requestTokenFinished(const ParamMap &reply)
+
+  This signal is emitted when a request sent in requestToken() successfully finishes.
+
+  \param reply all the data passed in the Service Provider response (including a Request Token
+         and Token Secret), formed in a \ref ParamMap.
+*/
+
+/*!
+  \deprecated This method is deprecated.
+*/
+/*  This method constructs and sends a request for obtaining an unauthorized Request Token
+  from the Service Provider. This is the first step of the OAuth authentication flow,
+  according to <a href=http://oauth.net/core/1.0/#anchor9>OAuth 1.0 Core specification</a>.
+  The PLAINTEXT signature method uses Customer Secret and (if provided) Token Secret to
+  sign a request. For the HMAC-SHA1 and RSA-SHA1 signature methods the
+  <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a> is created
+  using the given \a requestUrl and \a httpMethod. The optional request parameters
+  specified by the Service Provider can be passed in the \a params ParamMap.
+
+  The Signature Base String contains the \ref consumerKey and uses \ref consumerSecret
+  for encrypting the message, so it's necessary to provide them both before issuing this
+  request. The method will check if both \ref consumerKey and \ref consumerSecret are
+  provided, and fail if any of them is missing.
+
+  When the signature is created, the appropriate request is sent to the Service Provider
+  (namely, the \a requestUrl). Depending on the type of the request, the parameters are
+  passed according to the <a href=http://oauth.net/core/1.0/#consumer_req_param>
+  Consumer Request Parametes</a> section of the OAuth specification, i.e.:
+  \li for GET requests, in the HTTP Authorization header, as defined in
+      <a href=http://oauth.net/core/1.0/#auth_header>OAuth HTTP Authorization Scheme</a>,
+  \li for POST requests, as a request body with \c content-type set to
+      \c application/x-www-form-urlencoded.
+
   Once the request is sent, a local event loop is executed and set up to wait for the request
   to complete. If the \ref requestTimeout property is set to a non-zero value, its vaue
   is applied as a request timeout, after which the request is aborted.
@@ -778,15 +840,6 @@ void QOAuth::InterfacePrivate::_q_setPassphrase( int id, const QCA::Event &event
 
   \sa accessToken(), error
 */
-
-QNetworkReply* QOAuth::Interface::requestToken( const QUrl &requestUrl, HttpMethod httpMethod,
-                                                const ParamMap &params )
-{
-    Q_D(Interface);
-
-    return d->sendRequest( requestUrl.toString(), httpMethod, d->signatureMethod,
-                           QByteArray(), QByteArray(), params, QOAuth::InterfacePrivate::RequestToken );
-}
 
 QOAuth::ParamMap QOAuth::Interface::requestToken(const QString &requestUrl, HttpMethod httpMethod,
                                                  SignatureMethod signatureMethod, const ParamMap &params)
@@ -847,16 +900,20 @@ QOAuth::ParamMap QOAuth::Interface::requestToken(const QString &requestUrl, Http
   \li for POST requests, as a request body with \c content-type set to
       \c application/x-www-form-urlencoded.
 
-  Once the request is sent, a local event loop is executed and set up to wait for the request
-  to complete. If the \ref requestTimeout property is set to a non-zero value, its vaue
-  is applied as a request timeout, after which the request is aborted.
+  This method doesn't wait until the request is finished, instead it returns immediately.
+  When the request is complete, the class will emit \ref accessTokenFinished() signal.
+  The resulting reply parameters are passed in that signal and you should connect to it to
+  access them.
 
-  \returns If request succeded, the method returns all the data passed in the Service
-  Provider response (including an authorized Access Token and Token Secret), formed in
-  a ParamMap. This request ends the authorization process, and the obtained Access Token
-  and Token Secret should be kept by the application and provided with every future request
-  authorized by OAuth, e.g. using \ref createParametersString(). If request fails, the
-  \ref error property is set to an appropriate value, and an empty ParamMap is returned.
+  This request ends the authorization process, and the obtained Access Token and Token Secret
+  should be kept by the application and provided with every future request authorized by OAuth,
+  e.g. using \ref createParametersString().
+
+  \returns A pointer to QNetworkReply associated with the sent request. The library takes
+  responsibility for deleting the reply when request succeeded. However it doesn't apply any
+  timeout for the request, so it's up to the user to apply and handle timeout if necessary
+  (e.g. by calling QNetworkReply::abort()).
+  \note When aborting a request on user's side, the user is responsible for deleting the reply.
 
   \sa requestToken(), createParametersString(), error
 */
@@ -870,6 +927,62 @@ QNetworkReply* QOAuth::Interface::accessToken( const QUrl &requestUrl, HttpMetho
                            token, tokenSecret, params, QOAuth::InterfacePrivate::AccessToken );
 
 }
+
+/*!
+  \fn void QOAuth::Interface::accessTokenFinished(const ParamMap &reply)
+
+  This signal is emitted when a request sent in accessToken() successfully finishes.
+
+  \param reply all the data passed in the Service Provider response (including an authorized
+         Access Token and Token Secret), formed in a \ref ParamMap. This request ends the authorization
+         process, and the obtained Access Token and Token Secret should be kept by the application
+         and provided with every future request authorized by OAuth, e.g. using
+         createParametersString().
+*/
+
+/*!
+  \deprecated This method is deprecated.
+*/
+/*
+
+  This method constructs and sends a request for exchanging a Request Token (obtained
+  previously with a call to \ref requestToken()) for an Access Token, that authorizes the
+  application to access Protected Resources. This is the third step of the OAuth
+  authentication flow, according to <a href=http://oauth.net/core/1.0/#anchor9>OAuth 1.0
+  Core specification</a>. The PLAINTEXT signature method uses Customer Secret and (if
+  provided) Token Secret to sign a request. For the HMAC-SHA1 and RSA-SHA1
+  signature methods the <a href=http://oauth.net/core/1.0/#anchor14>Signature Base String</a>
+  is created using the given \a requestUrl, \a httpMethod, \a token and \a tokenSecret.
+  The optional request parameters specified by the Service Provider can be passed in the
+  \a params ParamMap.
+
+  The Signature Base String contains the \ref consumerKey and uses \ref consumerSecret
+  for encrypting the message, so it's necessary to provide them both before issuing
+  this request. The method will check if both \ref consumerKey and \ref consumerSecret
+  are provided, and fail if any of them is missing.
+
+  When the signature is created, the appropriate request is sent to the Service Provider
+  (namely, the \a requestUrl). Depending on the type of the request, the parameters are
+  passed according to the <a href=http://oauth.net/core/1.0/#consumer_req_param>
+  Consumer Request Parametes</a> section of the OAuth specification, i.e.:
+  \li for GET requests, in the HTTP Authorization header, as defined in
+      <a href=http://oauth.net/core/1.0/#auth_header>OAuth HTTP Authorization Scheme</a>,
+  \li for POST requests, as a request body with \c content-type set to
+      \c application/x-www-form-urlencoded.
+
+  Once the request is sent, a local event loop is executed and set up to wait for the request
+  to complete. If the \ref requestTimeout property is set to a non-zero value, its vaue
+  is applied as a request timeout, after which the request is aborted.
+
+  \returns If request succeded, the method returns all the data passed in the Service
+  Provider response (including an authorized Access Token and Token Secret), formed in
+  a ParamMap. This request ends the authorization process, and the obtained Access Token
+  and Token Secret should be kept by the application and provided with every future request
+  authorized by OAuth, e.g. using \ref createParametersString(). If request fails, the
+  \ref error property is set to an appropriate value, and an empty ParamMap is returned.
+
+  \sa requestToken(), createParametersString(), error
+*/
 
 QOAuth::ParamMap QOAuth::Interface::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                                                  const QByteArray &tokenSecret, SignatureMethod signatureMethod,

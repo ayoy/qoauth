@@ -51,10 +51,8 @@ namespace QOAuth {
 
       There are 3 different signature methods defined by the
       <a href=http://oauth.net/core/1.0/#signing_process>OAuth protocol</a>. This enum
-      is used to specify the method used by a specific request. Hence, one of its values
-      must be passed as a parameter in any of the \ref QOAuth::Interface::requestToken(),
-      \ref QOAuth::Interface::accessToken() or \ref QOAuth::Interface::createParametersString()
-      method.
+      is used to specify the method used by an interface to sign outgoing requests. It has to be
+      set using QOAuth::Interface::setSignatureMethod() before sending any requests.
     */
     enum SignatureMethod {
         HMAC_SHA1, //!< Sets the signature method to HMAC-SHA1
