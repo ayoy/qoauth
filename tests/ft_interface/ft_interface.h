@@ -23,6 +23,8 @@
 
 #include <QObject>
 #include <QEventLoop>
+#include <interface.h>
+#include <qoauth_namespace.h>
 
 class MyEventLoop : public QEventLoop
 {
@@ -37,8 +39,6 @@ private:
 };
 
 namespace QOAuth {
-
-class Interface;
 
 class Ft_Interface : public QObject
 {
@@ -66,8 +66,30 @@ private Q_SLOTS:
     void accessResourcesRSA_data();
     void accessResourcesRSA();
 
+#ifdef DEPRECATED_TESTS
+    void DEPRECATED_requestToken_data();
+    void DEPRECATED_requestToken();
+    void DEPRECATED_requestTokenRSA_data();
+    void DEPRECATED_requestTokenRSA();
+    void DEPRECATED_accessToken_data();
+    void DEPRECATED_accessToken();
+    void DEPRECATED_accessTokenRSA_data();
+    void DEPRECATED_accessTokenRSA();
+#endif
+
 private:
     Interface *m;
+};
+
+class ReplyReader : public QObject
+{
+    Q_OBJECT
+
+public:
+    ParamMap replyParams;
+
+private slots:
+    void readParams(const ParamMap &params) {replyParams = params;}
 };
 
 } // namespace QOAuth

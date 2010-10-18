@@ -31,6 +31,7 @@
 #include "interface.h"
 #include <QPointer>
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 
 class QNetworkReply;
 class QEventLoop;
@@ -47,15 +48,16 @@ class InterfacePrivate
 public:
     enum Operation {
         RequestToken,
-        Authorize,
-        Authenticate,
-        AccessToken
+        AccessToken,
+        Invalid
     };
 
     enum KeySource {
         KeyFromString,
         KeyFromFile
     };
+
+    static const QNetworkRequest::Attribute OperationTypeAttribute;
 
     static const QByteArray OAuthVersion;
     static const QByteArray ParamToken;
@@ -85,8 +87,9 @@ public:
     // for PLAINTEXT only
     QByteArray createPlaintextSignature( const QByteArray &tokenSecret );
 
-    ParamMap sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
-                          const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params );
+    QNetworkReply* sendRequest( const QString &requestUrl, HttpMethod httpMethod, SignatureMethod signatureMethod,
+                          const QByteArray &token, const QByteArray &tokenSecret, const ParamMap &params,
+                          Operation operation );
 
     // RSA-SHA1 stuff
     void setPrivateKey( const QString &source, const QCA::SecureArray &passphrase, KeySource from );
@@ -103,13 +106,14 @@ public:
     bool ignoreSslErrors;
     QByteArray consumerKey;
     QByteArray consumerSecret;
+    SignatureMethod signatureMethod;
 
-    ParamMap replyParams;
+    ParamMap DEPRECATED_replyParams;
 
     QPointer<QNetworkAccessManager> manager;
-    QEventLoop *loop;
 
-    uint requestTimeout;
+    QEventLoop *DEPRECATED_loop;
+    uint DEPRECATED_requestTimeout;
     int error;
 
 protected:
@@ -122,5 +126,7 @@ public:
 };
 
 } // namespace QOAuth
+
+Q_DECLARE_METATYPE(QOAuth::InterfacePrivate::Operation)
 
 #endif // INTERFACE_P_H

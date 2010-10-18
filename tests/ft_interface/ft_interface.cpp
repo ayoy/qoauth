@@ -24,6 +24,7 @@
 #include <QtNetwork>
 #include <QTimer>
 #include <QTest>
+#include <QUrl>
 
 #include <QtOAuth>
 #include <interface_p.h>
@@ -59,7 +60,6 @@ void QOAuth::Ft_Interface::cleanup()
 
 void QOAuth::Ft_Interface::requestToken_data()
 {
-    QTest::addColumn<uint>("timeout");
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("secret");
     QTest::addColumn<QString>("url");
@@ -70,8 +70,7 @@ void QOAuth::Ft_Interface::requestToken_data()
     QTest::addColumn<QByteArray>("requestTokenSecret");
 
     // OAuth test server at http://term.ie/oauth/example
-    QTest::newRow("HMAC-SHA1") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("HMAC-SHA1") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QString( "http://term.ie/oauth/example/request_token.php" )
             << (int) GET
@@ -80,8 +79,7 @@ void QOAuth::Ft_Interface::requestToken_data()
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" );
 
-    QTest::newRow("PLAINTEXT") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("PLAINTEXT") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QString( "http://term.ie/oauth/example/request_token.php" )
             << (int) GET
@@ -89,23 +87,10 @@ void QOAuth::Ft_Interface::requestToken_data()
             << (int) NoError
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" );
-
-    // timeout seems to be untestable for a moment
-    //  QTest::newRow("timeout") << (uint) 100
-    //                           << QByteArray( "key" )
-    //                           << QByteArray( "secret" )
-    //                           << QString( "http://term.ie/oauth/example/request_token.php" )
-    //                           << (int) QOAuth::GET
-    //                           << (int) QOAuth::HMAC_SHA1
-    //                           << (int) QOAuth::Timeout
-    //                             << QByteArray()
-    //                             << QByteArray();
-
 }
 
 void QOAuth::Ft_Interface::requestToken()
 {
-    QFETCH( uint, timeout );
     QFETCH( QByteArray, key );
     QFETCH( QByteArray, secret );
     QFETCH( QString, url );
@@ -115,45 +100,49 @@ void QOAuth::Ft_Interface::requestToken()
     QFETCH( QByteArray, requestToken );
     QFETCH( QByteArray, requestTokenSecret );
 
-    m->setRequestTimeout( timeout );
     m->setConsumerKey( key );
     m->setConsumerSecret( secret );
-    ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
+    m->setSignatureMethod( (SignatureMethod) signMethod );
 
-    if ( m->error() != QOAuth::Timeout ) {
-        QVERIFY( m->error() == error );
-    } else {
+    MyEventLoop loop;
+    ReplyReader reader;
+
+    connect(m, SIGNAL(requestTokenFinished(ParamMap)), &reader, SLOT(readParams(ParamMap)));
+    connect(m, SIGNAL(requestTokenFinished(ParamMap)), &loop, SLOT(quit()));
+
+    QNetworkReply *reply = m->requestToken( QUrl(url), (HttpMethod) httpMethod );
+    QTimer::singleShot( 10000, &loop, SLOT(quitWithTimeout()) );
+    loop.exec();
+
+    if (loop.timeout()) {
+        reply->abort();
+        reply->deleteLater();
         QWARN( "Request timeout" );
     }
 
     //check the reply if request finished with no errors
-    if ( m->error() == NoError ) {
-        QCOMPARE( map.value( tokenParameterName() ), requestToken );
-        QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
-    }
+    QCOMPARE(m->error(), error);
+    QCOMPARE( reader.replyParams.value( tokenParameterName() ), requestToken );
+    QCOMPARE( reader.replyParams.value( tokenSecretParameterName() ), requestTokenSecret );
 }
 
 void QOAuth::Ft_Interface::requestTokenRSA_data()
 {
-    QTest::addColumn<uint>("timeout");
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("secret");
     QTest::addColumn<QString>("rsaKeyFile");
     QTest::addColumn<QString>("url");
     QTest::addColumn<int>("httpMethod");
-    QTest::addColumn<int>("signMethod");
     QTest::addColumn<int>("error");
     QTest::addColumn<QByteArray>("requestToken");
     QTest::addColumn<QByteArray>("requestTokenSecret");
 
     // OAuth test server at http://term.ie/oauth/example
-    QTest::newRow("noError") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("noError") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QString( "rsa-testkey.pem" )
             << QString( "http://term.ie/oauth/example/request_token.php" )
             << (int) GET
-            << (int) RSA_SHA1
             << (int) NoError
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" );
@@ -161,40 +150,45 @@ void QOAuth::Ft_Interface::requestTokenRSA_data()
 
 void QOAuth::Ft_Interface::requestTokenRSA()
 {
-    QFETCH( uint, timeout );
     QFETCH( QByteArray, key );
     QFETCH( QByteArray, secret );
     QFETCH( QString, rsaKeyFile );
     QFETCH( QString, url );
     QFETCH( int, httpMethod );
-    QFETCH( int, signMethod );
     QFETCH( int, error );
     QFETCH( QByteArray, requestToken );
     QFETCH( QByteArray, requestTokenSecret );
 
-    m->setRequestTimeout( timeout );
     m->setConsumerKey( key );
     m->setConsumerSecret( secret );
+    m->setSignatureMethod(RSA_SHA1);
     m->setRSAPrivateKeyFromFile( rsaKeyFile );
-    ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
 
-    if ( m->error() != QOAuth::Timeout ) {
-        QVERIFY( m->error() == error );
-    } else {
+    MyEventLoop loop;
+    ReplyReader reader;
+
+    connect(m, SIGNAL(requestTokenFinished(ParamMap)), &reader, SLOT(readParams(ParamMap)));
+    connect(m, SIGNAL(requestTokenFinished(ParamMap)), &loop, SLOT(quit()));
+
+    QNetworkReply *reply = m->requestToken( QUrl(url), (HttpMethod) httpMethod );
+    QTimer::singleShot( 10000, &loop, SLOT(quitWithTimeout()) );
+    loop.exec();
+
+    if (loop.timeout()) {
+        reply->abort();
+        reply->deleteLater();
         QWARN( "Request timeout" );
+        return;
     }
 
     //check the reply if request finished with no errors
-    if ( m->error() == NoError ) {
-        QCOMPARE( map.value( tokenParameterName() ), requestToken );
-        QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
-    }
+    QCOMPARE(m->error(), error);
+    QCOMPARE( reader.replyParams.value( tokenParameterName() ), requestToken );
+    QCOMPARE( reader.replyParams.value( tokenSecretParameterName() ), requestTokenSecret );
 }
-
 
 void QOAuth::Ft_Interface::accessToken_data()
 {
-    QTest::addColumn<uint>("timeout");
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("secret");
     QTest::addColumn<QByteArray>("token");
@@ -207,8 +201,7 @@ void QOAuth::Ft_Interface::accessToken_data()
     QTest::addColumn<QByteArray>("accessTokenSecret");
 
     // OAuth test server at http://term.ie/oauth/example
-    QTest::newRow("HMAC-SHA1") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("HMAC-SHA1") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" )
@@ -219,8 +212,7 @@ void QOAuth::Ft_Interface::accessToken_data()
             << QByteArray( "accesskey" )
             << QByteArray( "accesssecret" );
 
-    QTest::newRow("PLAINTEXT") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("PLAINTEXT") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" )
@@ -234,7 +226,6 @@ void QOAuth::Ft_Interface::accessToken_data()
 
 void QOAuth::Ft_Interface::accessToken()
 {
-    QFETCH( uint, timeout );
     QFETCH( QByteArray, key );
     QFETCH( QByteArray, secret );
     QFETCH( QByteArray, token );
@@ -246,29 +237,36 @@ void QOAuth::Ft_Interface::accessToken()
     QFETCH( QByteArray, accessToken );
     QFETCH( QByteArray, accessTokenSecret );
 
-    m->setRequestTimeout( timeout );
     m->setConsumerKey( key );
     m->setConsumerSecret( secret );
-    ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
-                                   (SignatureMethod) signMethod );
+    m->setSignatureMethod( (SignatureMethod) signMethod );
 
-    if ( m->error() != QOAuth::Timeout ) {
-        QVERIFY( m->error() == error );
-    } else {
+    MyEventLoop loop;
+    ReplyReader reader;
+
+    connect(m, SIGNAL(accessTokenFinished(ParamMap)), &reader, SLOT(readParams(ParamMap)));
+    connect(m, SIGNAL(accessTokenFinished(ParamMap)), &loop, SLOT(quit()));
+
+    QNetworkReply *reply = m->accessToken( QUrl(url), (HttpMethod) httpMethod, token, tokenSecret );
+    QTimer::singleShot( 10000, &loop, SLOT(quitWithTimeout()) );
+    loop.exec();
+
+    if (loop.timeout()) {
+        reply->abort();
+        reply->deleteLater();
         QWARN( "Request timeout" );
+        return;
     }
 
     //check the reply if request finished with no errors
-    if ( m->error() == NoError ) {
-        QCOMPARE( map.value( tokenParameterName() ), accessToken );
-        QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
-    }
+    QCOMPARE(m->error(), error);
+    QCOMPARE( reader.replyParams.value( tokenParameterName() ), accessToken );
+    QCOMPARE( reader.replyParams.value( tokenSecretParameterName() ), accessTokenSecret );
 }
 
 
 void QOAuth::Ft_Interface::accessTokenRSA_data()
 {
-    QTest::addColumn<uint>("timeout");
     QTest::addColumn<QByteArray>("key");
     QTest::addColumn<QByteArray>("secret");
     QTest::addColumn<QByteArray>("token");
@@ -276,30 +274,25 @@ void QOAuth::Ft_Interface::accessTokenRSA_data()
     QTest::addColumn<QString>("rsaKeyFile");
     QTest::addColumn<QString>("url");
     QTest::addColumn<int>("httpMethod");
-    QTest::addColumn<int>("signMethod");
     QTest::addColumn<int>("error");
     QTest::addColumn<QByteArray>("accessToken");
     QTest::addColumn<QByteArray>("accessTokenSecret");
 
     // OAuth test server at http://term.ie/oauth/example
-    QTest::newRow("noError") << (uint) 10000
-            << QByteArray( "key" )
+    QTest::newRow("noError") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" )
             << QString( "rsa-testkey.pem" )
             << QString( "http://term.ie/oauth/example/access_token.php" )
             << (int) GET
-            << (int) RSA_SHA1
             << (int) NoError
             << QByteArray( "accesskey" )
             << QByteArray( "accesssecret" );
-
 }
 
 void QOAuth::Ft_Interface::accessTokenRSA()
 {
-    QFETCH( uint, timeout );
     QFETCH( QByteArray, key );
     QFETCH( QByteArray, secret );
     QFETCH( QByteArray, token );
@@ -307,31 +300,38 @@ void QOAuth::Ft_Interface::accessTokenRSA()
     QFETCH( QString, rsaKeyFile );
     QFETCH( QString, url );
     QFETCH( int, httpMethod );
-    QFETCH( int, signMethod );
     QFETCH( int, error );
     QFETCH( QByteArray, accessToken );
     QFETCH( QByteArray, accessTokenSecret );
 
-    m->setRequestTimeout( timeout );
     m->setConsumerKey( key );
     m->setConsumerSecret( secret );
     m->setRSAPrivateKeyFromFile( rsaKeyFile );
-    ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
-                                   (SignatureMethod) signMethod );
+    m->setSignatureMethod( RSA_SHA1 );
 
-    if ( m->error() != QOAuth::Timeout ) {
-        QVERIFY( m->error() == error );
-    } else {
+    MyEventLoop loop;
+    ReplyReader reader;
+
+    connect(m, SIGNAL(accessTokenFinished(ParamMap)), &reader, SLOT(readParams(ParamMap)));
+    connect(m, SIGNAL(accessTokenFinished(ParamMap)), &loop, SLOT(quit()));
+
+    QNetworkReply *reply = m->accessToken( QUrl(url), (HttpMethod) httpMethod, token, tokenSecret );
+    QTimer::singleShot( 10000, &loop, SLOT(quitWithTimeout()) );
+    loop.exec();
+
+    if (loop.timeout()) {
+        reply->abort();
+        reply->deleteLater();
         QWARN( "Request timeout" );
+        return;
     }
 
     //check the reply if request finished with no errors
-    if ( m->error() == NoError ) {
-        QCOMPARE( map.value( tokenParameterName() ), accessToken );
-        QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
-    }
-}
+    QCOMPARE(m->error(), error);
+    QCOMPARE( reader.replyParams.value( tokenParameterName() ), accessToken );
+    QCOMPARE( reader.replyParams.value( tokenSecretParameterName() ), accessTokenSecret );
 
+}
 
 void QOAuth::Ft_Interface::accessResources_data()
 {
@@ -539,5 +539,277 @@ void QOAuth::Ft_Interface::accessResourcesRSA()
     }
 }
 
+
+
+
+
+/***************************************************************
+ ***************************************************************
+ ****************** DEPRECATED STUFF TESTS *********************
+ ***************************************************************
+ ***************************************************************/
+
+
+#ifdef DEPRECATED_TESTS
+void QOAuth::Ft_Interface::DEPRECATED_requestToken_data()
+{
+    QTest::addColumn<uint>("timeout");
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("secret");
+    QTest::addColumn<QString>("url");
+    QTest::addColumn<int>("httpMethod");
+    QTest::addColumn<int>("signMethod");
+    QTest::addColumn<int>("error");
+    QTest::addColumn<QByteArray>("requestToken");
+    QTest::addColumn<QByteArray>("requestTokenSecret");
+
+    // OAuth test server at http://term.ie/oauth/example
+    QTest::newRow("HMAC-SHA1") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QString( "http://term.ie/oauth/example/request_token.php" )
+            << (int) GET
+            << (int) HMAC_SHA1
+            << (int) NoError
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" );
+
+    QTest::newRow("PLAINTEXT") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QString( "http://term.ie/oauth/example/request_token.php" )
+            << (int) GET
+            << (int) PLAINTEXT
+            << (int) NoError
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" );
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_requestToken()
+{
+    QFETCH( uint, timeout );
+    QFETCH( QByteArray, key );
+    QFETCH( QByteArray, secret );
+    QFETCH( QString, url );
+    QFETCH( int, httpMethod );
+    QFETCH( int, signMethod );
+    QFETCH( int, error );
+    QFETCH( QByteArray, requestToken );
+    QFETCH( QByteArray, requestTokenSecret );
+
+    m->setRequestTimeout( timeout );
+    m->setConsumerKey( key );
+    m->setConsumerSecret( secret );
+    ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
+
+    if ( m->error() != QOAuth::Timeout ) {
+        QVERIFY( m->error() == error );
+    } else {
+        QWARN( "Request timeout" );
+    }
+
+    //check the reply if request finished with no errors
+    if ( m->error() == NoError ) {
+        QCOMPARE( map.value( tokenParameterName() ), requestToken );
+        QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
+    }
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_requestTokenRSA_data()
+{
+    QTest::addColumn<uint>("timeout");
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("secret");
+    QTest::addColumn<QString>("rsaKeyFile");
+    QTest::addColumn<QString>("url");
+    QTest::addColumn<int>("httpMethod");
+    QTest::addColumn<int>("signMethod");
+    QTest::addColumn<int>("error");
+    QTest::addColumn<QByteArray>("requestToken");
+    QTest::addColumn<QByteArray>("requestTokenSecret");
+
+    // OAuth test server at http://term.ie/oauth/example
+    QTest::newRow("noError") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QString( "rsa-testkey.pem" )
+            << QString( "http://term.ie/oauth/example/request_token.php" )
+            << (int) GET
+            << (int) RSA_SHA1
+            << (int) NoError
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" );
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_requestTokenRSA()
+{
+    QFETCH( uint, timeout );
+    QFETCH( QByteArray, key );
+    QFETCH( QByteArray, secret );
+    QFETCH( QString, rsaKeyFile );
+    QFETCH( QString, url );
+    QFETCH( int, httpMethod );
+    QFETCH( int, signMethod );
+    QFETCH( int, error );
+    QFETCH( QByteArray, requestToken );
+    QFETCH( QByteArray, requestTokenSecret );
+
+    m->setRequestTimeout( timeout );
+    m->setConsumerKey( key );
+    m->setConsumerSecret( secret );
+    m->setRSAPrivateKeyFromFile( rsaKeyFile );
+    ParamMap map = m->requestToken( url, (HttpMethod) httpMethod, (SignatureMethod) signMethod );
+
+    if ( m->error() != QOAuth::Timeout ) {
+        QVERIFY( m->error() == error );
+    } else {
+        QWARN( "Request timeout" );
+    }
+
+    //check the reply if request finished with no errors
+    if ( m->error() == NoError ) {
+        QCOMPARE( map.value( tokenParameterName() ), requestToken );
+        QCOMPARE( map.value( tokenSecretParameterName() ), requestTokenSecret );
+    }
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_accessToken_data()
+{
+    QTest::addColumn<uint>("timeout");
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("secret");
+    QTest::addColumn<QByteArray>("token");
+    QTest::addColumn<QByteArray>("tokenSecret");
+    QTest::addColumn<QString>("url");
+    QTest::addColumn<int>("httpMethod");
+    QTest::addColumn<int>("signMethod");
+    QTest::addColumn<int>("error");
+    QTest::addColumn<QByteArray>("accessToken");
+    QTest::addColumn<QByteArray>("accessTokenSecret");
+
+    // OAuth test server at http://term.ie/oauth/example
+    QTest::newRow("HMAC-SHA1") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" )
+            << QString( "http://term.ie/oauth/example/access_token.php" )
+            << (int) GET
+            << (int) HMAC_SHA1
+            << (int) NoError
+            << QByteArray( "accesskey" )
+            << QByteArray( "accesssecret" );
+
+    QTest::newRow("PLAINTEXT") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" )
+            << QString( "http://term.ie/oauth/example/access_token.php" )
+            << (int) GET
+            << (int) PLAINTEXT
+            << (int) NoError
+            << QByteArray( "accesskey" )
+            << QByteArray( "accesssecret" );
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_accessToken()
+{
+    QFETCH( uint, timeout );
+    QFETCH( QByteArray, key );
+    QFETCH( QByteArray, secret );
+    QFETCH( QByteArray, token );
+    QFETCH( QByteArray, tokenSecret );
+    QFETCH( QString, url );
+    QFETCH( int, httpMethod );
+    QFETCH( int, signMethod );
+    QFETCH( int, error );
+    QFETCH( QByteArray, accessToken );
+    QFETCH( QByteArray, accessTokenSecret );
+
+    m->setRequestTimeout( timeout );
+    m->setConsumerKey( key );
+    m->setConsumerSecret( secret );
+    ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                   (SignatureMethod) signMethod );
+
+    if ( m->error() != QOAuth::Timeout ) {
+        QVERIFY( m->error() == error );
+    } else {
+        QWARN( "Request timeout" );
+    }
+
+    //check the reply if request finished with no errors
+    if ( m->error() == NoError ) {
+        QCOMPARE( map.value( tokenParameterName() ), accessToken );
+        QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
+    }
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_accessTokenRSA_data()
+{
+    QTest::addColumn<uint>("timeout");
+    QTest::addColumn<QByteArray>("key");
+    QTest::addColumn<QByteArray>("secret");
+    QTest::addColumn<QByteArray>("token");
+    QTest::addColumn<QByteArray>("tokenSecret");
+    QTest::addColumn<QString>("rsaKeyFile");
+    QTest::addColumn<QString>("url");
+    QTest::addColumn<int>("httpMethod");
+    QTest::addColumn<int>("signMethod");
+    QTest::addColumn<int>("error");
+    QTest::addColumn<QByteArray>("accessToken");
+    QTest::addColumn<QByteArray>("accessTokenSecret");
+
+    // OAuth test server at http://term.ie/oauth/example
+    QTest::newRow("noError") << (uint) 10000
+            << QByteArray( "key" )
+            << QByteArray( "secret" )
+            << QByteArray( "requestkey" )
+            << QByteArray( "requestsecret" )
+            << QString( "rsa-testkey.pem" )
+            << QString( "http://term.ie/oauth/example/access_token.php" )
+            << (int) GET
+            << (int) RSA_SHA1
+            << (int) NoError
+            << QByteArray( "accesskey" )
+            << QByteArray( "accesssecret" );
+}
+
+void QOAuth::Ft_Interface::DEPRECATED_accessTokenRSA()
+{
+    QFETCH( uint, timeout );
+    QFETCH( QByteArray, key );
+    QFETCH( QByteArray, secret );
+    QFETCH( QByteArray, token );
+    QFETCH( QByteArray, tokenSecret );
+    QFETCH( QString, rsaKeyFile );
+    QFETCH( QString, url );
+    QFETCH( int, httpMethod );
+    QFETCH( int, signMethod );
+    QFETCH( int, error );
+    QFETCH( QByteArray, accessToken );
+    QFETCH( QByteArray, accessTokenSecret );
+
+    m->setRequestTimeout( timeout );
+    m->setConsumerKey( key );
+    m->setConsumerSecret( secret );
+    m->setRSAPrivateKeyFromFile( rsaKeyFile );
+    ParamMap map = m->accessToken( url, (HttpMethod) httpMethod, token, tokenSecret,
+                                   (SignatureMethod) signMethod );
+
+    if ( m->error() != QOAuth::Timeout ) {
+        QVERIFY( m->error() == error );
+    } else {
+        QWARN( "Request timeout" );
+    }
+
+    //check the reply if request finished with no errors
+    if ( m->error() == NoError ) {
+        QCOMPARE( map.value( tokenParameterName() ), accessToken );
+        QCOMPARE( map.value( tokenSecretParameterName() ), accessTokenSecret );
+    }
+}
+#endif
 
 QTEST_MAIN(QOAuth::Ft_Interface)

@@ -212,13 +212,16 @@ const QByteArray QOAuth::InterfacePrivate::ParamTimestamp       = "oauth_timesta
 //! \brief The <em>version</em> request parameter string
 const QByteArray QOAuth::InterfacePrivate::ParamVersion         = "oauth_version";
 
+const QNetworkRequest::Attribute QOAuth::InterfacePrivate::OperationTypeAttribute = QNetworkRequest::User;
+
 QOAuth::InterfacePrivate::InterfacePrivate() :
         privateKeySet( false ),
         consumerKey( QByteArray() ),
         consumerSecret( QByteArray() ),
+        signatureMethod( HMAC_SHA1 ),
         manager(0),
-        loop(0),
-        requestTimeout(0),
+        DEPRECATED_loop(0),
+        DEPRECATED_requestTimeout(0),
         error( NoError )
 {
 }
@@ -228,7 +231,7 @@ void QOAuth::InterfacePrivate::init()
     Q_Q(QOAuth::Interface);
 
     ignoreSslErrors = false;
-    loop = new QEventLoop(q);
+    DEPRECATED_loop = new QEventLoop(q);
     setupNetworkAccessManager();
 
     q->connect( &eventHandler, SIGNAL(eventReady(int,QCA::Event)), SLOT(_q_setPassphrase(int,QCA::Event)) );
@@ -243,7 +246,7 @@ void QOAuth::InterfacePrivate::setupNetworkAccessManager()
         manager = new QNetworkAccessManager;
 
     manager->setParent(q);
-    q->connect( manager, SIGNAL(finished(QNetworkReply*)), loop, SLOT(quit()) );
+    q->connect( manager, SIGNAL(finished(QNetworkReply*)), DEPRECATED_loop, SLOT(quit()) );
     q->connect( manager, SIGNAL(finished(QNetworkReply*)), SLOT(_q_parseReply(QNetworkReply*)) );
     q->connect( manager, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)),
                 SLOT(_q_handleSslErrors(QNetworkReply*,QList<QSslError>)) );
@@ -311,11 +314,13 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::replyToMap( const QByteArray &data )
 
 void QOAuth::InterfacePrivate::_q_parseReply( QNetworkReply *reply )
 {
+    Q_Q(QOAuth::Interface);
+
     int returnCode = reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
 
     switch ( returnCode ) {
-    case NoError:
-        replyParams = replyToMap( reply->readAll() );
+    case NoError: {
+        ParamMap replyParams = replyToMap( reply->readAll() );
         if ( !replyParams.contains( InterfacePrivate::ParamToken ) ) {
             qWarning() << __FUNCTION__ << "- oauth_token not present in reply!";
         }
@@ -323,6 +328,17 @@ void QOAuth::InterfacePrivate::_q_parseReply( QNetworkReply *reply )
             qWarning() << __FUNCTION__ << "- oauth_token_secret not present in reply!";
         }
 
+        QNetworkRequest request = reply->request();
+        Operation op = (Operation) request.attribute(OperationTypeAttribute, Invalid).toInt();
+        Q_ASSERT(op != Invalid);
+
+        if (op == RequestToken)
+            emit q->requestTokenFinished(replyParams);
+        else if (op == AccessToken)
+            emit q->accessTokenFinished(replyParams);
+
+        DEPRECATED_replyParams = replyParams;
+    }
     case BadRequest:
     case Unauthorized:
     case Forbidden:
@@ -333,6 +349,7 @@ void QOAuth::InterfacePrivate::_q_parseReply( QNetworkReply *reply )
     }
 
     reply->close();
+    reply->deleteLater();
 }
 
 void QOAuth::InterfacePrivate::_q_handleSslErrors(QNetworkReply *reply, const QList<QSslError> &errors)
@@ -545,6 +562,21 @@ void QOAuth::Interface::setConsumerSecret( const QByteArray &consumerSecret )
     d->consumerSecret = consumerSecret;
 }
 
+QOAuth::SignatureMethod QOAuth::Interface::signatureMethod() const
+{
+    Q_D(const QOAuth::Interface);
+
+    return d->signatureMethod;
+}
+
+void QOAuth::Interface::setSignatureMethod( const SignatureMethod &signatureMethod )
+{
+    Q_D(QOAuth::Interface);
+
+    d->signatureMethod = signatureMethod;
+}
+
+
 /*!
   \property QOAuth::Interface::requestTimeout
   \brief This property holds the timeout value in milliseconds for issued network requests.
@@ -564,14 +596,14 @@ uint QOAuth::Interface::requestTimeout() const
 {
     Q_D(const Interface);
 
-    return d->requestTimeout;
+    return d->DEPRECATED_requestTimeout;
 }
 
 void QOAuth::Interface::setRequestTimeout( uint msec )
 {
     Q_D(Interface);
 
-    d->requestTimeout = msec;
+    d->DEPRECATED_requestTimeout = msec;
 }
 
 
@@ -747,13 +779,46 @@ void QOAuth::InterfacePrivate::_q_setPassphrase( int id, const QCA::Event &event
   \sa accessToken(), error
 */
 
-QOAuth::ParamMap QOAuth::Interface::requestToken( const QString &requestUrl, HttpMethod httpMethod,
-                                                  SignatureMethod signatureMethod, const ParamMap &params )
+QNetworkReply* QOAuth::Interface::requestToken( const QUrl &requestUrl, HttpMethod httpMethod,
+                                                const ParamMap &params )
 {
     Q_D(Interface);
 
-    return d->sendRequest( requestUrl, httpMethod, signatureMethod,
-                           QByteArray(), QByteArray(), params );
+    return d->sendRequest( requestUrl.toString(), httpMethod, d->signatureMethod,
+                           QByteArray(), QByteArray(), params, QOAuth::InterfacePrivate::RequestToken );
+}
+
+QOAuth::ParamMap QOAuth::Interface::requestToken(const QString &requestUrl, HttpMethod httpMethod,
+                                                 SignatureMethod signatureMethod, const ParamMap &params)
+{
+    Q_D(QOAuth::Interface);
+
+    // fire up a single shot timer if timeout was specified
+    if ( d->DEPRECATED_requestTimeout > 0 ) {
+        QTimer::singleShot( d->DEPRECATED_requestTimeout, d->DEPRECATED_loop, SLOT(quit()) );
+        // if the request finishes on time, the error value is overriden
+        // if not, it remains equal to QOAuth::Interface::Timeout
+        d->error = Timeout;
+    }
+
+    // clear the reply container and send the request
+    d->DEPRECATED_replyParams.clear();
+    QNetworkReply *reply = d->sendRequest( requestUrl, httpMethod, signatureMethod,
+                           QByteArray(), QByteArray(), params, QOAuth::InterfacePrivate::RequestToken );
+    if (!reply)
+        return ParamMap();
+
+    // start the event loop and wait for the response
+    d->DEPRECATED_loop->exec();
+
+    // if request completed successfully, error is different than QOAuth::Interface::Timeout
+    // if it failed, we have to abort the request
+    if ( d->error == Timeout ) {
+        reply->abort();
+        reply->deleteLater();
+    }
+
+    return d->DEPRECATED_replyParams;
 }
 
 /*!
@@ -796,14 +861,48 @@ QOAuth::ParamMap QOAuth::Interface::requestToken( const QString &requestUrl, Htt
   \sa requestToken(), createParametersString(), error
 */
 
+QNetworkReply* QOAuth::Interface::accessToken( const QUrl &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+                                                 const QByteArray &tokenSecret, const ParamMap &params )
+{
+    Q_D(QOAuth::Interface);
+
+    return d->sendRequest( requestUrl.toString(), httpMethod, d->signatureMethod,
+                           token, tokenSecret, params, QOAuth::InterfacePrivate::AccessToken );
+
+}
+
 QOAuth::ParamMap QOAuth::Interface::accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                                                  const QByteArray &tokenSecret, SignatureMethod signatureMethod,
                                                  const ParamMap &params )
 {
-    Q_D(Interface);
+    Q_D(QOAuth::Interface);
+    // fire up a single shot timer if timeout was specified
+    if ( d->DEPRECATED_requestTimeout > 0 ) {
+        QTimer::singleShot( d->DEPRECATED_requestTimeout, d->DEPRECATED_loop, SLOT(quit()) );
+        // if the request finishes on time, the error value is overriden
+        // if not, it remains equal to QOAuth::Interface::Timeout
+        d->error = Timeout;
+    }
 
-    return d->sendRequest( requestUrl, httpMethod, signatureMethod,
-                           token, tokenSecret, params );
+    // clear the reply container and send the request
+    d->DEPRECATED_replyParams.clear();
+    QNetworkReply *reply = d->sendRequest( requestUrl, httpMethod, signatureMethod,
+                           token, tokenSecret, params, QOAuth::InterfacePrivate::AccessToken );
+    if (!reply)
+        return ParamMap();
+
+    // start the event loop and wait for the response
+    d->DEPRECATED_loop->exec();
+
+    // if request completed successfully, error is different than QOAuth::Interface::Timeout
+    // if it failed, we have to abort the request
+    if ( d->error == Timeout ) {
+        reply->abort();
+        reply->deleteLater();
+    }
+
+    return d->DEPRECATED_replyParams;
+
 
 }
 
@@ -905,14 +1004,15 @@ QByteArray QOAuth::Interface::inlineParameters( const ParamMap &params, ParsingM
     return query;
 }
 
-QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,
+QNetworkReply* QOAuth::InterfacePrivate::sendRequest( const QString &requestUrl, HttpMethod httpMethod,
                                                         SignatureMethod signatureMethod, const QByteArray &token,
-                                                        const QByteArray &tokenSecret, const ParamMap &params )
+                                                        const QByteArray &tokenSecret, const ParamMap &params,
+                                                        Operation operation )
 {
     if ( httpMethod != GET && httpMethod != POST ) {
         qWarning() << __FUNCTION__ << "- requestToken() and accessToken() accept only GET and POST methods";
         error = UnsupportedHttpMethod;
-        return ParamMap();
+        return 0;
     }
 
     error = NoError;
@@ -925,7 +1025,7 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUr
 
     // if signature wasn't created, return an empty map
     if ( error != NoError ) {
-        return ParamMap();
+        return 0;
     }
 
     // add signature to parameters
@@ -945,17 +1045,8 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUr
     }
 
     request.setUrl( QUrl( requestUrl ) );
+    request.setAttribute(OperationTypeAttribute, operation);
 
-    // fire up a single shot timer if timeout was specified
-    if ( requestTimeout > 0 ) {
-        QTimer::singleShot( requestTimeout, loop, SLOT(quit()) );
-        // if the request finishes on time, the error value is overriden
-        // if not, it remains equal to QOAuth::Interface::Timeout
-        error = Timeout;
-    }
-
-    // clear the reply container and send the request
-    replyParams.clear();
     QNetworkReply *reply;
     if ( httpMethod == GET ) {
         reply = manager->get( request );
@@ -963,16 +1054,7 @@ QOAuth::ParamMap QOAuth::InterfacePrivate::sendRequest( const QString &requestUr
         reply = manager->post( request, authorizationHeader );
     }
 
-    // start the event loop and wait for the response
-    loop->exec();
-
-    // if request completed successfully, error is different than QOAuth::Interface::Timeout
-    // if it failed, we have to abort the request
-    if ( error == Timeout ) {
-        reply->abort();
-    }
-
-    return replyParams;
+    return reply;
 }
 
 QByteArray QOAuth::InterfacePrivate::createSignature( const QString &requestUrl, HttpMethod httpMethod,

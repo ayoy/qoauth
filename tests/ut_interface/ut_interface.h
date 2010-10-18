@@ -44,8 +44,8 @@ private Q_SLOTS:
     void consumerSecret();
     void setConsumerSecret();
 
-    void requestTimeout();
-    void setRequestTimeout();
+//    void requestTimeout();
+//    void setRequestTimeout();
 
     void error();
 

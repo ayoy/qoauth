@@ -51,6 +51,8 @@ class QOAUTH_EXPORT Interface : public QObject
     Q_PROPERTY( uint requestTimeout READ requestTimeout WRITE setRequestTimeout )
     Q_PROPERTY( bool ignoreSslErrors READ ignoreSslErrors WRITE setIgnoreSslErrors )
     Q_PROPERTY( int error READ error )
+    Q_PROPERTY( SignatureMethod signatureMethod READ signatureMethod WRITE setSignatureMethod )
+    Q_ENUMS( QOAuth::SignatureMethod )
 
 public:
     Interface( QObject *parent = 0 );
@@ -69,6 +71,9 @@ public:
     QByteArray consumerSecret() const;
     void setConsumerSecret( const QByteArray &consumerSecret );
 
+    SignatureMethod signatureMethod() const;
+    void setSignatureMethod( const SignatureMethod &signatureMethod );
+
     uint requestTimeout() const;
     void setRequestTimeout( uint msec );
 
@@ -80,10 +85,17 @@ public:
                                    const QCA::SecureArray &passphrase = QCA::SecureArray() );
 
 
-    ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
+    QNetworkReply* requestToken( const QUrl &requestUrl, HttpMethod httpMethod,
+                                 const ParamMap &params = ParamMap() );
+
+    QNetworkReply* accessToken( const QUrl &requestUrl, HttpMethod httpMethod,
+                                const QByteArray &token, const QByteArray &tokenSecret,
+                                const ParamMap &params = ParamMap() );
+
+    Q_DECL_DEPRECATED ParamMap requestToken( const QString &requestUrl, HttpMethod httpMethod,
                            SignatureMethod signatureMethod = HMAC_SHA1, const ParamMap &params = ParamMap() );
 
-    ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
+    Q_DECL_DEPRECATED ParamMap accessToken( const QString &requestUrl, HttpMethod httpMethod, const QByteArray &token,
                           const QByteArray &tokenSecret, SignatureMethod signatureMethod = HMAC_SHA1,
                           const ParamMap &params = ParamMap() );
 
@@ -93,6 +105,9 @@ public:
 
     QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
 
+signals:
+    void requestTokenFinished(const ParamMap &reply);
+    void accessTokenFinished(const ParamMap &reply);
 
 protected:
     InterfacePrivate * const d_ptr;

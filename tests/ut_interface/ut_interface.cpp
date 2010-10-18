@@ -79,21 +79,21 @@ void QOAuth::Ut_Interface::setConsumerSecret()
     QCOMPARE( m->d_ptr->consumerSecret, consumerSecret );
 }
 
-void QOAuth::Ut_Interface::requestTimeout()
-{
-    uint timeout = 13986754;
+//void QOAuth::Ut_Interface::requestTimeout()
+//{
+//    uint timeout = 13986754;
 
-    m->d_ptr->requestTimeout = timeout;
-    QVERIFY( m->requestTimeout() == timeout );
-}
+//    m->d_ptr->requestTimeout = timeout;
+//    QVERIFY( m->requestTimeout() == timeout );
+//}
 
-void QOAuth::Ut_Interface::setRequestTimeout()
-{
-    uint timeout = 13986754;
+//void QOAuth::Ut_Interface::setRequestTimeout()
+//{
+//    uint timeout = 13986754;
 
-    m->setRequestTimeout( timeout );
-    QVERIFY( m->d_ptr->requestTimeout == timeout );
-}
+//    m->setRequestTimeout( timeout );
+//    QVERIFY( m->d_ptr->requestTimeout == timeout );
+//}
 
 void QOAuth::Ut_Interface::error()
 {

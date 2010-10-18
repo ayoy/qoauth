@@ -58,8 +58,8 @@ namespace QOAuth {
     */
     enum SignatureMethod {
         HMAC_SHA1, //!< Sets the signature method to HMAC-SHA1
-        RSA_SHA1,  //!< Sets the signature method to RSA-SHA1 (not implemented yet)
-        PLAINTEXT  //!< Sets the signature method to PLAINTEXT (not implemented yet)
+        RSA_SHA1,  //!< Sets the signature method to RSA-SHA1
+        PLAINTEXT  //!< Sets the signature method to PLAINTEXT
     };
 
     /*!
