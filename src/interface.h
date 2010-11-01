@@ -106,8 +106,8 @@ public:
     QByteArray inlineParameters( const ParamMap &params, ParsingMode mode = ParseForRequestContent );
 
 signals:
-    void requestTokenFinished(const ParamMap &reply);
-    void accessTokenFinished(const ParamMap &reply);
+    void requestTokenFinished(const QOAuth::ParamMap &reply);
+    void accessTokenFinished(const QOAuth::ParamMap &reply);
 
 protected:
     InterfacePrivate * const d_ptr;
