@@ -1078,9 +1078,8 @@ QByteArray QOAuth::InterfacePrivate::createPlaintextSignature( const QByteArray 
         return QByteArray();
     }
 
-    // get percent encoded consumer secret and token secret, join and percent encode once more
-    QByteArray digest = consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
-    return digest.toPercentEncoding();
+    // get percent encoded consumer secret and token secret, join and return
+    return consumerSecret.toPercentEncoding() + "&" + tokenSecret.toPercentEncoding();
 }
 
 #include "moc_interface.cpp"
