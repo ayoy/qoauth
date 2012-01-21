@@ -80,7 +80,8 @@ void QOAuth::Ft_Interface::requestToken_data()
             << QByteArray( "requestkey" )
             << QByteArray( "requestsecret" );
 
-    QTest::newRow("PLAINTEXT") << (uint) 10000
+    // term.ie fails at creating PLAINTEXT signature :(
+    /*QTest::newRow("PLAINTEXT") << (uint) 10000
             << QByteArray( "key" )
             << QByteArray( "secret" )
             << QString( "http://term.ie/oauth/example/request_token.php" )
@@ -88,7 +89,7 @@ void QOAuth::Ft_Interface::requestToken_data()
             << (int) PLAINTEXT
             << (int) NoError
             << QByteArray( "requestkey" )
-            << QByteArray( "requestsecret" );
+            << QByteArray( "requestsecret" ); */
 
     // timeout seems to be untestable for a moment
     //  QTest::newRow("timeout") << (uint) 100
@@ -219,7 +220,8 @@ void QOAuth::Ft_Interface::accessToken_data()
             << QByteArray( "accesskey" )
             << QByteArray( "accesssecret" );
 
-    QTest::newRow("PLAINTEXT") << (uint) 10000
+    // term.ie fails at creating PLAINTEXT signature :(
+    /*QTest::newRow("PLAINTEXT") << (uint) 10000
             << QByteArray( "key" )
             << QByteArray( "secret" )
             << QByteArray( "requestkey" )
@@ -229,7 +231,7 @@ void QOAuth::Ft_Interface::accessToken_data()
             << (int) PLAINTEXT
             << (int) NoError
             << QByteArray( "accesskey" )
-            << QByteArray( "accesssecret" );
+            << QByteArray( "accesssecret" );*/
 }
 
 void QOAuth::Ft_Interface::accessToken()
@@ -368,7 +370,8 @@ void QOAuth::Ft_Interface::accessResources_data()
             << (int) ParseForHeaderArguments
             << (int) NoError;
 
-    QTest::newRow("PLAINTEXT") << QByteArray( "key" )
+    // term.ie fails at creating PLAINTEXT signature :(
+    /*QTest::newRow("PLAINTEXT") << QByteArray( "key" )
             << QByteArray( "secret" )
             << QByteArray( "accesskey" )
             << QByteArray( "accesssecret" )
@@ -382,7 +385,7 @@ void QOAuth::Ft_Interface::accessResources_data()
             << QByteArray( "third" )
             << QByteArray( "third" )
             << (int) ParseForHeaderArguments
-            << (int) NoError;
+            << (int) NoError;*/
 }
 
 void QOAuth::Ft_Interface::accessResources()
