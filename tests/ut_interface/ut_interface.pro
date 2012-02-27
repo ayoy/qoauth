@@ -10,7 +10,10 @@ CONFIG += crypto
 
 macx {
     CONFIG -= app_bundle
-    QMAKE_POST_LINK += install_name_tool -change qoauth.framework/Versions/1/qoauth \
+    # keep this in sync with oauth.prf
+    LIBDIR = $$[QT_INSTALL_LIBS]
+    LIBDIR ~= s!/qt4*!!
+    QMAKE_POST_LINK += install_name_tool -change $$LIBDIR/qoauth.framework/Versions/1/qoauth \
                        ../../lib/qoauth.framework/Versions/1/qoauth $${TARGET}
 }
 else:unix {

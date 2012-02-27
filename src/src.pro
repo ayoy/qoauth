@@ -48,6 +48,12 @@ macx {
     FRAMEWORK_HEADERS.files = $$headers.files
     FRAMEWORK_HEADERS.path = Headers
     QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+
+    # keep this in sync with oauth.prf
+    LIBDIR = $$[QT_INSTALL_LIBS]
+    LIBDIR ~= s!/qt4*!!
+    QMAKE_LFLAGS_SONAME = -Wl,-install_name,"$$LIBDIR/"
+
     target.path = $$[QT_INSTALL_LIBS]
     INSTALLS += \
         target \
