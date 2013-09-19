@@ -11,18 +11,32 @@ CONFIG += \
     crypto \
     create_prl
 
-!macx: CONFIG += static_and_shared
 
-OBJECTS_DIR = tmp
-MOC_DIR = tmp
 INC_DIR = ../include
 
 INCLUDEPATH += .
+win32 {
+	CONFIG(debug, debug|release) {
+		BUILDDIR = build/debug
+		windows: TARGET = $$join(TARGET,,,d)
+        mac: TARGET = $$join(TARGET,,,_debug)
+	} else {
+		BUILDDIR = build/release
+	}
+}
+
+INCLUDEPATH += ./$${BUILDDIR}
+MOC_DIR += ./$${BUILDDIR}
+OBJECTS_DIR += ./$${BUILDDIR}
+UI_DIR += ./$${BUILDDIR}
+RCC_DIR += ./$${BUILDDIR}
+
 
 PUBLIC_HEADERS += \
     qoauth_global.h \
     qoauth_namespace.h \
     interface.h
+
 PRIVATE_HEADERS += \
     interface_p.h
 
@@ -76,11 +90,4 @@ else:unix {
         docs \
         pkgconfig \
         features
-}
-
-CONFIG(debug_and_release) {
-    build_pass:CONFIG(debug, debug|release) {
-        unix: TARGET = $$join(TARGET,,,_debug)
-        else: TARGET = $$join(TARGET,,,d)
-    }
 }

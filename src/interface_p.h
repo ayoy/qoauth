@@ -40,7 +40,7 @@ namespace QOAuth {
 class Interface;
 
 
-class InterfacePrivate
+class QOAUTH_EXPORT InterfacePrivate
 {
     Q_DECLARE_PUBLIC(Interface)
 
