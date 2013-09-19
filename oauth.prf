@@ -35,8 +35,10 @@ isEmpty(LINKAGE) {
     LIBS += -L$$QOAUTH_LIBDIR
     LINKAGE = -lqoauth
     CONFIG(debug, debug|release) {
-        windows:LINKAGE = -lqoauthd
+        windows:LINKAGE = -lqoauthd1
         mac:LINKAGE = -lqoauth_debug
+    } else {
+        windows:LINKAGE = -lqoauth1
     }
 }
 
