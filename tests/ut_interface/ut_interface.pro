@@ -19,6 +19,11 @@ else:unix {
   LIBS += -Wl,-rpath,../../lib:lib
 }
 
+CONFIG(debug, debug|release) {
+    windows: TARGET = $$join(TARGET,,,d)
+    mac: TARGET = $$join(TARGET,,,_debug)
+}
+
 INCLUDEPATH += . ../../src
 HEADERS += ut_interface.h
 SOURCES += ut_interface.cpp
