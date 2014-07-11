@@ -1014,7 +1014,7 @@ QByteArray QOAuth::InterfacePrivate::createSignature( const QString &requestUrl,
     // 1. create the method string
     QByteArray httpMethodString = httpMethodToString( httpMethod );
     // 2. prepare percent-encoded request URL
-    QByteArray percentRequestUrl = requestUrl.toAscii().toPercentEncoding();
+    QByteArray percentRequestUrl = requestUrl.toLatin1().toPercentEncoding();
     // 3. prepare percent-encoded parameters string
     params->insert( InterfacePrivate::ParamConsumerKey, consumerKey );
     params->insert( InterfacePrivate::ParamNonce, nonce );
