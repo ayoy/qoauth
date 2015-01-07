@@ -2,7 +2,12 @@ TARGET = qoauth
 DESTDIR = ../lib
 win32:DLLDESTDIR = $${DESTDIR}
 
-VERSION = 1.0.1
+equals(QT_MAJOR_VERSION, 5){
+   VERSION = 2.0.1
+}
+equals(QT_MAJOR_VERSION, 4) {
+   VERSION = 1.0.1
+}
 
 TEMPLATE = lib
 QT += network
