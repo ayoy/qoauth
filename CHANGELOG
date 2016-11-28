@@ -1,3 +1,5 @@
+v2.0.0 (28/11/2016):
+* Qt5 support
 v1.0.1 (01/08/2010):
 * new API: 
     - QOAuth::Interface::networkAccessManager()
