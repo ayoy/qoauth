@@ -5,7 +5,7 @@ includedir=${prefix}/include/QtOAuth
 
 Name: QOAuth
 Description: Qt OAuth support library
-Version: 2.0.1
+Version: 2.0.0
 Requires: QtCore QtNetwork qca2
 Libs: -L${libdir} -lqoauth
 Cflags: -I${includedir}

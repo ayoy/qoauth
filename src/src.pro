@@ -3,7 +3,7 @@ DESTDIR = ../lib
 win32:DLLDESTDIR = $${DESTDIR}
 
 equals(QT_MAJOR_VERSION, 5){
-   VERSION = 2.0.1
+   VERSION = 2.0.0
 }
 equals(QT_MAJOR_VERSION, 4) {
    VERSION = 1.0.1
